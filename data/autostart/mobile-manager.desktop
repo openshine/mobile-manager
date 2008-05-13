@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Mobile Manager
+Comment=Mobile Manager User Space Daemon
+Exec=/usr/bin/MobileManagerDaemon
+Type=Application
+StartupNotify=true
+Terminal=false
+

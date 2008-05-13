@@ -1,0 +1,1 @@
+SUBDIRS = dbus glade initscripts 

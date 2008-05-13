@@ -1,0 +1,2 @@
+SUBDIRS = huawei option novatel
+
