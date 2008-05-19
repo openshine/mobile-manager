@@ -1,4 +1,5 @@
 2008-05-19  Roberto Majadas  <telemaco@openshine.com>
 
+	* data/Makefile.am: Added pkg-config dir
 	* data/pkg-config/mobile-manager.pc.in (Version): Create pkg-config
 

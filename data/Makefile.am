@@ -1,1 +1,1 @@
-SUBDIRS = dbus glade initscripts 
+SUBDIRS = dbus glade initscripts pkg-config 
