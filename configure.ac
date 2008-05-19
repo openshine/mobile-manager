@@ -216,6 +216,8 @@ data/initscripts/Makefile
 data/initscripts/debian/Makefile
 data/initscripts/redhat/Makefile
 data/initscripts/suse/Makefile
+data/pkg-config/mobile-manager.pc
+data/pkg-config/Makefile
 src/Makefile
 src/ui/Makefile
 src/ui/__init__.py
