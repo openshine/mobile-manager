@@ -1,0 +1,86 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          mobile-manager 
+# Required-Start:    boot.localnet dbus 
+# Should-Start:      
+# Required-Stop:     
+# Should-Stop:
+# Default-Start:     3 5
+# Default-Stop:      
+# Short-Description: mobile-manager is a daemon to management GPRS/3G devices
+# Description:       mobile-manager is a daemon to management GPRS/3G devices
+#                    
+### END INIT INFO
+
+. /etc/rc.status
+FULL_NAME="mobile-manager"
+PID_DIR="/var/run/mobile-manager/"
+PID_FILE=$PID_DIR/MobileManagerDaemon.pid
+DAEMON_EXE=/usr/sbin/MobileManagerDaemon 
+DAEMON_PARAMS=" --pid-file=$PID_FILE"
+
+
+
+test -e $DAEMON_EXE || exit 5
+
+# Reset status of this service
+rc_reset
+
+case "$1" in
+    start)
+	
+	if [ ! -d $PID_DIR ]; then
+                mkdir -p $PID_DIR;
+
+        fi
+        if [ -e $PID_FILE ]; then
+                if [ -d /proc/`cat $PID_FILE` ]; then
+			echo "$FULL_NAME already started. Not starting."
+			exit 0;
+                else
+                        echo "Removing stale PID file $PID_FILE.";
+                        rm -f $PID_FILE;
+                fi
+        fi
+
+        
+	echo -n "Starting $FULL_NAME";
+        startproc -p $PID_FILE $DAEMON_EXE  $DAEMON_PARAMS
+        rc_status -v
+        ;;
+    stop)
+	echo -n "Shutting down $FULL_NAME daemon"
+       	killproc -p $PID_FILE -TERM $DAEMON_EXE
+       	rm -f $PID_FILE;
+       	rc_status -v
+        ;;
+    try-restart)
+        $0 status >/dev/null &&  $0 restart
+        rc_status
+        ;;
+    restart)
+        $0 stop
+        $0 start
+        ;;
+    force-reload)
+        echo -n "Reload service $FULL_NAME"
+        $0 stop  &&  $0 start
+        rc_status
+        ;;
+    reload)
+        rc_failed 3
+        rc_status -v
+        ;;
+    status)
+        echo -n "Checking for service $FULL_NAME"
+        checkproc $DAEMON_EXE
+        rc_status -v
+        ;;
+    probe)
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|status|try-restart|restart|force-reload|start-with-dbus|reload|probe}"
+        exit 1
+        ;;
+esac
+rc_exit

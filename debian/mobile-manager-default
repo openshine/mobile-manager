@@ -1,0 +1,10 @@
+# Defaults for mobile-manager initscript
+# sourced by /etc/init.d/mobile-manager
+# installed at /etc/default/mobile-manager by the maintainer scripts
+
+#
+# This is a POSIX shell fragment
+#
+
+# Additional options that are passed to the Daemon.
+DAEMON_OPTS=""

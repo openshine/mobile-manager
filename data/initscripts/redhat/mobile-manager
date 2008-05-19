@@ -1,0 +1,84 @@
+#!/bin/sh
+#
+# mobile-manager:    MobileManagerDaemon daemon
+#
+# chkconfig: 345 99 50 
+# description: Run MobileManagerDaemon needed for mobile-manager
+#
+# processname: MobileManagerDaemon
+# pidfile: /var/run/mobile-manager/MobileManagerDaemon.pid 
+#
+
+
+prefix=/usr
+exec_prefix=/usr
+sbindir=/usr/sbin
+ubindir=/usr/bin
+
+MOBILEMANAGER_BIN=/usr/sbin/MobileManagerDaemon
+
+# Sanity checks.
+[ -e $MOBILEMANAGER_BIN ] || exit 1
+
+
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# so we can rearrange this easily
+processname=/usr/sbin/MobileManagerDaemon
+servicename=mobile-manager
+pidfile=/var/run/mobile-manager/MobileManagerDaemon.pid
+
+RETVAL=0
+
+start()
+{
+	if [ -f /var/lock/subsys/$servicename ]; then
+		exit 0
+	fi
+	echo -n $"Starting PPPManager daemon: "
+	daemon --check $servicename /usr/bin/python  $processname --pid-file=$pidfile
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$servicename
+}
+
+stop()
+{
+	echo -n $"Stopping MobileManager daemon: "
+	killproc -p $pidfile $servicename
+	RETVAL=$?
+	echo
+	if [ $RETVAL -eq 0 ]; then
+		rm -f /var/lock/subsys/$servicename
+		rm -f $pidfile
+	fi
+}
+
+# See how we were called.
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	status)
+		status -p $pidfile $processname
+		RETVAL=$?
+		;;
+	restart)
+		stop
+		start
+		;;
+	condrestart)
+		if [ -f /var/lock/subsys/$servicename ]; then
+			stop
+			start
+		fi
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|status|restart|condrestart}"
+		;;
+esac
+exit $RETVAL

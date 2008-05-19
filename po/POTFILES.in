@@ -1,0 +1,8 @@
+[encoding: UTF-8]
+
+src/ui/MobileDeviceConf.py
+src/ui/MobilePinDialog.py
+src/ui/MobileCarrierDialog.py
+src/ui/MobileATOptionsButton.py
+src/ui/MobilePukDialog.py
+

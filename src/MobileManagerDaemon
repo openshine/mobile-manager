@@ -1,0 +1,79 @@
+#!/usr/bin/python
+# -*- coding: iso-8859-15 -*-
+#
+# Authors : Roberto Majadas <roberto.majadas@openshine.com>
+#
+# Copyright (c) 2003-2007, Telefonica Móviles España S.A.U.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+#
+
+import gobject
+
+import dbus
+import dbus.service
+import dbus.mainloop.glib
+from optparse import OptionParser
+import MobileManager
+import syslog
+import os
+
+from MobileManager.MobileManagerDbus import MOBILE_MANAGER_CONTROLLER_URI
+
+def write_pid_file(pid_file):
+    syslog.syslog(syslog.LOG_INFO,"Creating MobileManager pid file : %s" % pid_file)
+    if pid_file is None :
+        return
+    try:
+        dirname = os.path.dirname(pid_file)
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+        pid = os.getpid()
+        fd = open(pid_file,"w")
+        fd.write("%s" % pid)
+        fd.close()
+    except Exception ,msg:
+        syslog.syslog(syslog.LOG_INFO,"MobileManager failed : %s" % msg)
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+
+    syslog.openlog("MobileManager")
+
+    parser = OptionParser()
+    parser.add_option("-p", "--pid-file", dest="pid_file", help="pid File", metavar="PID_FILE")
+    parser.add_option("--no-daemon",action="store_false", dest="daemon", default=True, help="No se crea un demonio")
+    (options, args) = parser.parse_args()
+
+    syslog.syslog(syslog.LOG_INFO,"Creating daemon process")
+    ret =0 
+    if options.daemon:
+        ret = MobileManager.daemon.create_daemon()
+        
+    write_pid_file(options.pid_file)
+    
+    dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+    name = dbus.service.BusName(MOBILE_MANAGER_CONTROLLER_URI, dbus.SystemBus())
+
+    mainloop = gobject.MainLoop()
+    
+    mc = MobileManager.MobileController(bname=name)
+    
+    mainloop.run()
+
+    syslog.syslog(syslog.LOG_INFO,"Shutdown daemon")
+    sys.exit(ret)
