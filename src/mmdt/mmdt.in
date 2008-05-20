@@ -1,0 +1,471 @@
+#!/usr/bin/env python
+# -*- coding: iso-8859-15 -*-
+#
+# Authors : Roberto Majadas <roberto.majadas@openshine.com>
+#
+# Copyright (c) 2003-2008, Telefonica Móviles España S.A.U.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+#
+
+import re
+import gtk
+import gtk.glade
+import dbus
+import dbus.glib
+import time
+import os
+from MobileManager.MobileStatus import *
+import MobileManager.ui
+
+from MobileManager.MobileManagerDbus import MOBILE_MANAGER_CONTROLLER_PATH,MOBILE_MANAGER_CONTROLLER_URI,MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,MOBILE_MANAGER_DEVICE_PATH,MOBILE_MANAGER_DEVICE_URI,MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI,MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI,MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI,MOBILE_MANAGER_DEVICE_XZONE_INTERFACE_URI,MOBILE_MANAGER_DEVICE_DEBUG_INTERFACE_URI
+
+
+class Mmdt :
+    def __init__(self):
+        glade_path = os.path.join("@prefix@", "share/", "mobilemanager/", "glade/", "mmdt/")
+        widgets = self.__get_glade_widgets(glade_path + "mmdt.glade")
+        self.xml = gtk.glade.XML(glade_path + "mmdt.glade")
+        for widget in widgets :
+            exec ('self.%s = self.xml.get_widget("%s")' % (widget,widget))
+
+        self.dbus = None
+        self.mcontroller_obj = None
+        self.mcontroller = None
+        self.init_bus()
+
+        self.main_event_model = None
+        self.init_main_event_model()
+
+        self.active_event_model = None
+        self.init_active_event_model()
+
+        self.main_console_model = None
+        self.init_main_console_model()
+
+        self.device_conf_widget = MobileManager.ui.MobileDeviceConfWidget()
+        self.mmdt_device_conf.add(self.device_conf_widget)
+
+        #Signals
+        
+        self.mcontroller.connect_to_signal("ActiveDevCardStatusChanged", self.ActiveDevCardStatusChanged_cb)
+        self.mcontroller.connect_to_signal("ActiveDevTechStatusChanged", self.ActiveDevTechStatusChanged_cb)
+        self.mcontroller.connect_to_signal("ActiveDevModeStatusChanged", self.ActiveDevModeStatusChanged_cb)
+        self.mcontroller.connect_to_signal("ActiveDevDomainStatusChanged", self.ActiveDevDomainStatusChanged_cb)
+        self.mcontroller.connect_to_signal("ActiveDevSignalStatusChanged", self.ActiveDevSignalStatusChanged_cb)
+        self.mcontroller.connect_to_signal("ActiveDevPinActStatusChanged", self.ActiveDevPinActStatusChanged_cb)
+        self.mcontroller.connect_to_signal("ActiveDevRoamingActStatusChanged", self.ActiveDevRoamingActStatusChanged_cb)
+        self.mcontroller.connect_to_signal("ActiveDevCarrierChanged", self.ActiveDevCarrierChanged_cb)
+        self.mcontroller.connect_to_signal("ActiveDevCarrierSmStatusChanged", self.ActiveDevCarrierSmStatusChanged_cb)
+        self.mcontroller.connect_to_signal("ActiveDevXZoneChanged", self.ActiveDevXZoneChanged_cb)
+        self.mcontroller.connect_to_signal("DevCardStatusChanged", self.DevCardStatusChanged_cb)
+        self.mcontroller.connect_to_signal("DevTechStatusChanged", self.DevTechStatusChanged_cb)
+        self.mcontroller.connect_to_signal("DevModeStatusChanged", self.DevModeStatusChanged_cb)
+        self.mcontroller.connect_to_signal("DevDomainStatusChanged", self.DevDomainStatusChanged_cb)
+        self.mcontroller.connect_to_signal("DevSignalStatusChanged", self.DevSignalStatusChanged_cb)
+        self.mcontroller.connect_to_signal("DevPinActStatusChanged", self.DevPinActStatusChanged_cb)
+        self.mcontroller.connect_to_signal("DevRoamingActStatusChanged", self.DevRoamingActStatusChanged_cb)
+        self.mcontroller.connect_to_signal("DevCarrierChanged", self.DevCarrierChanged_cb)
+        self.mcontroller.connect_to_signal("DevCarrierSmStatusChanged", self.DevCarrierSmStatusChanged_cb)
+        self.mcontroller.connect_to_signal("AddedDevice", self.AddedDevice_cb)
+        self.mcontroller.connect_to_signal("RemovedDevice", self.RemovedDevice_cb)
+        self.mcontroller.connect_to_signal("SupportedDeviceDetected", self.SupportedDeviceDetected_cb)
+        self.mcontroller.connect_to_signal("ActiveDeviceChanged", self.ActiveDeviceChanged_cb)
+
+        self.mmdt_send_custom_cmd_button.connect("clicked", self.__send_custom_cmd_button_cb, None)
+        self.mmdt_main_window.connect("destroy", self.destroy)
+	dev_path = self.mcontroller.GetActiveDevice()
+        dev_state = self.__get_device_state_from_path(dev_path)
+        dev_info = self.__get_device_info_from_path(dev_path)
+
+        if dev_info.HasCapability(MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI) :
+            dev_state.EmitStatusSignals()
+
+	self.mmdt_main_window.show()
+
+
+    def destroy(self, widget, data=None):
+        gtk.main_quit()
+
+    def __get_glade_widgets(self, f):
+        fd = open(f)
+        pattern = re.compile(".*id=\"(?P<widget>mmdt_.*)\"")
+        lines = fd.readlines()
+        fd.close()
+        widgets = []
+
+        for line in lines :
+            matched_res = pattern.match(line)
+            if matched_res != None :
+                widgets.append(matched_res.group("widget"))
+
+        return widgets
+
+    def __get_device_info_from_path(self, dev_path):
+        dev = self.dbus.get_object(MOBILE_MANAGER_DEVICE_URI,
+                                   dev_path)
+        dev_info = dbus.Interface(dev, MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI)
+        return dev_info
+
+    def __get_device_auth_from_path(self, dev_path):
+        dev = self.dbus.get_object(MOBILE_MANAGER_DEVICE_URI,
+                                   dev_path)
+        dev_auth = dbus.Interface(dev, MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI)
+        return dev_auth
+
+    def __get_device_debug_from_path(self, dev_path):
+        dev = self.dbus.get_object(MOBILE_MANAGER_DEVICE_URI,
+                                   dev_path)
+        dev_debug = dbus.Interface(dev, MOBILE_MANAGER_DEVICE_DEBUG_INTERFACE_URI)
+        return dev_debug
+    
+    def __get_device_state_from_path(self, dev_path):
+        dev = self.dbus.get_object(MOBILE_MANAGER_DEVICE_URI,
+                                   dev_path)
+        dev_auth = dbus.Interface(dev, MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI)
+        return dev_auth
+        
+    def init_bus(self):
+        try:
+            self.dbus = dbus.SystemBus()
+            
+            self.mcontroller_obj = self.dbus.get_object(MOBILE_MANAGER_CONTROLLER_URI,
+                                                       MOBILE_MANAGER_CONTROLLER_PATH)
+            self.mcontroller = dbus.Interface(self.mcontroller_obj,
+                                             MOBILE_MANAGER_CONTROLLER_INTERFACE_URI)
+        except:
+            print "Crash"
+            exit (1)
+
+    def init_main_console_model(self):
+        self.main_console_model = gtk.ListStore(str, str, str, str)
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Time', cell, markup=0)
+        self.mmdt_main_console_treeview.append_column(column)
+        
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Command', cell, markup=1)
+        self.mmdt_main_console_treeview.append_column(column)
+        
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Result', cell, markup=2)
+        self.mmdt_main_console_treeview.append_column(column)
+
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Return', cell, markup=3)
+        self.mmdt_main_console_treeview.append_column(column)
+
+        self.mmdt_main_console_treeview.set_model(self.main_console_model)
+
+    def init_main_event_model(self):
+        self.main_event_model = gtk.ListStore(str, str, str, str)
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Time', cell, markup=0)
+        self.mmdt_main_event_console_treeview.append_column(column)
+        
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Event name', cell, markup=1)
+        self.mmdt_main_event_console_treeview.append_column(column)
+
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('UDI', cell, markup=2)
+        self.mmdt_main_event_console_treeview.append_column(column)
+
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Returned value description', cell, markup=3)
+        self.mmdt_main_event_console_treeview.append_column(column)
+        
+        self.mmdt_main_event_console_treeview.set_model(self.main_event_model)
+
+    def init_active_event_model(self):
+        self.active_event_model = gtk.ListStore(str, str, str)
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Time', cell, markup=0)
+        self.mmdt_active_event_console_treeview.append_column(column)
+        
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Event Name', cell, markup=1)
+        self.mmdt_active_event_console_treeview.append_column(column)
+
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Returned value description', cell, markup=2)
+        self.mmdt_active_event_console_treeview.append_column(column)
+        
+
+        self.mmdt_active_event_console_treeview.set_model(self.active_event_model)
+
+    #
+    # Mobile Manager Status Signal Callbacks
+    #
+    
+    def ActiveDevCardStatusChanged_cb(self, status):
+        rstatus = ""
+
+        if status == CARD_STATUS_ERROR :
+            rstatus = "Error"
+        elif status == CARD_STATUS_NO_DETECTED :
+            rstatus = "No Detected"
+        elif status == CARD_STATUS_DETECTED :
+            rstatus = "Detected"
+        elif status == CARD_STATUS_CONFIGURED :
+            rstatus = "Configured"
+        elif status == CARD_STATUS_NO_SIM :
+            rstatus = "NO SIM"
+        elif status == CARD_STATUS_PIN_REQUIRED :
+            rstatus = "Pin Required"
+        elif status == CARD_STATUS_PUK_REQUIRED :
+            rstatus = "Puk Required"
+        elif status == CARD_STATUS_ATTACHING :
+            rstatus = "Attaching"
+        elif status == CARD_STATUS_READY :
+            rstatus = "Ready"
+
+        if rstatus != "" :
+            self.active_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                            "<b>Card Status Changed</b>",
+                                            rstatus])
+
+        if status == CARD_STATUS_PIN_REQUIRED :
+            pin = MobileManager.ui.MobileAskPinDialog()
+            pin.run()
+        elif status == CARD_STATUS_PUK_REQUIRED :
+            puk = MobileManager.ui.MobilePukDialog()
+            puk.run()
+        else:
+            return
+        
+    def ActiveDevTechStatusChanged_cb(self, status):
+        rstatus = ""
+        
+        if status == CARD_TECH_GSM:
+            rstatus = "GSM"
+        elif status == CARD_TECH_GSM_COMPACT:
+            rstatus = "GSM COMPACT"
+        elif status == CARD_TECH_UMTS:
+            rstatus = "UTMS"
+        elif status == CARD_TECH_HSPA:
+            rstatus = "HSPA"
+
+        if rstatus != "" :
+            self.active_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                            "<b>Tech Status Changed</b>",
+                                            rstatus])
+            
+        
+    def ActiveDevModeStatusChanged_cb(self, status):
+        self.active_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                        "<b>Mode Status Changed</b>",
+                                        status])
+        
+    def ActiveDevDomainStatusChanged_cb(self, status):
+        rstatus = ""
+        
+        if status == CARD_DOMAIN_CS:
+            rstatus = "CS"
+        elif status == CARD_DOMAIN_PS:
+            rstatus = "PS"
+        elif status == CARD_DOMAIN_CS_PS:
+            rstatus = "CS_PS"
+        elif status == CARD_DOMAIN_ANY:
+            rstatus = "ANY"
+
+        if rstatus != "" :
+            self.active_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                            "<b>Domain Status Changed</b>",
+                                            rstatus])        
+        
+    def ActiveDevSignalStatusChanged_cb(self, status):
+        self.active_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>Signal Status Changed</b>",
+                                      status])
+        
+    def ActiveDevPinActStatusChanged_cb(self, status):
+        self.active_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>PIN Act Status Changed</b>",
+                                      status])
+        
+    def ActiveDevRoamingActStatusChanged_cb(self, status):
+        self.active_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>Roaming Status Changed</b>",
+                                      status])        
+        
+    def ActiveDevCarrierChanged_cb(self, carrier_name):
+        self.active_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                        "<b>Carrier Changed</b>",
+                                        carrier_name])
+        
+    def ActiveDevCarrierSmStatusChanged_cb(self, status):
+        self.active_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                        "<b>Carrier SM Status Changed</b>",
+                                         status])
+        
+    def ActiveDevXZoneChanged_cb(self, xzone_name):
+        self.active_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>X Zone Changed</b>",
+                                       xzone_name])        
+        
+    def ActiveDeviceChanged_cb(self, device):
+        dev_path = self.mcontroller.GetActiveDevice()
+        if dev_path == "" :
+            self.set_sensitive(False)
+            return
+        dev_info = self.__get_device_info_from_path(dev_path)
+        if not dev_info.HasCapability(MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI):
+            self.mmdt_send_custom_cmd_button.set_sensitive(False)
+            self.mmdt_main_console_entry.set_sensitive(False)
+        else:
+            self.mmdt_send_custom_cmd_button.set_sensitive(True)
+            self.mmdt_main_console_entry.set_sensitive(True)
+        
+        self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>Active Device Changed</b>",
+                                      device, ""])       
+    
+    def DevCardStatusChanged_cb(self, device, status):
+        rstatus = ""
+
+        if status == CARD_STATUS_ERROR :
+            rstatus = "Error"
+        elif status == CARD_STATUS_NO_DETECTED :
+            rstatus = "No Detected"
+        elif status == CARD_STATUS_DETECTED :
+            rstatus = "Detected"
+        elif status == CARD_STATUS_CONFIGURED :
+            rstatus = "Configured"
+        elif status == CARD_STATUS_NO_SIM :
+            rstatus = "NO SIM"
+        elif status == CARD_STATUS_PIN_REQUIRED :
+            rstatus = "Pin Required"
+        elif status == CARD_STATUS_PUK_REQUIRED :
+            rstatus = "Puk Required"
+        elif status == CARD_STATUS_ATTACHING :
+            rstatus = "Attaching"
+        elif status == CARD_STATUS_READY :
+            rstatus = "Ready"
+
+        if rstatus != "" :
+            self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                          "<b>Card Status Changed</b>",
+                                          device, rstatus])
+        
+    def DevTechStatusChanged_cb(self, device, status):
+        rstatus = ""
+        
+        if status == CARD_TECH_GSM:
+            rstatus = "GSM"
+        elif status == CARD_TECH_GSM_COMPACT:
+            rstatus = "GSM COMPACT"
+        elif status == CARD_TECH_UMTS:
+            rstatus = "UTMS"
+        elif status == CARD_TECH_HSPA:
+            rstatus = "HSPA"
+
+        if rstatus != "" :
+            self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                          "<b>Tech Status Changed</b>",
+                                          device, rstatus])
+        
+    def DevModeStatusChanged_cb(self, device, status):        
+        self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>Mode Status Changed</b>",
+                                      device, status])
+        
+    def DevDomainStatusChanged_cb(self, device, status):
+        rstatus = ""
+        
+        if status == CARD_DOMAIN_CS:
+            rstatus = "CS"
+        elif status == CARD_DOMAIN_PS:
+            rstatus = "PS"
+        elif status == CARD_DOMAIN_CS_PS:
+            rstatus = "CS_PS"
+        elif status == CARD_DOMAIN_ANY:
+            rstatus = "ANY"
+
+        if rstatus != "" :
+            self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                          "<b>Domain Status Changed</b>",
+                                          device, rstatus])
+        
+    def DevSignalStatusChanged_cb(self, device, status):
+        self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>Signal Status Changed</b>",
+                                      device, status])
+        
+    def DevPinActStatusChanged_cb(self, device, status):
+        self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>PIN Act Status Changed</b>",
+                                      device, status])
+        
+    def DevRoamingActStatusChanged_cb(self, device, status):
+        self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>Roaming Status Changed</b>",
+                                      device, status])
+        
+    def DevCarrierChanged_cb(self, device, carrier_name):
+        self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>Carrier Changed</b>",
+                                      device, carrier_name])
+        
+    def DevCarrierSmStatusChanged_cb(self, device, status):
+        self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>Carrier SM Status Changed</b>",
+                                      device, status])
+    
+    def AddedDevice_cb(self, device):
+        self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>Added Device</b>", device, ""])
+                                
+    def RemovedDevice_cb(self, device):
+        self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>Removed Device</b>", device, ""])
+        
+    def SupportedDeviceDetected_cb(self, device):
+        self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>Supported Device Detected</b>",
+                                      device, ""])
+
+    
+    def __send_custom_cmd_button_cb(self, widget, data):
+        cmd = self.mmdt_main_console_entry.get_text()
+        
+        dev_path = self.mcontroller.GetActiveDevice()
+        dev_info = self.__get_device_info_from_path(dev_path)
+        dev_debug = self.__get_device_debug_from_path(dev_path)
+
+        if len(cmd)>0 :
+            cmd, res, ret = dev_debug.SendAtCommand(cmd)
+            real_res = ""
+
+            for x in res :
+                real_res = real_res + " " + x 
+            
+            self.main_console_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                            "<b>%s</b>" % cmd,
+                                            real_res, ret])
+            
+
+        self.mmdt_main_console_entry.set_text("")
+    
+
+def main():
+    
+    gtk.main()
+    return
+
+if __name__ == "__main__":
+    mmdt = Mmdt()
+    main()

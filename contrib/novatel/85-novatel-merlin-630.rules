@@ -1,0 +1,5 @@
+
+ACTION=="add", KERNEL=="ttyS0", SYSFS{card_id}=="0x0276", SYSFS{manf_id}=="0x00a4", SYMLINK+="novatel/%k"
+
+ACTION=="add", KERNEL=="ttyS1", SYSFS{card_id}=="0x0276", SYSFS{manf_id}=="0x00a4", SYMLINK+="novatel/%k"
+

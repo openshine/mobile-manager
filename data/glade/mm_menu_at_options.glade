@@ -1,0 +1,198 @@
+<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
+<!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
+
+<glade-interface>
+<requires lib="gnome"/>
+
+<widget class="GtkMenu" id="menu_pcmcia">
+
+  <child>
+    <widget class="GtkMenuItem" id="gest_pin_branch">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">PIN management</property>
+      <property name="use_underline">True</property>
+
+      <child>
+	<widget class="GtkMenu" id="gest_pin_branch_menu">
+
+	  <child>
+	    <widget class="GtkMenuItem" id="activate_pin">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">_Activate PIN ...</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_pin_activate" last_modification_time="Thu, 27 Sep 2007 13:09:28 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="deactivate_pin">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">_Deactivate PIN ...</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_pin_deactivate" last_modification_time="Thu, 27 Sep 2007 13:09:28 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="change_pin">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">_Change PIN...</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_change_pin_activate" last_modification_time="Fri, 16 Feb 2007 21:25:07 GMT"/>
+	    </widget>
+	  </child>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="select_tech">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Network technology selection</property>
+      <property name="use_underline">True</property>
+
+      <child>
+	<widget class="GtkMenu" id="select_tech_menu">
+
+	  <child>
+	    <widget class="GtkRadioMenuItem" id="auto_tech">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">_Automatic</property>
+	      <property name="use_underline">True</property>
+	      <property name="active">True</property>
+	      <signal name="activate" handler="on_auto_tech_activate" last_modification_time="Fri, 16 Feb 2007 21:25:07 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkRadioMenuItem" id="only_utms">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">_UTMS/3G only</property>
+	      <property name="use_underline">True</property>
+	      <property name="active">False</property>
+	      <property name="group">auto_tech</property>
+	      <signal name="activate" handler="on_only_utms_activate" last_modification_time="Fri, 16 Feb 2007 21:25:07 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkRadioMenuItem" id="preferred_utms">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">U_TMS/3G preferred</property>
+	      <property name="use_underline">True</property>
+	      <property name="active">False</property>
+	      <property name="group">auto_tech</property>
+	      <signal name="activate" handler="on_preferred_utms_activate" last_modification_time="Fri, 16 Feb 2007 21:25:07 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkRadioMenuItem" id="only_gprs">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">_GPRS/2.5G only</property>
+	      <property name="use_underline">True</property>
+	      <property name="active">False</property>
+	      <property name="group">auto_tech</property>
+	      <signal name="activate" handler="on_only_gprs_activate" last_modification_time="Fri, 16 Feb 2007 21:25:07 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkRadioMenuItem" id="preferred_gprs">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">G_PRS/2.5G preferred</property>
+	      <property name="use_underline">True</property>
+	      <property name="active">False</property>
+	      <property name="group">auto_tech</property>
+	      <signal name="activate" handler="on_preferred_gprs_activate" last_modification_time="Fri, 16 Feb 2007 21:25:07 GMT"/>
+	    </widget>
+	  </child>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="select_operator">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Carrier selection</property>
+      <property name="use_underline">True</property>
+
+      <child>
+	<widget class="GtkMenu" id="select_operator_menu">
+
+	  <child>
+	    <widget class="GtkCheckMenuItem" id="auto_oper">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">_Automatic</property>
+	      <property name="use_underline">True</property>
+	      <property name="active">False</property>
+	      <signal name="activate" handler="on_auto_oper_activate" last_modification_time="Fri, 16 Feb 2007 21:25:07 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkCheckMenuItem" id="manual_oper">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">_Manual</property>
+	      <property name="use_underline">True</property>
+	      <property name="active">False</property>
+	      <signal name="activate" handler="on_manual_oper_activate" last_modification_time="Fri, 16 Feb 2007 21:25:07 GMT"/>
+	    </widget>
+	  </child>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkSeparatorMenuItem" id="separador1">
+      <property name="visible">True</property>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="activate_card">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Turn on</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_card_activate" last_modification_time="Tue, 09 Oct 2007 09:43:17 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image16">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-yes</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="deactivate_card">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Turn off</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_card_deactivate" last_modification_time="Tue, 09 Oct 2007 09:43:17 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image17">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-no</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
+    </widget>
+  </child>
+</widget>
+
+</glade-interface>

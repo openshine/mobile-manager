@@ -1,0 +1,3 @@
+KERNEL=="ttyUSB[0-9]*" , ATTRS{idProduct}=="6000", ATTRS{idVendor}=="0af0", GROUP="uucp", MODE="0666", OPTIONS="last_rule"
+KERNEL=="ttyUSB[0-9]*" , ATTRS{idProduct}=="6100", ATTRS{idVendor}=="0af0", GROUP="uucp", MODE="0666", OPTIONS="last_rule"
+KERNEL=="ttyUSB[0-9]*" , ATTRS{idProduct}=="6300", ATTRS{idVendor}=="0af0", GROUP="uucp", MODE="0666", OPTIONS="last_rule"

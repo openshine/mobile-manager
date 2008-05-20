@@ -1,0 +1,145 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-02-18 03:00+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../src/ui/MobileDeviceConf.py:58
+msgid "Options"
+msgstr ""
+
+#: ../src/ui/MobilePinDialog.py:131
+msgid ""
+"You cancel the PIN code insertion process, the mobile device will be turn off"
+msgstr ""
+
+#: ../src/ui/MobilePinDialog.py:132
+msgid "PIN Code insertion canceled"
+msgstr ""
+
+#: ../src/ui/MobilePinDialog.py:145 ../src/ui/MobilePinDialog.py:268
+#: ../src/ui/MobilePinDialog.py:412
+msgid "The PIN Code require between 4 and 8 digits"
+msgstr ""
+
+#: ../src/ui/MobilePinDialog.py:163 ../src/ui/MobilePinDialog.py:297
+#: ../src/ui/MobilePinDialog.py:435
+msgid "The PIN Code is not valid"
+msgstr ""
+
+#: ../src/ui/MobilePinDialog.py:168 ../src/ui/MobilePinDialog.py:302
+#: ../src/ui/MobilePinDialog.py:440 ../src/ui/MobilePukDialog.py:174
+msgid ""
+"There is a problem with you Mobile Device. The application can not "
+"communicate with it"
+msgstr ""
+
+#: ../src/ui/MobilePinDialog.py:274
+msgid "The two PIN code are not equal"
+msgstr ""
+
+#: ../src/ui/MobilePinDialog.py:287
+msgid "<b>Error changing PIN Code</b>"
+msgstr ""
+
+#: ../src/ui/MobilePinDialog.py:288
+msgid ""
+"The PIN code changing process of your SIM card has failed. Now , your card "
+"will be turn off. The next turn on of your card, the PUK Code will be "
+"required"
+msgstr ""
+
+#: ../src/ui/MobilePinDialog.py:373
+msgid ""
+"The <b>PIN Code</b> of your SIM card is not active. If you want activate it, "
+"introduce your <b>PIN Code</b> and press accept button.\n"
+"You have 3 attempts to introduce the PIN code correctly. If you fail, the "
+"card will be blocked."
+msgstr ""
+
+#: ../src/ui/MobilePinDialog.py:374
+msgid "<b><big>Activate Pin Code</big></b>"
+msgstr ""
+
+#: ../src/ui/MobilePinDialog.py:375
+msgid "Activate Pin Code"
+msgstr ""
+
+#: ../src/ui/MobilePinDialog.py:377
+msgid ""
+"The <b>PIN Code</b> of your SIM card is active. If you want deactivate it, "
+"introduce your <b>PIN Code</b> and press accept button.\n"
+"You have 3 attempts to introduce the PIN code correctly. If you fail, the "
+"card will be blocked."
+msgstr ""
+
+#: ../src/ui/MobilePinDialog.py:378
+msgid "<b><big>Deactivate Pin Code</big></b>"
+msgstr ""
+
+#: ../src/ui/MobilePinDialog.py:379
+msgid "Deactivate Pin Code"
+msgstr ""
+
+#: ../src/ui/MobilePinDialog.py:425
+msgid "<b>Wrong insertion of PIN Code</b>"
+msgstr ""
+
+#: ../src/ui/MobilePinDialog.py:426
+msgid ""
+"The PIN code insertion process of your SIM card has failed. Now , your card "
+"will be turn off. The next turn on of your card, the PUK Code will be "
+"required"
+msgstr ""
+
+#: ../src/ui/MobileCarrierDialog.py:148
+msgid "Registering in the network"
+msgstr ""
+
+#: ../src/ui/MobileCarrierDialog.py:160
+msgid "<b>Network selection failed</b>"
+msgstr ""
+
+#: ../src/ui/MobileCarrierDialog.py:161
+msgid "The network selection failed. Try again or select other carrier."
+msgstr ""
+
+#: ../src/ui/MobileCarrierDialog.py:216
+msgid "Scanning Carriers"
+msgstr ""
+
+#: ../src/ui/MobilePukDialog.py:136
+msgid "<b>Puk auth cancel</b>"
+msgstr ""
+
+#: ../src/ui/MobilePukDialog.py:137
+msgid "You cancel the puk auth process, the card will be turn off"
+msgstr ""
+
+#: ../src/ui/MobilePukDialog.py:149
+msgid "You insert a not valid PUK code"
+msgstr ""
+
+#: ../src/ui/MobilePukDialog.py:154
+msgid "You insert a not valid PIN code"
+msgstr ""
+
+#: ../src/ui/MobilePukDialog.py:159
+msgid "The two Pin code are not equal"
+msgstr ""
+
+#: ../src/ui/MobilePukDialog.py:171
+msgid "You insert a wrong PUK code"
+msgstr ""
