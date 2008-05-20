@@ -1,5 +1,6 @@
 2008-05-20  Roberto Majadas  <telemaco@openshine.com>
 
+	* configure.ac: Updated version to 0.2
 	* data/pkg-config/Makefile.am (pkgconfigdir): Fix , correct pkg-config-path
 
 2008-05-19  Roberto Majadas  <telemaco@openshine.com>
