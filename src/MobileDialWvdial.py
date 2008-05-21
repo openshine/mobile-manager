@@ -89,7 +89,7 @@ class MobileDialWvdial(MobileDial):
 
         if auto_dns == False:
             wvdial_conf = wvdial_conf + "Auto DNS = 0\n"
-            dns_data = [primary_dns, secundary_dns, dns_suffixes]
+            self.dns_data = [primary_dns, secundary_dns, dns_suffixes]
         else:
             wvdial_conf = wvdial_conf + "Auto DNS = 1\n"
 

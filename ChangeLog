@@ -1,3 +1,7 @@
+2008-05-21  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDialWvdial.py (MobileDialWvdial.start): Fix dns bug
+
 2008-05-20  Roberto Majadas  <telemaco@openshine.com>
 
 	* configure.ac: Updated version to 0.2
