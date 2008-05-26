@@ -1,3 +1,15 @@
+2008-05-26  Roberto Majadas  <telemaco@openshine.com>
+
+	* contrib/usb-modeswitch/usb_modeswitch.[ch]: Add new usb mode switchs
+
+	* src/MobileManagerDbus.py (MobileManagerDbusDevice.GetUSSDCmd): Add new dbus method for USSD cmds
+
+	* src/devices/MobileDeviceHuawei.py (MobileDeviceHuawei.get_ussd_cmd_handler) 
+	(MobileDeviceHuawei.get_ussd_cmd): Add custom ussd cmd
+
+	* src/MobileDevice.py (MobileDevice.get_ussd_cmd)
+	(MobileDevice.get_ussd_cmd_handler) : Add ussd cmd
+
 2008-05-21  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileDialWvdial.py (MobileDialWvdial.start): Fix dns bug

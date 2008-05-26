@@ -378,6 +378,7 @@ class MobileManagerDbusDevice(dbus.service.Object):
         self.bname = bname
         self.carrier_list = None
         self.carrier_last_check = 0
+        self.ussd_result = ""
         
         dbus.service.Object.__init__(self, bname, MOBILE_MANAGER_DEVICE_PATH + dev_id)
 
@@ -556,7 +557,33 @@ class MobileManagerDbusDevice(dbus.service.Object):
         carrier_list = self.carrier_list
         print carrier_list
         return carrier_list["carrier_list"], carrier_list["supported_modes"], carrier_list["supported_formats"]
-            
+
+    def __check_ussd_cmd(self, data):
+        if len(data) == 3 :
+            if data[2] == "OK" :
+                self.ussd_result = data[1][0]
+            else:
+                self.ussd_result = ""
+        else:
+            self.ussd_result = ""
+        
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI,
+                         in_signature='s', out_signature='s')
+    def GetUSSDCmd(self, ussd_cmd):
+        self.device.get_ussd_cmd(ussd_cmd, self.__check_ussd_cmd)
+
+        mainloop = gobject.MainLoop(is_running=True)
+        context = mainloop.get_context()
+        while self.device.pause_polling_necesary == True :
+            context.iteration()
+
+        if self.ussd_result != "" :
+            ret = self.ussd_result
+        else:
+            ret = ""
+        self.ussd_result = ""
+
+        return ret
 
     @dbus.service.method(MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI,
                          in_signature='', out_signature='s')

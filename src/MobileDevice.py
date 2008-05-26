@@ -701,85 +701,6 @@ class MobileDevice(gobject.GObject) :
                 return self.send_at_command(str, attempt - 1)
         
         return result
-        
-        
-
-    def send_at_command_old (self, str, attempt=6, accept_null_response=True):
-        if self.serial == None :
-            return
-
-        self.serial.flush()
-        
-        try:
-            self.serial.write(str + "\r")
-        except:
-            print "CRASH ON WRITE"
-            
-        tt_res = []
-
-        while True:
-
-            res = self.serial.readline()
-
-            if res != None:
-                if len(res.strip("\r\n")) > 0:
-                    tt_res.append(res.strip("\r\n"))
-                if res.startswith("OK") or res.startswith("ERROR") or res.startswith("+CME ERROR"):
-                    break
-            else:
-                if attempt == 0:
-                    return None
-                else:
-                    print "reopening and resending command %s" % str
-                    self.serial.reopen()
-                    self.actions_on_reopen_port()
-                    if  accept_null_response == False:
-                        ret = self.send_at_command(str, attempt - 1, accept_null_response=False)
-                        if ret[0] == 'OK' and ret[-1] == 'OK' :
-                            print "double OK case!!"
-                            return [str, [] ,'OK']
-                        return ret
-                    else:
-                        ret = self.send_at_command(str, attempt - 1)
-                        if ret[0] == 'OK' and ret[-1] == 'OK' :
-                            print "double OK case!!"
-                            return [str, [] ,'OK']
-                        return ret
-
-        result = [tt_res[0],tt_res[1:-1],tt_res[-1]]
-        print ">TTRES = %s" % result
-
-        #This response is for some especial cases in options cards
-        if tt_res[0] == 'OK' and tt_res[-1] == 'OK' :
-            print "double OK case!!"
-            return [str, [] ,'OK']
-
-        if accept_null_response == False:
-            if len(result[1]) == 0 and result[0] == "OK" :
-                if attempt == 0:
-                    return result
-                print "Reopening and resending , the response is ok but there isn't echo (%s, attempt=%s)" % (result, attempt)
-                self.serial.reopen()
-                self.actions_on_reopen_port()
-                ret = self.send_at_command(str, attempt - 1, accept_null_response=False)
-                if ret[0] == 'OK' and ret[-1] == 'OK' :
-                    print "double OK case!!"
-                    return [str, [] ,'OK']
-                return ret
-
-        if result[0] != str :
-            if attempt == 0:
-                return result
-            print "Reopening and resending , wrong echo command field  (%s, attempt=%s)" % (result, attempt)
-            self.serial.reopen()
-            self.actions_on_reopen_port()
-            ret = self.send_at_command(str, attempt - 1)
-            if ret[0] == 'OK' and ret[-1] == 'OK' :
-                print "double OK case!!"
-                return [str, [] ,'OK']
-            return ret
-        
-        return result
 
     def actions_on_reopen_port(self):
         pass
@@ -1115,6 +1036,54 @@ class MobileDevice(gobject.GObject) :
             return False
         else:
             return True
+
+
+    def get_ussd_cmd_handler(self, fd, condition, at_command, func):
+        self.dbg_msg("__get_ussd_cmd_hadler in")
+        tt_res = [at_command]
+        
+        while True :
+            res = self.serial.readline()
+            print "ussd ----> %s\n" % res
+            gobject.main_context_default ().iteration()
+
+            if res == None :
+                self.serial.flush()
+                print "ussd (reopening)\n"
+                continue
+            
+            if len(res.strip("\r\n")) > 0:
+                if res.startswith("+CUSD:"):
+                    pattern = re.compile(".*,+(?P<value>.*),")
+                    matched_res = pattern.match(res)
+                    value = matched_res.group("value")
+                    tt_res.append(value.strip('"'))
+                    tt_res.append("OK")
+                    break
+                else:
+                    continue
+            else:
+                continue
+        
+        result = [tt_res[0],tt_res[1:-1],tt_res[-1]]
+        func(result)
+
+        self.dbg_msg("__get_ussd_cmd_hadler out")
+        self.pause_polling_necesary = False
+        return False
+
+    def get_ussd_cmd(self, ussd_cmd, func):
+        res = self.send_at_command(ussd_cmd)
+        self.dbg_msg ("GET USSD : %s" % res)
+
+        if res[2] == 'OK':
+            self.pause_polling_necesary = True
+            self.serial.flush()
+            gobject.io_add_watch(self.serial.fileno(), gobject.IO_IN,
+                                 self.get_ussd_cmd_handler,  ussd_cmd, func)
+        else:
+            func([ussd_cmd,[], "ERROR"])
+        
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def set_carrier_auto_selection(self):

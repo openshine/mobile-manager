@@ -90,9 +90,10 @@ fi
 dnl Other headers
 dnl -----------------------------
 
-PKG_CHECK_MODULES(HUAWEI220, libusb >=  0.1.12)
-AC_SUBST(HUAWEI220_CFLAGS)
-AC_SUBST(HUAWEI220_LIBS)
+PKG_CHECK_MODULES(LIBUSB, libusb >=  0.1.12)
+AC_SUBST(LIBUSB_CFLAGS)
+AC_SUBST(LIBUSB_LIBS)
+
 
 AC_PATH_PROG( PKGCONFIG, pkg-config, no, $PATH:/usr/bin:/usr/local/bin)
   if test "$PKGCONFIG" != "no" ; then
@@ -209,6 +210,7 @@ contrib/Makefile
 contrib/huawei/Makefile
 contrib/option/Makefile
 contrib/novatel/Makefile
+contrib/usb-modeswitch/Makefile
 data/Makefile
 data/dbus/Makefile
 data/glade/Makefile

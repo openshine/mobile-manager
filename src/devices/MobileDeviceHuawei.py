@@ -228,3 +228,13 @@ class MobileDeviceHuawei(MobileDevice):
         self.dbg_msg ("ATCOPS : %s" % res)
         if res[2] != "OK" :
             print "error opening huawei device"
+
+    def get_ussd_cmd_handler(self, fd, at_command, condition, func):
+        ret = MobileDevice.get_ussd_cmd_handler(self, fd, at_command, condition, func)
+        self.send_at_command("AT^PORTSEL=1")
+        return ret
+        
+    def get_ussd_cmd(self, ussd_cmd, func):
+        print "get_USSD_cmd (HUAWEI)"
+        self.send_at_command("AT^PORTSEL=0")
+        MobileDevice.get_ussd_cmd(self, ussd_cmd, func)
