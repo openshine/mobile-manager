@@ -1,2 +1,2 @@
-SUBDIRS = huawei option novatel usb-modeswitch
+SUBDIRS = huawei usb-modeswitch
 

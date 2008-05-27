@@ -1,3 +1,13 @@
+2008-05-27  Roberto Majadas  <telemaco@openshine.com>
+
+	* configure.ac: Update to 0.3, fix some erase dirs
+	* contrib/novatel, option: removed
+	* data/usb-modeswitch : add experimental support for usb-modeswitch
+	* data/udev-rules/* : add new udev rules dir
+	* src/pppmanager : removed
+	* src/test : removed
+	
+
 2008-05-26  Roberto Majadas  <telemaco@openshine.com>
 
 	* contrib/usb-modeswitch/usb_modeswitch.[ch]: Add new usb mode switchs

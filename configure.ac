@@ -1,7 +1,7 @@
 AC_INIT(src/__init__.py)
 
 PACKAGE=mobile-manager
-VERSION=0.2
+VERSION=0.3
 
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
@@ -208,8 +208,6 @@ Makefile
 po/Makefile.in
 contrib/Makefile
 contrib/huawei/Makefile
-contrib/option/Makefile
-contrib/novatel/Makefile
 contrib/usb-modeswitch/Makefile
 data/Makefile
 data/dbus/Makefile
@@ -220,6 +218,8 @@ data/initscripts/redhat/Makefile
 data/initscripts/suse/Makefile
 data/pkg-config/mobile-manager.pc
 data/pkg-config/Makefile
+data/usbmodeswitch-conf/Makefile
+data/udev-rules/Makefile
 src/Makefile
 src/ui/Makefile
 src/ui/__init__.py
