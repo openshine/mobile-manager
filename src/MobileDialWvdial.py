@@ -210,7 +210,7 @@ class MobileDialWvdial(MobileDial):
             return True
         elif self.ppp_if != None :
             print  "pppd monitor : looking for ip"
-            cmd = "ifconfig %s | grep 'inet addr'" % self.ppp_if
+            cmd = "LANG=C ifconfig %s | grep 'inet addr'" % self.ppp_if
             pm =  Popen(cmd, shell=True, stdout=PIPE, close_fds=True)
             out = pm.stdout.readline()
             if out != "" :
