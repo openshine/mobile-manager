@@ -1,3 +1,11 @@
+2008-06-02  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/ui/MobileDeviceConf.py (MobileDeviceConfWidget.__init__): Set no show all to at_op_button
+
+2008-06-01  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDialWvdial.py (MobileDialWvdial.stop): Added turn off/on. Some cards crash, when wvdial is killed
+
 2008-05-30  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileDialWvdial.py (MobileDialWvdial.__pppd_monitor): Added LANG=C 

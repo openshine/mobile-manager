@@ -54,6 +54,7 @@ class MobileDeviceConfWidget(gtk.HBox):
         
 
         self.at_op_button = MobileManager.ui.MobileATOptionsButton()
+        self.at_op_button.set_no_show_all(True)
         self.at_op_button_vbox.add(self.at_op_button)
         self.at_op_button.set_label(_("Options"))
 
