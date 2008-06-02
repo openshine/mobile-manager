@@ -301,7 +301,7 @@ on `(hostname || uname -n) 2>/dev/null | sed 1q`
 "
 
 # Files that config.status was made for.
-config_files=" Makefile po/Makefile.in contrib/Makefile contrib/e220/Makefile contrib/option/Makefile data/Makefile data/dbus/Makefile data/glade/Makefile data/initscripts/Makefile data/initscripts/debian/Makefile data/initscripts/redhat/Makefile data/initscripts/suse/Makefile src/Makefile src/pppmanager/PPPManager/Makefile src/pppmanager/Makefile src/ui/Makefile src/ui/__init__.py src/mmdt/Makefile src/mmdt/mmdt"
+config_files=" Makefile po/Makefile.in contrib/Makefile contrib/huawei/Makefile contrib/usb-modeswitch/Makefile data/Makefile data/dbus/Makefile data/glade/Makefile data/initscripts/Makefile data/initscripts/debian/Makefile data/initscripts/redhat/Makefile data/initscripts/suse/Makefile data/pkg-config/mobile-manager.pc data/pkg-config/Makefile data/usbmodeswitch-conf/Makefile data/udev-rules/Makefile src/Makefile src/ui/Makefile src/ui/__init__.py src/devices/Makefile src/mmdt/Makefile src/mmdt/mmdt doc/Makefile"
 config_headers=" config.h"
 config_commands=" depfiles default-1 intltool po/stamp-it"
 
@@ -341,9 +341,10 @@ Copyright (C) 2006 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/home/telemaco/Desktop/tid/MobileManager'
+ac_pwd='/home/telemaco/Desktop/mobile-manager-sf/trunk'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
+MKDIR_P='/bin/mkdir -p'
 # If no file are specified by the user, then we need to provide default
 # value.  By we need to know if files were specified by the user.
 ac_need_defaults=:
@@ -445,8 +446,8 @@ do
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "po/Makefile.in") CONFIG_FILES="$CONFIG_FILES po/Makefile.in" ;;
     "contrib/Makefile") CONFIG_FILES="$CONFIG_FILES contrib/Makefile" ;;
-    "contrib/e220/Makefile") CONFIG_FILES="$CONFIG_FILES contrib/e220/Makefile" ;;
-    "contrib/option/Makefile") CONFIG_FILES="$CONFIG_FILES contrib/option/Makefile" ;;
+    "contrib/huawei/Makefile") CONFIG_FILES="$CONFIG_FILES contrib/huawei/Makefile" ;;
+    "contrib/usb-modeswitch/Makefile") CONFIG_FILES="$CONFIG_FILES contrib/usb-modeswitch/Makefile" ;;
     "data/Makefile") CONFIG_FILES="$CONFIG_FILES data/Makefile" ;;
     "data/dbus/Makefile") CONFIG_FILES="$CONFIG_FILES data/dbus/Makefile" ;;
     "data/glade/Makefile") CONFIG_FILES="$CONFIG_FILES data/glade/Makefile" ;;
@@ -454,16 +455,20 @@ do
     "data/initscripts/debian/Makefile") CONFIG_FILES="$CONFIG_FILES data/initscripts/debian/Makefile" ;;
     "data/initscripts/redhat/Makefile") CONFIG_FILES="$CONFIG_FILES data/initscripts/redhat/Makefile" ;;
     "data/initscripts/suse/Makefile") CONFIG_FILES="$CONFIG_FILES data/initscripts/suse/Makefile" ;;
+    "data/pkg-config/mobile-manager.pc") CONFIG_FILES="$CONFIG_FILES data/pkg-config/mobile-manager.pc" ;;
+    "data/pkg-config/Makefile") CONFIG_FILES="$CONFIG_FILES data/pkg-config/Makefile" ;;
+    "data/usbmodeswitch-conf/Makefile") CONFIG_FILES="$CONFIG_FILES data/usbmodeswitch-conf/Makefile" ;;
+    "data/udev-rules/Makefile") CONFIG_FILES="$CONFIG_FILES data/udev-rules/Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
-    "src/pppmanager/PPPManager/Makefile") CONFIG_FILES="$CONFIG_FILES src/pppmanager/PPPManager/Makefile" ;;
-    "src/pppmanager/Makefile") CONFIG_FILES="$CONFIG_FILES src/pppmanager/Makefile" ;;
     "src/ui/Makefile") CONFIG_FILES="$CONFIG_FILES src/ui/Makefile" ;;
     "src/ui/__init__.py") CONFIG_FILES="$CONFIG_FILES src/ui/__init__.py" ;;
+    "src/devices/Makefile") CONFIG_FILES="$CONFIG_FILES src/devices/Makefile" ;;
     "src/mmdt/Makefile") CONFIG_FILES="$CONFIG_FILES src/mmdt/Makefile" ;;
     "src/mmdt/mmdt") CONFIG_FILES="$CONFIG_FILES src/mmdt/mmdt" ;;
+    "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
     "po/stamp-it") CONFIG_COMMANDS="$CONFIG_COMMANDS po/stamp-it" ;;
 
-  *) { { echo "$as_me:466: error: invalid argument: $ac_config_target" >&5
+  *) { { echo "$as_me:471: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -557,24 +562,25 @@ s,@build_alias@,|#_!!_#|,g
 s,@host_alias@,|#_!!_#|,g
 s,@target_alias@,|#_!!_#|,g
 s,@PACKAGE@,|#_!!_#|mobile-manager,g
-s,@VERSION@,|#_!!_#|0.1,g
+s,@VERSION@,|#_!!_#|0.3,g
 s,@INSTALL_PROGRAM@,|#_!!_#|${INSTALL},g
 s,@INSTALL_SCRIPT@,|#_!!_#|${INSTALL},g
 s,@INSTALL_DATA@,|#_!!_#|${INSTALL} -m 644,g
+s,@am__isrc@,|#_!!_#|,g
 s,@CYGPATH_W@,|#_!!_#|echo,g
-s,@ACLOCAL@,|#_!!_#|${SHELL} /home/telemaco/Desktop/tid/MobileManager/missing --run aclocal-1.9,g
-s,@AUTOCONF@,|#_!!_#|${SHELL} /home/telemaco/Desktop/tid/MobileManager/missing --run autoconf,g
-s,@AUTOMAKE@,|#_!!_#|${SHELL} /home/telemaco/Desktop/tid/MobileManager/missing --run automake-1.9,g
-s,@AUTOHEADER@,|#_!!_#|${SHELL} /home/telemaco/Desktop/tid/MobileManager/missing --run autoheader,g
-s,@MAKEINFO@,|#_!!_#|${SHELL} /home/telemaco/Desktop/tid/MobileManager/missing --run makeinfo,g
-s,@install_sh@,|#_!!_#|/home/telemaco/Desktop/tid/MobileManager/install-sh,g
+s,@ACLOCAL@,|#_!!_#|${SHELL} /home/telemaco/Desktop/mobile-manager-sf/trunk/missing --run aclocal-1.10,g
+s,@AUTOCONF@,|#_!!_#|${SHELL} /home/telemaco/Desktop/mobile-manager-sf/trunk/missing --run autoconf,g
+s,@AUTOMAKE@,|#_!!_#|${SHELL} /home/telemaco/Desktop/mobile-manager-sf/trunk/missing --run automake-1.10,g
+s,@AUTOHEADER@,|#_!!_#|${SHELL} /home/telemaco/Desktop/mobile-manager-sf/trunk/missing --run autoheader,g
+s,@MAKEINFO@,|#_!!_#|${SHELL} /home/telemaco/Desktop/mobile-manager-sf/trunk/missing --run makeinfo,g
+s,@install_sh@,|#_!!_#|$(SHELL) /home/telemaco/Desktop/mobile-manager-sf/trunk/install-sh,g
 s,@STRIP@,|#_!!_#|strip,g
-s,@INSTALL_STRIP_PROGRAM@,|#_!!_#|${SHELL} $(install_sh) -c -s,g
-s,@mkdir_p@,|#_!!_#|mkdir -p --,g
+s,@INSTALL_STRIP_PROGRAM@,|#_!!_#|$(install_sh) -c -s,g
+s,@mkdir_p@,|#_!!_#|/bin/mkdir -p,g
 s,@AWK@,|#_!!_#|gawk,g
 s,@SET_MAKE@,|#_!!_#|,g
 s,@am__leading_dot@,|#_!!_#|.,g
-s,@AMTAR@,|#_!!_#|${SHELL} /home/telemaco/Desktop/tid/MobileManager/missing --run tar,g
+s,@AMTAR@,|#_!!_#|${SHELL} /home/telemaco/Desktop/mobile-manager-sf/trunk/missing --run tar,g
 s,@am__tar@,|#_!!_#|${AMTAR} chof - "$$tardir",g
 s,@am__untar@,|#_!!_#|${AMTAR} xf -,g
 s,@MAINTAINER_MODE_TRUE@,|#_!!_#|,g
@@ -612,13 +618,15 @@ s,@LN_S@,|#_!!_#|ln -s,g
 s,@ECHO@,|#_!!_#|echo,g
 s,@AR@,|#_!!_#|ar,g
 s,@RANLIB@,|#_!!_#|ranlib,g
+s,@DSYMUTIL@,|#_!!_#|,g
+s,@NMEDIT@,|#_!!_#|,g
 s,@CXX@,|#_!!_#|g++,g
+CEOF
+cat >"$tmp/subs-2.sed" <<\CEOF
+/@[a-zA-Z_][a-zA-Z_0-9]*@/!b
 s,@CXXFLAGS@,|#_!!_#|-g -O2,g
 s,@ac_ct_CXX@,|#_!!_#|g++,g
 s,@CXXDEPMODE@,|#_!!_#|depmode=gcc3,g
-CEOF
-cat >"$tmp/subs-2.sed" <<\CEOF
-/@[a-zA-Z_][a-zA-Z_0-9]*@/!b end
 s,@am__fastdepCXX_TRUE@,|#_!!_#|,g
 s,@am__fastdepCXX_FALSE@,|#_!!_#|#,g
 s,@CXXCPP@,|#_!!_#|g++ -E,g
@@ -637,17 +645,17 @@ s,@pyexecdir@,|#_!!_#|${exec_prefix}/lib/python2.5/site-packages,g
 s,@pkgpyexecdir@,|#_!!_#|${pyexecdir}/mobile-manager,g
 s,@PKG_CONFIG@,|#_!!_#|/usr/bin/pkg-config,g
 s,@PYGTK_CFLAGS@,|#_!!_#|-I/usr/include/pygtk-2.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include  ,g
-s,@PYGTK_LIBS@,|#_!!_#|-lgobject-2.0 -lglib-2.0  ,g
+s,@PYGTK_LIBS@,|#_!!_#|-lffi -lgobject-2.0 -lglib-2.0  ,g
 s,@PYDBUS_CFLAGS@,|#_!!_#|-I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include  ,g
 s,@PYDBUS_LIBS@,|#_!!_#|-ldbus-1  ,g
 s,@PYTHON_LIBS@,|#_!!_#|-lpython2.5,g
 s,@PYTHON_LIB_LOC@,|#_!!_#|-L/usr/lib/python2.5/config,g
 s,@PYTHON_CFLAGS@,|#_!!_#|-I/usr/include/python2.5,g
 s,@PYTHON_EXTRA_LIBS@,|#_!!_#|            		-lpthread -ldl  -lutil,g
-s,@HUAWEI220_CFLAGS@,|#_!!_#| ,g
-s,@HUAWEI220_LIBS@,|#_!!_#|-lusb  ,g
+s,@LIBUSB_CFLAGS@,|#_!!_#| ,g
+s,@LIBUSB_LIBS@,|#_!!_#|-lusb  ,g
 s,@PKGCONFIG@,|#_!!_#|/usr/bin/pkg-config,g
-s,@PYTHONPATH@,|#_!!_#|:/usr/lib/python2.4/site-packages,g
+s,@PYTHONPATH@,|#_!!_#|:/usr/lib/python2.5/site-packages,g
 s,@EXPANDED_SYSCONFDIR@,|#_!!_#|/etc,g
 s,@MSD_INIT_SCRIPTS_RED_HAT_TRUE@,|#_!!_#|#,g
 s,@MSD_INIT_SCRIPTS_RED_HAT_FALSE@,|#_!!_#|,g
@@ -669,6 +677,7 @@ s,@OMF_DIR@,|#_!!_#|${datadir}/omf,g
 s,@DOC_USER_FORMATS@,|#_!!_#|,g
 s,@ENABLE_SK_TRUE@,|#_!!_#|,g
 s,@ENABLE_SK_FALSE@,|#_!!_#|#,g
+s,@DISTCHECK_CONFIGURE_FLAGS@,|#_!!_#|--disable-scrollkeeper ,g
 s,@HAVE_GNOME_DOC_UTILS_TRUE@,|#_!!_#|,g
 s,@HAVE_GNOME_DOC_UTILS_FALSE@,|#_!!_#|#,g
 s,@USE_NLS@,|#_!!_#|yes,g
@@ -706,11 +715,15 @@ s,@INTLTOOL_SCHEMAS_RULE@,|#_!!_#|%.schemas:   %.schemas.in   $(INTLTOOL_MERGE) 
 s,@INTLTOOL_THEME_RULE@,|#_!!_#|%.theme:     %.theme.in     $(INTLTOOL_MERGE) $(wildcard $(top_srcdir)/po/*.po) ; LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(top_builddir)/po/.intltool-merge-cache $(top_srcdir)/po $< $@|#_!!_#|,g
 s,@INTLTOOL_SERVICE_RULE@,|#_!!_#|%.service: %.service.in   $(INTLTOOL_MERGE) $(wildcard $(top_srcdir)/po/*.po) ; LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(top_builddir)/po/.intltool-merge-cache $(top_srcdir)/po $< $@|#_!!_#|,g
 s,@INTLTOOL_POLICY_RULE@,|#_!!_#|%.policy:    %.policy.in    $(INTLTOOL_MERGE) $(wildcard $(top_srcdir)/po/*.po) ; LC_ALL=C $(INTLTOOL_MERGE) -x -u -c $(top_builddir)/po/.intltool-merge-cache $(top_srcdir)/po $< $@|#_!!_#|,g
+s,@MSGMERGE@,|#_!!_#|/usr/bin/msgmerge,g
 s,@INTLTOOL_EXTRACT@,|#_!!_#|$(top_builddir)/intltool-extract,g
 s,@INTLTOOL_MERGE@,|#_!!_#|$(top_builddir)/intltool-merge,g
 s,@INTLTOOL_UPDATE@,|#_!!_#|$(top_builddir)/intltool-update,g
 s,@INTLTOOL_PERL@,|#_!!_#|/usr/bin/perl,g
 s,@ALL_LINGUAS@,|#_!!_#|es,g
+CEOF
+cat >"$tmp/subs-3.sed" <<\CEOF
+/@[a-zA-Z_][a-zA-Z_0-9]*@/!b end
 s,@LIBOBJS@,|#_!!_#|,g
 s,@LTLIBOBJS@,|#_!!_#|,g
 :end
@@ -726,7 +739,7 @@ do
   esac
   case $ac_mode$ac_tag in
   :[FHL]*:*);;
-  :L* | :C*:*) { { echo "$as_me:729: error: Invalid tag $ac_tag." >&5
+  :L* | :C*:*) { { echo "$as_me:742: error: Invalid tag $ac_tag." >&5
 echo "$as_me: error: Invalid tag $ac_tag." >&2;}
    { (exit 1); exit 1; }; };;
   :[FH]-) ac_tag=-:-;;
@@ -756,7 +769,7 @@ echo "$as_me: error: Invalid tag $ac_tag." >&2;}
 	   [\\/$]*) false;;
 	   *) test -f "$srcdir/$ac_f" && ac_f="$srcdir/$ac_f";;
 	   esac ||
-	   { { echo "$as_me:759: error: cannot find input file: $ac_f" >&5
+	   { { echo "$as_me:772: error: cannot find input file: $ac_f" >&5
 echo "$as_me: error: cannot find input file: $ac_f" >&2;}
    { (exit 1); exit 1; }; };;
       esac
@@ -770,7 +783,7 @@ echo "$as_me: error: cannot find input file: $ac_f" >&2;}
 	  echo $* | sed 's|^[^:]*/||;s|:[^:]*/|, |g'`" by configure."
     if test x"$ac_file" != x-; then
       configure_input="$ac_file.  $configure_input"
-      { echo "$as_me:773: creating $ac_file" >&5
+      { echo "$as_me:786: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     fi
 
@@ -841,7 +854,7 @@ echo X"$as_dir" |
       test -d "$as_dir" && break
     done
     test -z "$as_dirs" || eval "mkdir $as_dirs"
-  } || test -d "$as_dir" || { { echo "$as_me:844: error: cannot create directory $as_dir" >&5
+  } || test -d "$as_dir" || { { echo "$as_me:857: error: cannot create directory $as_dir" >&5
 echo "$as_me: error: cannot create directory $as_dir" >&2;}
    { (exit 1); exit 1; }; }; }
   ac_builddir=.
@@ -889,6 +902,11 @@ ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
   [\\/$]* | ?:[\\/]* ) ac_INSTALL=$INSTALL ;;
   *) ac_INSTALL=$ac_top_build_prefix$INSTALL ;;
   esac
+  ac_MKDIR_P=$MKDIR_P
+  case $MKDIR_P in
+  [\\/$]* | ?:[\\/]* ) ;;
+  */*) ac_MKDIR_P=$ac_top_build_prefix$MKDIR_P ;;
+  esac
 # If the template does not know about datarootdir, expand it.
 # FIXME: This hack should be removed a few years after 2.60.
 ac_datarootdir_hack=; ac_datarootdir_seen=
@@ -905,7 +923,7 @@ case `sed -n '/datarootdir/ {
 ' $ac_file_inputs` in
 *datarootdir*) ac_datarootdir_seen=yes;;
 *@datadir@*|*@docdir@*|*@infodir@*|*@localedir@*|*@mandir@*)
-  { echo "$as_me:908: WARNING: $ac_file_inputs seems to ignore the --datarootdir setting" >&5
+  { echo "$as_me:926: WARNING: $ac_file_inputs seems to ignore the --datarootdir setting" >&5
 echo "$as_me: WARNING: $ac_file_inputs seems to ignore the --datarootdir setting" >&2;}
   ac_datarootdir_hack='
   s&@datadir@&${datarootdir}&g
@@ -936,13 +954,14 @@ s&@builddir@&$ac_builddir&;t t
 s&@abs_builddir@&$ac_abs_builddir&;t t
 s&@abs_top_builddir@&$ac_abs_top_builddir&;t t
 s&@INSTALL@&$ac_INSTALL&;t t
+s&@MKDIR_P@&$ac_MKDIR_P&;t t
 $ac_datarootdir_hack
-" $ac_file_inputs | sed -f "$tmp/subs-1.sed" | sed -f "$tmp/subs-2.sed" >$tmp/out
+" $ac_file_inputs | sed -f "$tmp/subs-1.sed" | sed -f "$tmp/subs-2.sed" | sed -f "$tmp/subs-3.sed" >$tmp/out
 
 test -z "$ac_datarootdir_hack$ac_datarootdir_seen" &&
   { ac_out=`sed -n '/\${datarootdir}/p' "$tmp/out"`; test -n "$ac_out"; } &&
   { ac_out=`sed -n '/^[	 ]*datarootdir[	 ]*:*=/p' "$tmp/out"`; test -z "$ac_out"; } &&
-  { echo "$as_me:945: WARNING: $ac_file contains a reference to the variable \`datarootdir'
+  { echo "$as_me:964: WARNING: $ac_file contains a reference to the variable \`datarootdir'
 which seems to be undefined.  Please make sure it is defined." >&5
 echo "$as_me: WARNING: $ac_file contains a reference to the variable \`datarootdir'
 which seems to be undefined.  Please make sure it is defined." >&2;}
@@ -970,7 +989,7 @@ s,^\([	 #]*\)[^	 ]*\([	 ]*PACKAGE_VERSION\)[	 (].*,\1define\2 "" ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*PACKAGE_STRING\)[	 (].*,\1define\2 "" ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*PACKAGE_BUGREPORT\)[	 (].*,\1define\2 "" ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*PACKAGE\)[	 (].*,\1define\2 "mobile-manager" ,
-s,^\([	 #]*\)[^	 ]*\([	 ]*VERSION\)[	 (].*,\1define\2 "0.1" ,
+s,^\([	 #]*\)[^	 ]*\([	 ]*VERSION\)[	 (].*,\1define\2 "0.3" ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*STDC_HEADERS\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_SYS_TYPES_H\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_SYS_STAT_H\)[	 (].*,\1define\2 1 ,
@@ -998,7 +1017,7 @@ ac_result="$tmp/out1"
     echo "/* $configure_input  */" >"$tmp/config.h"
     cat "$ac_result" >>"$tmp/config.h"
     if diff $ac_file "$tmp/config.h" >/dev/null 2>&1; then
-      { echo "$as_me:1001: $ac_file is unchanged" >&5
+      { echo "$as_me:1020: $ac_file is unchanged" >&5
 echo "$as_me: $ac_file is unchanged" >&6;}
     else
       rm -f $ac_file
@@ -1010,21 +1029,22 @@ echo "$as_me: $ac_file is unchanged" >&6;}
   fi
   rm -f "$tmp/out12"
 # Compute $ac_file's index in $config_headers.
+_am_arg=$ac_file
 _am_stamp_count=1
 for _am_header in $config_headers :; do
   case $_am_header in
-    $ac_file | $ac_file:* )
+    $_am_arg | $_am_arg:* )
       break ;;
     * )
       _am_stamp_count=`expr $_am_stamp_count + 1` ;;
   esac
 done
-echo "timestamp for $ac_file" >`$as_dirname -- $ac_file ||
-$as_expr X$ac_file : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
-	 X$ac_file : 'X\(//\)[^/]' \| \
-	 X$ac_file : 'X\(//\)$' \| \
-	 X$ac_file : 'X\(/\)' \| . 2>/dev/null ||
-echo X$ac_file |
+echo "timestamp for $_am_arg" >`$as_dirname -- "$_am_arg" ||
+$as_expr X"$_am_arg" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
+	 X"$_am_arg" : 'X\(//\)[^/]' \| \
+	 X"$_am_arg" : 'X\(//\)$' \| \
+	 X"$_am_arg" : 'X\(/\)' \| . 2>/dev/null ||
+echo X"$_am_arg" |
     sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{
 	    s//\1/
 	    q
@@ -1044,7 +1064,7 @@ echo X$ac_file |
 	  s/.*/./; q'`/stamp-h$_am_stamp_count
  ;;
 
-  :C)  { echo "$as_me:1047: executing $ac_file commands" >&5
+  :C)  { echo "$as_me:1067: executing $ac_file commands" >&5
 echo "$as_me: executing $ac_file commands" >&6;}
  ;;
   esac
@@ -1059,8 +1079,9 @@ echo "$as_me: executing $ac_file commands" >&6;}
   # some people rename them; so instead we look at the file content.
   # Grep'ing the first line is not enough: some people post-process
   # each Makefile.in and add a new line on top of each file to say so.
-  # So let's grep whole file.
-  if grep '^#.*generated by automake' $mf > /dev/null 2>&1; then
+  # Grep'ing the whole file is not good either: AIX grep has a line
+  # limit of 2048, but all sed's we know have understand at least 4000.
+  if sed -n 's,^#.*generated by automake.*,X,p' "$mf" | grep X >/dev/null 2>&1; then
     dirpart=`$as_dirname -- "$mf" ||
 $as_expr X"$mf" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
 	 X"$mf" : 'X\(//\)[^/]' \| \
@@ -1166,7 +1187,7 @@ echo X"$as_dir" |
       test -d "$as_dir" && break
     done
     test -z "$as_dirs" || eval "mkdir $as_dirs"
-  } || test -d "$as_dir" || { { echo "$as_me:1169: error: cannot create directory $as_dir" >&5
+  } || test -d "$as_dir" || { { echo "$as_me:1190: error: cannot create directory $as_dir" >&5
 echo "$as_me: error: cannot create directory $as_dir" >&2;}
    { (exit 1); exit 1; }; }; }
     # echo "creating $dirpart/$file"
@@ -1204,7 +1225,7 @@ done
       "$srcdir/po/POTFILES.in" | sed '$!s/$/ \\/' >"po/POTFILES"
 
     if test ! -f "po/Makefile"; then
-      { { echo "$as_me:1207: error: po/Makefile is not ready." >&5
+      { { echo "$as_me:1228: error: po/Makefile is not ready." >&5
 echo "$as_me: error: po/Makefile is not ready." >&2;}
    { (exit 1); exit 1; }; }
     fi

@@ -52,7 +52,8 @@ class MobilePukDialog:
             return
         
         main_ui_filename = os.path.join(MobileManager.ui.mobilemanager_glade_path ,"mm_puk_dialog.glade")
-        widget_tree = gtk.glade.XML(main_ui_filename,"ask_puk_dialog")
+        MobileManager.ui.init_i18n()
+	widget_tree = gtk.glade.XML(main_ui_filename,"ask_puk_dialog")
         self.dialog = widget_tree.get_widget("ask_puk_dialog")
         self.puk_entry = widget_tree.get_widget("puk_entry")
         self.new_pin_entry = widget_tree.get_widget("new_pin_entry")

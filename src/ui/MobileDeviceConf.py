@@ -29,15 +29,20 @@ import os
 import re
 import dbus
 import dbus.glib
+import gettext
 
 from MobileManager.MobileManagerDbus import MOBILE_MANAGER_CONTROLLER_PATH,MOBILE_MANAGER_CONTROLLER_URI,MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,MOBILE_MANAGER_DEVICE_PATH,MOBILE_MANAGER_DEVICE_URI,MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI,MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI,MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI,MOBILE_MANAGER_DEVICE_XZONE_INTERFACE_URI
 
 VELOCITY = [9600, 14400, 19200, 38400, 56000, 57600, 115200]
 
+GETTEXT_DOMAIN="mobile-manager"
+
 class MobileDeviceConfWidget(gtk.HBox):
 
     def __init__(self):
         gtk.HBox.__init__(self)
+
+        MobileManager.ui.init_i18n()
         
         main_ui_filename = os.path.join(MobileManager.ui.mobilemanager_glade_path, "mm_devices_conf.glade")
         widgets = self.__get_glade_widgets(main_ui_filename)

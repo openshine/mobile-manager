@@ -38,6 +38,8 @@ from MobileManager.MobileManagerDbus import MOBILE_MANAGER_CONTROLLER_PATH,MOBIL
 class MobileCarrierSelectorDialog:
 
     def __init__(self):
+	MobileManager.ui.init_i18n()
+
         self.dbus = None
         self.mm_manager_obj = None
         self.mcontroller = None
