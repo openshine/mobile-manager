@@ -62,6 +62,8 @@ class MobileDeviceHuawei(MobileDevice):
         dev = (self.dev_props["usb_device.product_id"],
                self.dev_props["usb_device.vendor_id"])
 
+        self.set_property("device-icon", "network-wireless")
+        
         if dev == (0x1004,0x12d1) and len(ports) == 4 :
             self.set_property("data-device", "/dev/%s" % ports[0])
             self.set_property("conf-device", "/dev/%s" % ports[2])

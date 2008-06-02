@@ -65,6 +65,7 @@ class MobileDeviceNozomi(MobileDeviceOption):
         if len(ports) >= 3 :
             self.set_property("data-device", "/dev/%s" % ports[0])
             self.set_property("conf-device", "/dev/%s" % ports[2])
+            self.set_property("device-icon", "network-wireless")
             self.pretty_name = "Option Nozomi"
             self.set_property("devices-autoconf", True)
             if not self.exists_conf :

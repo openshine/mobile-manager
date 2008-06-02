@@ -117,6 +117,9 @@ class MobileDevice(gobject.GObject) :
         'priority' : (gobject.TYPE_STRING, 'priority',
                       'int that represents the priority to use the device over other devices',
                       '0', gobject.PARAM_READWRITE),
+        'device-icon' : (gobject.TYPE_STRING, 'device icon',
+                         'string that represents the icon of the device',
+                         '', gobject.PARAM_READWRITE),
 
         }
     
@@ -143,6 +146,7 @@ class MobileDevice(gobject.GObject) :
         self.multiport = False
 
         self.pretty_name = ''
+        self.device_icon = ''
         self.priority = "0"
 
 
@@ -209,6 +213,9 @@ class MobileDevice(gobject.GObject) :
                 return self.pretty_name
             else:
                 return self.dev_props["info.product"]
+        elif property.name == 'device-icon':
+            return self.device_icon
+        
         elif property.name == 'priority':
             return self.priority
         else:
@@ -235,6 +242,8 @@ class MobileDevice(gobject.GObject) :
             return
         elif property.name == 'pretty-name' :
             return
+        elif property.name == 'device-icon':
+            self.device_icon = value
         elif property.name == 'priority':
             self.priority = value
         else:

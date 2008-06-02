@@ -67,9 +67,13 @@ class MobileDeviceBluetooth(MobileDevice):
             if parent_props["info.bus"] == "usb_device" :
                 if parent_props.has_key("info.product") :
                     self.pretty_name = parent_props["info.product"]
+                    if self.pretty_name == "Bluetooth Host Controller Interface":
+                        self.pretty_name = "Bluetooth"
+                    
         
         self.set_property("data-device", port)
         self.set_property("devices-autoconf", True)
+        self.set_property("device-icon", "stock_bluetooth")
 
         MobileDevice.init_device(self)
         

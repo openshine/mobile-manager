@@ -1,8 +1,13 @@
 2008-06-02  Roberto Majadas  <telemaco@openshine.com>
 
-	* src/ui/__init__.py.in (init_i18n): Added i18n init function
+	* src/MobileManagerDbus.py (MobileManagerDbusDevice.GetDeviceIcon): Export get_device_icon methond
+	(MobileManagerDbusController.__dialer_disconnecting_cb): Fix bug, incorrect signal "disconnecting"
 
+	* src/devices/MobileDevice*.py: Added icons
+	* src/MobileDevice.py (MobileDevice.__gproperties__): Added new property 'device-icon'
+	* src/ui/__init__.py.in (init_i18n): Added i18n init function
 	* src/ui/MobileDeviceConf.py (MobileDeviceConfWidget.__init__): Set no show all to at_op_button
+	(MobileDeviceConfWidget.__init_fields): Added custom icons per device
 
 2008-06-01  Roberto Majadas  <telemaco@openshine.com>
 

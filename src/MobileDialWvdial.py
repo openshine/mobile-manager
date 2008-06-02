@@ -297,7 +297,7 @@ class MobileDialWvdial(MobileDial):
             return
 
         if self.wvdial_pid != None :
+            print "emit disconnecting"
             os.kill(int(self.wvdial_pid), 1)
             self.emit('disconnecting')
             self.status_flag = PPP_STATUS_DISCONNECTING
-
