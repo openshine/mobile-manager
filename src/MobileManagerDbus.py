@@ -73,7 +73,7 @@ class MobileManagerDbusController(dbus.service.Object):
         self.mcontroller.dialer.connect("connected", self.__dialer_connected_cb)
         self.mcontroller.dialer.connect("disconnected", self.__dialer_disconnected_cb)
         self.mcontroller.dialer.connect("connecting", self.__dialer_connecting_cb)
-        self.mcontroller.dialer.connect("disconnected", self.__dialer_disconnected_cb)
+        self.mcontroller.dialer.connect("disconnecting", self.__dialer_disconnecting_cb)
         self.mcontroller.dialer.connect("pppstats_signal", self.__dialer_ppp_stats_cb)
 
         dbus.service.Object.__init__(self, bus_name, path)
@@ -485,6 +485,11 @@ class MobileManagerDbusDevice(dbus.service.Object):
                          in_signature='', out_signature='s')
     def GetPrettyName(self):
         return self.device.get_property('pretty-name')
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI,
+                         in_signature='', out_signature='s')
+    def GetDeviceIcon(self):
+        return self.device.get_property('device-icon')
 
     @dbus.service.method(MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI,
                          in_signature='', out_signature='i')

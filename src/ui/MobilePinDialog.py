@@ -47,6 +47,7 @@ class MobileAskPinDialog:
 	
 	def __init__(self):
 		main_ui_filename = os.path.join(MobileManager.ui.mobilemanager_glade_path, "mm_pin_dialog.glade")
+		MobileManager.ui.init_i18n()
 
 		self.dbus = None
 		self.mm_manager_obj = None
@@ -180,6 +181,7 @@ class  MobileChangePinDialog:
 			return 
 		
 		main_ui_filename = os.path.join(MobileManager.ui.mobilemanager_glade_path,"mm_pin_dialog.glade")
+		MobileManager.ui.init_i18n()
 		widget_tree = gtk.glade.XML(main_ui_filename,"change_pin_dialog")
 		self.dialog = widget_tree.get_widget("change_pin_dialog")
 		self.error_label = widget_tree.get_widget("change_pin_error_label")
@@ -316,6 +318,7 @@ class MobileManagePinDialog:
 		if self.__init_bus() == False:
 			return 
 		main_ui_filename = os.path.join(MobileManager.ui.mobilemanager_glade_path,"mm_pin_dialog.glade")
+		MobileManager.ui.init_i18n()
 		widget_tree = gtk.glade.XML(main_ui_filename,"manage_pin_dialog")
 		self.dialog = widget_tree.get_widget("manage_pin_dialog")
 		self.header_info_label = widget_tree.get_widget("header_info_label")

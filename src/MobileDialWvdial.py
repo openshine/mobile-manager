@@ -48,6 +48,7 @@ class MobileDialWvdial(MobileDial):
         return self.status_flag
 
     def start(self, username, password, apn, auto_dns, primary_dns, secundary_dns, dns_suffixes):
+        print "DAEMON ----> dns info %s, %s, %s" % (primary_dns, secundary_dns, dns_suffixes)
 
         if self.status_flag != PPP_STATUS_DISCONNECTED :
             return 
@@ -102,7 +103,10 @@ class MobileDialWvdial(MobileDial):
         self.__start_wvdial()
 
     def __pppd_options(self, hfc, hec, hc, auto_dns):
+        print "__pppd_options"
+        
         out = StringIO.StringIO()
+
         print >>out,"plugin passwordfd.so"
         print >>out,"debug"
         print >>out,"noauth"
@@ -113,6 +117,16 @@ class MobileDialWvdial(MobileDial):
         print >>out,"ipcp-accept-remote"
         print >>out,"lcp-echo-failure 0"
         print >>out,"kdebug 7"
+
+        ## print >>out, "defaultroute"
+        ## print >>out, "nodetach"
+        ## print >>out, "noauth"
+        ## print >>out, "debug"
+        ## print >>out, "noipdefault"
+        ## print >>out, "ipcp-accept-local"
+        ## print >>out, ":10.0.0.1"
+        ## print >>out, "lcp-echo-failure 0"
+        ## print >>out, "kdebug 7"
 
         if auto_dns == True:
             print >>out, "usepeerdns"
@@ -129,13 +143,14 @@ class MobileDialWvdial(MobileDial):
             print >>out, "nopcomp"
             print >>out, "noaccomp"
             
-        peer_filename_path = os.path.join("/etc","/ppp","/peers","/wvdial")
+        peer_filename_path = "/etc/ppp/peers/wvdial"
         try:
             f = open(peer_filename_path,"w")
             f.write(out.getvalue())
         finally:
             out.close()
             f.close()
+
 
     def __get_real_wvdial_pid(self):
         cmd = "ps -eo ppid,pid | grep '^[ ]*%s' | awk '{print $2}'" % self.wvdial_p.pid
@@ -174,6 +189,11 @@ class MobileDialWvdial(MobileDial):
             self.last_traffic_time = 0.0
             self.dns_data = None
             self.status_flag = PPP_STATUS_DISCONNECTED
+
+            active_device = self.mcontroller.get_active_device()
+            if active_device != None :
+                #Some devices need reopen port when wdial is killed
+                active_device.turn_on()
             
             return False
         
@@ -210,7 +230,7 @@ class MobileDialWvdial(MobileDial):
             return True
         elif self.ppp_if != None :
             print  "pppd monitor : looking for ip"
-            cmd = "ifconfig %s | grep 'inet addr'" % self.ppp_if
+            cmd = "LANG=C ifconfig %s | grep 'inet addr'" % self.ppp_if
             pm =  Popen(cmd, shell=True, stdout=PIPE, close_fds=True)
             out = pm.stdout.readline()
             if out != "" :
@@ -226,6 +246,7 @@ class MobileDialWvdial(MobileDial):
             return True
 
     def __set_dns_info(self):
+        print "-----> __set_dns_info (%s)" % self.dns_data
         if self.dns_data == None :
             return
         
@@ -268,11 +289,15 @@ class MobileDialWvdial(MobileDial):
         return True
     
     def stop(self):
+        active_device = self.mcontroller.get_active_device()
+        if active_device != None :
+            active_device.turn_off()
+            
         if self.wvdial_p == None :
             return
 
         if self.wvdial_pid != None :
-            os.kill(int(self.wvdial_pid), 15)
+            print "emit disconnecting"
+            os.kill(int(self.wvdial_pid), 1)
             self.emit('disconnecting')
             self.status_flag = PPP_STATUS_DISCONNECTING
-

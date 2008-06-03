@@ -29,15 +29,20 @@ import os
 import re
 import dbus
 import dbus.glib
+import gettext
 
 from MobileManager.MobileManagerDbus import MOBILE_MANAGER_CONTROLLER_PATH,MOBILE_MANAGER_CONTROLLER_URI,MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,MOBILE_MANAGER_DEVICE_PATH,MOBILE_MANAGER_DEVICE_URI,MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI,MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI,MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI,MOBILE_MANAGER_DEVICE_XZONE_INTERFACE_URI
 
 VELOCITY = [9600, 14400, 19200, 38400, 56000, 57600, 115200]
 
+GETTEXT_DOMAIN="mobile-manager"
+
 class MobileDeviceConfWidget(gtk.HBox):
 
     def __init__(self):
         gtk.HBox.__init__(self)
+
+        MobileManager.ui.init_i18n()
         
         main_ui_filename = os.path.join(MobileManager.ui.mobilemanager_glade_path, "mm_devices_conf.glade")
         widgets = self.__get_glade_widgets(main_ui_filename)
@@ -54,14 +59,21 @@ class MobileDeviceConfWidget(gtk.HBox):
         
 
         self.at_op_button = MobileManager.ui.MobileATOptionsButton()
+        self.at_op_button.set_no_show_all(True)
         self.at_op_button_vbox.add(self.at_op_button)
         self.at_op_button.set_label(_("Options"))
 
-        self.devs_liststore = gtk.ListStore(str, str)
+        self.devs_liststore = gtk.ListStore(str, str, gtk.gdk.Pixbuf)
         self.devs_combobox.set_model(self.devs_liststore)
+
+        cell = gtk.CellRendererPixbuf()
+        self.devs_combobox.pack_start(cell, False)
+        self.devs_combobox.add_attribute(cell, 'pixbuf', 2)
+        
         cell = gtk.CellRendererText()
-        self.devs_combobox.pack_start(cell, True)
+        self.devs_combobox.pack_start(cell, False)
         self.devs_combobox.add_attribute(cell, 'text', 0)
+
 
         self.v_liststore = gtk.ListStore(str)
         self.velocity_combobox.set_model(self.v_liststore)
@@ -143,11 +155,19 @@ class MobileDeviceConfWidget(gtk.HBox):
 
     def __init_fields(self):
         devs_list = self.mcontroller.GetAvailableDevices()
+        icontheme = gtk.icon_theme_get_default()
+        
         for dev_path in devs_list :
             dev = self.dbus.get_object(MOBILE_MANAGER_DEVICE_URI,
                                        dev_path)
             dev_info = dbus.Interface(dev, MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI)
-            self.devs_liststore.append([dev_info.GetPrettyName(), dev_path])
+            device_icon = dev_info.GetDeviceIcon()
+            pixbuf = None
+            
+            if device_icon != "" :
+                pixbuf = icontheme.load_icon(device_icon, 16, 0)
+                
+            self.devs_liststore.append([dev_info.GetPrettyName(), dev_path, pixbuf])
 
         if devs_list > 0 :
             active_dev = self.mcontroller.GetActiveDevice()
@@ -167,7 +187,14 @@ class MobileDeviceConfWidget(gtk.HBox):
             dev = self.dbus.get_object(MOBILE_MANAGER_DEVICE_URI,
                                        dev_path)
             dev_info = dbus.Interface(dev, MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI)
-            self.devs_liststore.append([dev_info.GetPrettyName(), dev_path])
+            icontheme = gtk.icon_theme_get_default()
+            device_icon = dev_info.GetDeviceIcon()
+            pixbuf = None
+            
+            if device_icon != "" :
+                pixbuf = icontheme.load_icon(device_icon, 16, 0)
+            
+            self.devs_liststore.append([dev_info.GetPrettyName(), dev_path, pixbuf])
 
         index = devs_list.index(active_dev)
         self.devs_combobox.set_active(index)
@@ -190,7 +217,14 @@ class MobileDeviceConfWidget(gtk.HBox):
             dev = self.dbus.get_object(MOBILE_MANAGER_DEVICE_URI,
                                        dev_path)
             dev_info = dbus.Interface(dev, MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI)
-            self.devs_liststore.append([dev_info.GetPrettyName(), dev_path])
+            icontheme = gtk.icon_theme_get_default()
+            device_icon = dev_info.GetDeviceIcon()
+            pixbuf = None
+            
+            if device_icon != "" :
+                pixbuf = icontheme.load_icon(device_icon, 16, 0)
+            
+            self.devs_liststore.append([dev_info.GetPrettyName(), dev_path, pixbuf])
 
         index = devs_list.index(active_dev)
         self.devs_combobox.set_active(index)

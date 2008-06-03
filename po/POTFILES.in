@@ -1,8 +1,13 @@
 [encoding: UTF-8]
 
+data/glade/mm_puk_dialog.glade
+data/glade/mm_pin_dialog.glade
+data/glade/mm_carrier_dialog.glade
+data/glade/mm_menu_at_options.glade
+data/glade/mm_devices_conf.glade
 src/ui/MobileDeviceConf.py
 src/ui/MobilePinDialog.py
 src/ui/MobileCarrierDialog.py
 src/ui/MobileATOptionsButton.py
 src/ui/MobilePukDialog.py
-
+src/devices/MobileDeviceSerial.py

@@ -79,6 +79,7 @@ class MobileDeviceUSB(MobileDevice):
         if self.device_port != None:
             self.set_property("data-device", self.device_port)
             self.set_property("devices-autoconf", True)
+            self.set_property("device-icon", "stock_cell-phone")
             MobileDevice.init_device(self)
             return True
         else:
