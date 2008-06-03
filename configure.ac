@@ -1,7 +1,7 @@
 AC_INIT(src/__init__.py)
 
 PACKAGE=mobile-manager
-VERSION=0.3
+VERSION=0.4
 
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)

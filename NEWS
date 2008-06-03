@@ -1,3 +1,12 @@
+=== Mobile Manager 0.4 ===
+
+ * Add some bubfixes to MobileDialWvdial
+ * UI fixes in MobileDeviceConf Widget
+ * Add icons support per device
+ * Widgets i18n support
+ * Spanish translation support
+ 
+
 === Mobile Manager 0.3 ===
 
  * New ussd commands support
