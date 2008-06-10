@@ -1,3 +1,9 @@
+=== Mobile Manager 0.5 ===
+
+ * Fix bug in Daemon script
+ * Fix bug when there isn't available devices
+ * Apport support
+
 === Mobile Manager 0.4 ===
 
  * Add some bubfixes to MobileDialWvdial
