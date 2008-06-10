@@ -31,7 +31,8 @@ import os
 import dbus
 import dbus.glib
 
-from MobileManager.MobileManagerDbus import MOBILE_MANAGER_CONTROLLER_PATH,MOBILE_MANAGER_CONTROLLER_URI,MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,MOBILE_MANAGER_DEVICE_PATH,MOBILE_MANAGER_DEVICE_URI,MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI,MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI,MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI,MOBILE_MANAGER_DEVICE_XZONE_INTERFACE_URI
+import MobileManager
+from MobileManager.MobileManagerDbus import MOBILE_MANAGER_CONTROLLER_PATH,MOBILE_MANAGER_CONTROLLER_URI,MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,MOBILE_MANAGER_DEVICE_PATH,MOBILE_MANAGER_DEVICE_URI,MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI,MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI,MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI,MOBILE_MANAGER_DEVICE_XZONE_INTERFACE_URI,MOBILE_MANAGER_DIALER_INTERFACE_URI 
 
 
 
@@ -112,6 +113,8 @@ class MobileATOptionsButton(gtk.Button) :
             dev_state = self.__get_device_state_from_path(dev_path)
             state = dev_state.GetCardStatus()
             self.__card_status_changed_cb(state)
+
+        print "End"
 
     def __init_bus(self):
         try:
@@ -331,8 +334,8 @@ class MobileATOptionsButton(gtk.Button) :
         dev_path = self.mcontroller.GetActiveDevice()
         dev_info = self.__get_device_info_from_path(dev_path)
         if dev_path != "":
-            if self.mcontroller.dialer.status() != MobileManager.PPP_STATUS_DISCONNECTED :
-               self.mcontroller.dialer.stop()
+            if self.mdialer.Status() != MobileManager.PPP_STATUS_DISCONNECTED :
+               self.mdialer.Stop()
             if dev_info.HasCapability(MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI):
                 dev_state =  self.__get_device_state_from_path(dev_path)
                 dev_state.TurnOff()
