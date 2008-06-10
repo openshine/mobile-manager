@@ -106,6 +106,8 @@ class MobileAskPinDialog:
 		bucle = 0
 		
 		dev_path = self.mcontroller.GetActiveDevice()
+		if dev_path == "" :
+			return
 		dev_info = self.__get_device_info_from_path(dev_path)
 		dev_auth = self.__get_device_auth_from_path(dev_path)
 		dev_state = self.__get_device_state_from_path(dev_path)
@@ -235,6 +237,8 @@ class  MobileChangePinDialog:
 
 	def run(self):
 		dev_path = self.mcontroller.GetActiveDevice()
+		if dev_path == "" :
+			return
 		dev_info = self.__get_device_info_from_path(dev_path)
 		dev_auth = self.__get_device_auth_from_path(dev_path)
 		dev_state = self.__get_device_state_from_path(dev_path)
@@ -387,6 +391,8 @@ class MobileManagePinDialog:
 		self.error_label.hide()
 
 		dev_path = self.mcontroller.GetActiveDevice()
+		if dev_path == "":
+			return
 		dev_info = self.__get_device_info_from_path(dev_path)
 		dev_auth = self.__get_device_auth_from_path(dev_path)
 		dev_state = self.__get_device_state_from_path(dev_path)

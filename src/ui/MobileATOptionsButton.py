@@ -44,6 +44,7 @@ class MobileATOptionsButton(gtk.Button) :
         self.dbus = None
         self.mm_manager_obj = None
         self.mcontroller = None
+        self.mdialer = None
         
         if self.__init_bus() == False:
             return
@@ -91,9 +92,9 @@ class MobileATOptionsButton(gtk.Button) :
         self.mcontroller.connect_to_signal("ActiveDevCardStatusChanged", self.__card_status_changed_cb)
         self.mcontroller.connect_to_signal("ActiveDeviceChanged", self.__active_device_changed_cb)
 
-##FIXME : Connect to new dialer
-##         self.mcontroller.dialer.connect("Connected", self.__connected_cb)
-##         self.mcontroller.dialer.connect("Disconnected", self.__disconnected_cb)
+
+        self.mdialer.connect_to_signal("Connected", self.__connected_cb)
+        self.mdialer.connect_to_signal("Disconnected", self.__disconnected_cb)
         
         self.connect("clicked", self.__show_menu_cb, None)
 
@@ -120,6 +121,8 @@ class MobileATOptionsButton(gtk.Button) :
                                                        MOBILE_MANAGER_CONTROLLER_PATH)
             self.mcontroller = dbus.Interface(self.mm_manager_obj,
                                               MOBILE_MANAGER_CONTROLLER_INTERFACE_URI)
+            self.mdialer = dbus.Interface(self.mm_manager_obj,
+                                          MOBILE_MANAGER_DIALER_INTERFACE_URI)
             return True
         except:
             print "Not dbus connection available"
@@ -230,6 +233,9 @@ class MobileATOptionsButton(gtk.Button) :
         
     def popup(self, widget=None):
         dev_path = self.mcontroller.GetActiveDevice()
+        if dev_path == "" :
+            return
+        
         dev_info = self.__get_device_info_from_path(dev_path)
         
         if not dev_info.HasCapability(MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI) :
@@ -325,10 +331,8 @@ class MobileATOptionsButton(gtk.Button) :
         dev_path = self.mcontroller.GetActiveDevice()
         dev_info = self.__get_device_info_from_path(dev_path)
         if dev_path != "":
-            #FIXME : Connect with the new dialer
-            #
-            #if self.mcontroller.dialer.status() != MobileManager.PPP_STATUS_DISCONNECTED :
-            #    self.mcontroller.dialer.stop()
+            if self.mcontroller.dialer.status() != MobileManager.PPP_STATUS_DISCONNECTED :
+               self.mcontroller.dialer.stop()
             if dev_info.HasCapability(MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI):
                 dev_state =  self.__get_device_state_from_path(dev_path)
                 dev_state.TurnOff()
@@ -417,7 +421,7 @@ class MobileATOptionsButton(gtk.Button) :
         self.manual_oper.handler_unblock(self.manual_oper_hid)
 
 
-    def __connected_cb (self, dialer):
+    def __connected_cb (self):
         dev_path = self.mcontroller.GetActiveDevice()
         dev_info = self.__get_device_info_from_path(dev_path)
         if dev_info.HasCapability(MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI) :
@@ -425,7 +429,7 @@ class MobileATOptionsButton(gtk.Button) :
             self.deactivate_card.show()
             self.activate_card.hide()
 
-    def __disconnected_cb (self, dialer):
+    def __disconnected_cb (self):
         dev_path = self.mcontroller.GetActiveDevice()
         dev_info = self.__get_device_info_from_path(dev_path)
         if dev_info.HasCapability(MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI) :

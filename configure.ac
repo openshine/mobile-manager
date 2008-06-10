@@ -210,6 +210,7 @@ contrib/Makefile
 contrib/huawei/Makefile
 contrib/usb-modeswitch/Makefile
 data/Makefile
+data/apport/Makefile
 data/dbus/Makefile
 data/glade/Makefile
 data/initscripts/Makefile

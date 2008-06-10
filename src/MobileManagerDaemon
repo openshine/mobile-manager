@@ -30,6 +30,7 @@ from optparse import OptionParser
 import MobileManager
 import syslog
 import os
+import sys
 
 from MobileManager.MobileManagerDbus import MOBILE_MANAGER_CONTROLLER_URI
 

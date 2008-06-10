@@ -47,6 +47,9 @@ class MobileCarrierSelectorDialog:
             return 
         
         dev_path = self.mcontroller.GetActiveDevice()
+        if dev_path == "":
+            return
+        
         dev_info = self.__get_device_info_from_path(dev_path)
         dev_auth = self.__get_device_auth_from_path(dev_path)
         dev_state = self.__get_device_state_from_path(dev_path)
@@ -129,6 +132,10 @@ class MobileCarrierSelectorDialog:
 
     def run(self, refresh=True):
         refresh_at_start = refresh
+
+        dev_path = self.mcontroller.GetActiveDevice()
+        if dev_path == "":
+            return
         
         while True :
             self.dialog.show()

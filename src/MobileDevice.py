@@ -933,6 +933,9 @@ class MobileDevice(gobject.GObject) :
             return False
         
     def turn_off(self):
+        if MobileManager.AT_COMM_CAPABILITY not in self.capabilities:
+            return True
+        
         res = self.send_at_command('AT+CFUN=0')
         self.dbg_msg ("TURN OFF : %s" % res)
         if res[2] == 'OK':

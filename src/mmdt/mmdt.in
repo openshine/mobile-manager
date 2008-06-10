@@ -88,11 +88,12 @@ class Mmdt :
         self.mmdt_send_custom_cmd_button.connect("clicked", self.__send_custom_cmd_button_cb, None)
         self.mmdt_main_window.connect("destroy", self.destroy)
 	dev_path = self.mcontroller.GetActiveDevice()
-        dev_state = self.__get_device_state_from_path(dev_path)
-        dev_info = self.__get_device_info_from_path(dev_path)
+        if dev_path != "" :
+            dev_state = self.__get_device_state_from_path(dev_path)
+            dev_info = self.__get_device_info_from_path(dev_path)
 
-        if dev_info.HasCapability(MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI) :
-            dev_state.EmitStatusSignals()
+            if dev_info.HasCapability(MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI) :
+                dev_state.EmitStatusSignals()
 
 	self.mmdt_main_window.show()
 

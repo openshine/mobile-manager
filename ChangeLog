@@ -1,4 +1,18 @@
+2008-06-10  Roberto Majadas  <telemaco@openshine.com>
+
+	* Apport support
+	* src/ui/MobileATOptionsButton.py: Check in all dialogs if there is an active device
+	(MobileATOptionsButton.__init__): Added dialer callbacks
+
+	* src/ui/MobileCarrierDialog.py: Check in all dialogs if there is an active device
+	* src/ui/MobileDeviceConf.py : Check in all dialogs if there is an active device
+	* src/ui/MobilePukDialog.py: Check in all dialogs if there is an active device
+	* src/ui/MobilePinDialog.py: Check in all dialogs if there is an active device
+	* src/MobileManagerDbus.py (MobileManagerDbusController.GetActiveDevice): return "" when there isn't an active device
+
 2008-06-03  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileManagerDaemon: Add "import sys"
 
 	* configure.ac: Updated to 0.4
 

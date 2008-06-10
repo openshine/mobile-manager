@@ -104,6 +104,10 @@ class MobileDeviceConfWidget(gtk.HBox):
         self.mcontroller.connect_to_signal("ActiveDevCardStatusChanged", self.__ActiveDevCardStatusChanged_cb)
 
         self.add(self.device_conf_widget)
+
+        self.no_dev_label.set_no_show_all(True)
+        self.devs_combobox.set_no_show_all(True)
+        self.device_configuration_vbox.set_no_show_all(True)
         
         self.show()
 
@@ -168,12 +172,16 @@ class MobileDeviceConfWidget(gtk.HBox):
                 pixbuf = icontheme.load_icon(device_icon, 16, 0)
                 
             self.devs_liststore.append([dev_info.GetPrettyName(), dev_path, pixbuf])
-
-        if devs_list > 0 :
+        print len(devs_list)
+        if len(devs_list) > 0 :
             active_dev = self.mcontroller.GetActiveDevice()
             index = devs_list.index(active_dev)
             self.devs_combobox.set_active(index)
             self.__reset_info_fields()
+        else:
+            self.no_dev_label.show()
+            self.devs_combobox.hide()
+            self.device_configuration_vbox.hide()
 
     def __AddedDevice_cb(self, device):
         for x in self.handlers:
@@ -226,8 +234,9 @@ class MobileDeviceConfWidget(gtk.HBox):
             
             self.devs_liststore.append([dev_info.GetPrettyName(), dev_path, pixbuf])
 
-        index = devs_list.index(active_dev)
-        self.devs_combobox.set_active(index)
+        if active_dev != "" :
+            index = devs_list.index(active_dev)
+            self.devs_combobox.set_active(index)
 
         self.__reset_info_fields()
 
@@ -279,8 +288,15 @@ class MobileDeviceConfWidget(gtk.HBox):
 
     def __reset_info_fields (self):
         active_dev = self.mcontroller.GetActiveDevice()
-        if active_dev == None:
+        if active_dev == "":
+            self.no_dev_label.show()
+            self.devs_combobox.hide()
+            self.device_configuration_vbox.hide()
             return
+        else:
+            self.no_dev_label.hide()
+            self.devs_combobox.show()
+            self.device_configuration_vbox.show()
         
         dev = self.dbus.get_object(MOBILE_MANAGER_DEVICE_URI,
                                    active_dev)

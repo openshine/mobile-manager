@@ -103,13 +103,13 @@ class MobileManagerDbusController(dbus.service.Object):
         return ''
 
     @dbus.service.method(MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,
-                         in_signature='', out_signature='o')
+                         in_signature='', out_signature='s')
     def GetActiveDevice(self):
         device = self.mcontroller.get_active_device()
         if device != None :
             return device.dbus_device.__dbus_object_path__
         else:
-            return None
+            return ""
 
     @dbus.service.method(MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,
                          in_signature='s', out_signature='b')
