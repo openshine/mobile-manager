@@ -28,6 +28,7 @@ import time
 from subprocess import Popen, PIPE
 from MobileDial import *
 import StringIO
+import MobileManager
 
 class MobileDialWvdial(MobileDial):
 
@@ -192,8 +193,11 @@ class MobileDialWvdial(MobileDial):
 
             active_device = self.mcontroller.get_active_device()
             if active_device != None :
-                #Some devices need reopen port when wdial is killed
-                active_device.turn_on()
+                if MobileManager.AT_COMM_CAPABILITY in active_device.capabilities :
+                    #Some devices need reopen port when wdial is killed
+                    active_device.serial.reopen()
+                    active_device.actions_on_reopen_port()
+                    active_device.start_polling()
             
             return False
         
@@ -289,14 +293,17 @@ class MobileDialWvdial(MobileDial):
         return True
     
     def stop(self):
-        active_device = self.mcontroller.get_active_device()
-        if active_device != None :
-            active_device.turn_off()
-            
-        if self.wvdial_p == None :
-            return
+        print "Stopping pppd"
 
+        if self.wvdial_p == None:
+            return
+        
         if self.wvdial_pid != None :
+            active_device = self.mcontroller.get_active_device()
+            if active_device != None :
+                if MobileManager.AT_COMM_CAPABILITY in active_device.capabilities :
+                    active_device.stop_polling()
+             
             print "emit disconnecting"
             os.kill(int(self.wvdial_pid), 1)
             self.emit('disconnecting')

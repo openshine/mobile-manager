@@ -1264,11 +1264,11 @@ class MobileDevice(gobject.GObject) :
 
     def start_polling(self):
         print "start polling"
-        #self.pause_polling_necesary = False
+        self.pause_polling_necesary = False
 
     def stop_polling(self):
         print "stop polling"
-        #self.pause_polling_necesary = True
+        self.pause_polling_necesary = True
 
 gobject.type_register(MobileDevice)
  
