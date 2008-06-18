@@ -69,23 +69,23 @@ msgid "Change PIN code"
 msgstr "Cambia código PIN"
 
 #: ../data/glade/mm_pin_dialog.glade.h:6
-msgid "Confirm PIN code : "
-msgstr "Confirma el nuevo PIN : "
+msgid "Confirm PIN code: "
+msgstr "Confirma el nuevo PIN: "
 
 #: ../data/glade/mm_pin_dialog.glade.h:7
 msgid "Enter PIN code"
 msgstr "Introduce código PIN"
 
 #: ../data/glade/mm_pin_dialog.glade.h:8
-msgid "New PIN code : "
-msgstr "Nuevo PIN : "
+msgid "New PIN code: "
+msgstr "Nuevo PIN: "
 
 #: ../data/glade/mm_pin_dialog.glade.h:9
-msgid "Old PIN code : "
+msgid "Old PIN code: "
 msgstr "PIN actual:"
 
 #: ../data/glade/mm_pin_dialog.glade.h:10
-msgid "PIN code : "
+msgid "PIN code: "
 msgstr "Código PIN:"
 
 #: ../data/glade/mm_pin_dialog.glade.h:11
@@ -129,8 +129,8 @@ msgid "<b><big>Carrier selection</big></b>"
 msgstr "<b><big>Selección de operadora</big></b>"
 
 #: ../data/glade/mm_carrier_dialog.glade.h:2
-msgid "Carrier list : "
-msgstr "Lista de operadoras :"
+msgid "Carrier list: "
+msgstr "Lista de operadoras: "
 
 #: ../data/glade/mm_carrier_dialog.glade.h:3
 #: ../data/glade/mm_menu_at_options.glade.h:1
@@ -148,7 +148,7 @@ msgid ""
 "search new networks pressing Refresh button."
 msgstr ""
 "Selecciona una operadora de la lista disponible presionando el botón Aceptar "
-"or busca nuevas redes presionando el boton Refrescar."
+"o busca nuevas redes presionando el boton Refrescar."
 
 #: ../data/glade/mm_menu_at_options.glade.h:2
 msgid "G_PRS/2.5G preferred"
@@ -175,8 +175,8 @@ msgid "U_TMS/3G preferred"
 msgstr "U_TMS/3G preferido"
 
 #: ../data/glade/mm_menu_at_options.glade.h:8
-msgid "_Activate PIN ..."
-msgstr "_Activar PIN ..."
+msgid "_Activate PIN..."
+msgstr "_Activar PIN..."
 
 #: ../data/glade/mm_menu_at_options.glade.h:9
 msgid "_Automatic"
@@ -187,7 +187,7 @@ msgid "_Change PIN..."
 msgstr "_Cambiar PIN..."
 
 #: ../data/glade/mm_menu_at_options.glade.h:11
-msgid "_Deactivate PIN ..."
+msgid "_Deactivate PIN..."
 msgstr "_Desactivar PIN..."
 
 #: ../data/glade/mm_menu_at_options.glade.h:12
@@ -216,12 +216,12 @@ msgstr "<u>No hay ningún dispositivo disponible</u>"
 
 # e ../data/glade/mm_devices_conf.glade.h:4
 #: ../data/glade/mm_devices_conf.glade.h:4
-msgid "Device :"
-msgstr "Dispositivos :"
+msgid "Device: "
+msgstr "Dispositivos: "
 
 #: ../data/glade/mm_devices_conf.glade.h:5
-msgid "Device : "
-msgstr "Dispositivos :"
+msgid "Device: "
+msgstr "Dispositivos: "
 
 #: ../data/glade/mm_devices_conf.glade.h:6
 msgid "Hardware compression"
@@ -236,21 +236,20 @@ msgid "Hardware flow control"
 msgstr "Control de flujo por hardware"
 
 #: ../data/glade/mm_devices_conf.glade.h:9
-msgid "Hardware options :"
-msgstr "Opciones de hardware :"
+msgid "Hardware options: "
+msgstr "Opciones de hardware: "
 
 #: ../data/glade/mm_devices_conf.glade.h:10
-msgid "Modem parameters:"
-msgstr "Parámetros módem:"
+msgid "Modem parameters: "
+msgstr "Parámetros módem: "
 
 #: ../data/glade/mm_devices_conf.glade.h:11
 msgid "Select the device to use when you connect to GRPS/3G network"
-msgstr ""
-"Selecciona el dispositivo que quieres usar para conectar a redes GRPS/3G"
+msgstr "Selecciona el dispositivo que quieres usar para conectar a redes GRPS/3G"
 
 #: ../data/glade/mm_devices_conf.glade.h:12
-msgid "Velocity : "
-msgstr "Velocidad : "
+msgid "Velocity: "
+msgstr "Velocidad: "
 
 #: ../src/ui/MobileDeviceConf.py:64
 msgid "Options"
@@ -264,12 +263,12 @@ msgstr ""
 
 #: ../src/ui/MobilePinDialog.py:135
 msgid "PIN code insertion canceled"
-msgstr "Insercción del código PIN cancelada"
+msgstr "Inserción del código PIN cancelada"
 
 #: ../src/ui/MobilePinDialog.py:148 ../src/ui/MobilePinDialog.py:275
 #: ../src/ui/MobilePinDialog.py:423
 msgid "The PIN code requires between 4 and 8 digits"
-msgstr "El código PIN requiere entre 4 y 8 digitos."
+msgstr "El código PIN requiere entre 4 y 8 dígitos."
 
 #: ../src/ui/MobilePinDialog.py:166 ../src/ui/MobilePinDialog.py:305
 #: ../src/ui/MobilePinDialog.py:446
@@ -282,16 +281,16 @@ msgid ""
 "There is a problem with your mobile device. The application can not "
 "communicate with it"
 msgstr ""
-"Hay un problema con tú dispositivo. La applicación no puede comunicarse con "
-"el."
+"Hay un problema con tu dispositivo. La applicación no puede comunicarse con "
+"él."
 
 #: ../src/ui/MobilePinDialog.py:282
 msgid "The two PIN codes are not equal"
-msgstr "Lo dos codigos PIN no son iguales"
+msgstr "Lo dos códigos PIN no son iguales"
 
 #: ../src/ui/MobilePinDialog.py:295
 msgid "<b>Error changing PIN code</b>"
-msgstr "<b>Error cambiando el codigo PIN</b>"
+msgstr "<b>Error cambiando el código PIN</b>"
 
 #: ../src/ui/MobilePinDialog.py:296
 msgid ""
@@ -331,7 +330,7 @@ msgstr "<b><big>Desactiva el código PIN</big></b> "
 
 #: ../src/ui/MobilePinDialog.py:388
 msgid "Deactivate PIN code"
-msgstr "Deactivate Pin Code"
+msgstr "Desactiva el código PIN"
 
 #: ../src/ui/MobilePinDialog.py:436
 msgid "<b>Wrong insertion of PIN code</b>"
@@ -358,7 +357,7 @@ msgstr "<b>Selección manual de operadora</b>"
 #: ../src/ui/MobileCarrierDialog.py:174
 msgid "The network selection has failed. Try again or select other carrier."
 msgstr ""
-"Ha fallado la selección de operadora. Inténtalo de nuevo o selecciona otra "
+"Ha fallado la selección de operadora. Inténtalo de nuevo o selecciona una "
 "red distinta."
 
 #: ../src/ui/MobilePukDialog.py:140
