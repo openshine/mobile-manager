@@ -69,7 +69,7 @@ msgid "Change PIN code"
 msgstr "Cambia código PIN"
 
 #: ../data/glade/mm_pin_dialog.glade.h:6
-msgid "Confirm PIN code: "
+msgid "Confirm PIN code : "
 msgstr "Confirma el nuevo PIN: "
 
 #: ../data/glade/mm_pin_dialog.glade.h:7
@@ -77,15 +77,15 @@ msgid "Enter PIN code"
 msgstr "Introduce código PIN"
 
 #: ../data/glade/mm_pin_dialog.glade.h:8
-msgid "New PIN code: "
+msgid "New PIN code : "
 msgstr "Nuevo PIN: "
 
 #: ../data/glade/mm_pin_dialog.glade.h:9
-msgid "Old PIN code: "
+msgid "Old PIN code : "
 msgstr "PIN actual:"
 
 #: ../data/glade/mm_pin_dialog.glade.h:10
-msgid "PIN code: "
+msgid "PIN code : "
 msgstr "Código PIN:"
 
 #: ../data/glade/mm_pin_dialog.glade.h:11
@@ -129,8 +129,8 @@ msgid "<b><big>Carrier selection</big></b>"
 msgstr "<b><big>Selección de operadora</big></b>"
 
 #: ../data/glade/mm_carrier_dialog.glade.h:2
-msgid "Carrier list: "
-msgstr "Lista de operadoras: "
+msgid "Carrier list : "
+msgstr "Lista de operadoras:"
 
 #: ../data/glade/mm_carrier_dialog.glade.h:3
 #: ../data/glade/mm_menu_at_options.glade.h:1
@@ -175,7 +175,7 @@ msgid "U_TMS/3G preferred"
 msgstr "U_TMS/3G preferido"
 
 #: ../data/glade/mm_menu_at_options.glade.h:8
-msgid "_Activate PIN..."
+msgid "_Activate PIN ..."
 msgstr "_Activar PIN..."
 
 #: ../data/glade/mm_menu_at_options.glade.h:9
@@ -187,7 +187,7 @@ msgid "_Change PIN..."
 msgstr "_Cambiar PIN..."
 
 #: ../data/glade/mm_menu_at_options.glade.h:11
-msgid "_Deactivate PIN..."
+msgid "_Deactivate PIN ..."
 msgstr "_Desactivar PIN..."
 
 #: ../data/glade/mm_menu_at_options.glade.h:12
@@ -216,12 +216,12 @@ msgstr "<u>No hay ningún dispositivo disponible</u>"
 
 # e ../data/glade/mm_devices_conf.glade.h:4
 #: ../data/glade/mm_devices_conf.glade.h:4
-msgid "Device: "
-msgstr "Dispositivos: "
+msgid "Device :"
+msgstr "Dispositivos:"
 
 #: ../data/glade/mm_devices_conf.glade.h:5
-msgid "Device: "
-msgstr "Dispositivos: "
+msgid "Device : "
+msgstr "Dispositivos:"
 
 #: ../data/glade/mm_devices_conf.glade.h:6
 msgid "Hardware compression"
@@ -236,19 +236,19 @@ msgid "Hardware flow control"
 msgstr "Control de flujo por hardware"
 
 #: ../data/glade/mm_devices_conf.glade.h:9
-msgid "Hardware options: "
-msgstr "Opciones de hardware: "
+msgid "Hardware options :"
+msgstr "Opciones de hardware:"
 
 #: ../data/glade/mm_devices_conf.glade.h:10
-msgid "Modem parameters: "
-msgstr "Parámetros módem: "
+msgid "Modem parameters:"
+msgstr "Parámetros módem:"
 
 #: ../data/glade/mm_devices_conf.glade.h:11
 msgid "Select the device to use when you connect to GRPS/3G network"
 msgstr "Selecciona el dispositivo que quieres usar para conectar a redes GRPS/3G"
 
 #: ../data/glade/mm_devices_conf.glade.h:12
-msgid "Velocity: "
+msgid "Velocity : "
 msgstr "Velocidad: "
 
 #: ../src/ui/MobileDeviceConf.py:64
@@ -259,7 +259,7 @@ msgstr "Opciones"
 msgid ""
 "You have canceled the PIN code insertion, the mobile device will be turn off"
 msgstr ""
-"Ha cancelado la insercción del código PIN, el dispositivo será apagado."
+"Has cancelado la insercción del código PIN, el dispositivo será apagado."
 
 #: ../src/ui/MobilePinDialog.py:135
 msgid "PIN code insertion canceled"
@@ -334,7 +334,7 @@ msgstr "Desactiva el código PIN"
 
 #: ../src/ui/MobilePinDialog.py:436
 msgid "<b>Wrong insertion of PIN code</b>"
-msgstr "<b>Inserción del codigo PIN errónea</b> "
+msgstr "<b>Inserción errónea del código PIN</b> "
 
 #: ../src/ui/MobilePinDialog.py:437
 msgid ""
@@ -357,7 +357,7 @@ msgstr "<b>Selección manual de operadora</b>"
 #: ../src/ui/MobileCarrierDialog.py:174
 msgid "The network selection has failed. Try again or select other carrier."
 msgstr ""
-"Ha fallado la selección de operadora. Inténtalo de nuevo o selecciona una "
+"Ha fallado la selección de operadora. Inténtalo de nuevo o selecciona otra "
 "red distinta."
 
 #: ../src/ui/MobilePukDialog.py:140
