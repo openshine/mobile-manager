@@ -1,3 +1,10 @@
+=== Mobile Manager 0.6 ===
+
+ * Support for HSDPA, HSUPA, HSPA
+ * Fix bug on stop connection
+ * Fix ui ui bug in Ask Pin Dialog
+ * Update translations: es
+
 === Mobile Manager 0.5 ===
 
  * Fix bug in Daemon script
