@@ -104,6 +104,7 @@ class MobileAskPinDialog:
         
 	def run(self):
 		bucle = 0
+		self.dialog.hide()
 		
 		dev_path = self.mcontroller.GetActiveDevice()
 		if dev_path == "" :
@@ -114,10 +115,11 @@ class MobileAskPinDialog:
 		
 		if not dev_info.HasCapability(MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI) :
 			return
-
+		
 		status = dev_auth.PINStatus()
 		
 		if status != MobileManager.PIN_STATUS_WAITING_PIN :
+			self.dialog.hide()
 			return
 
 		
@@ -126,10 +128,8 @@ class MobileAskPinDialog:
 		self.dialog.show()
 		
 		while status ==  MobileManager.PIN_STATUS_WAITING_PIN :
-			
 			response = self.dialog.run()
 			bucle = bucle + 1 
-			
 			if response != gtk.RESPONSE_OK:           
 				dlg = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, _("You have canceled the PIN code insertion, the mobile device will be turn off"))
 				dlg.set_title(_("PIN code insertion canceled"))
@@ -141,9 +141,8 @@ class MobileAskPinDialog:
 				except Exception,msg:
 					print "ERROR apagando tarjeta %s" % msg
 				return
-			
-			pin = self.pin_entry.get_text()
 
+			pin = self.pin_entry.get_text()
 			if not is_valid_pin(pin):
 				self.pin_error_label.set_markup('<b>%s</b>' % _("The PIN code requires between 4 and 8 digits"))                
 				self.error_hbox.show_all()
@@ -153,7 +152,6 @@ class MobileAskPinDialog:
 				res = dev_auth.SendPIN(pin)
 				time.sleep(2)
 				status = dev_auth.PINStatus()
-
 				if status == MobileManager.PIN_STATUS_WAITING_PUK:
 					self.dialog.hide()
 					ask_puk = MobileManager.ui.MobilePukDialog(self.mcontroller)
@@ -162,7 +160,6 @@ class MobileAskPinDialog:
 				if res == True and status != MobileManager.PIN_STATUS_WAITING_PIN:
 					self.dialog.hide()
 					return
-				
 				self.pin_error_label.set_markup('<b>%s.</b>' % _("The PIN code is invalid"))
 				self.pin_entry.set_text("")
 				self.error_hbox.show_all()
@@ -170,7 +167,8 @@ class MobileAskPinDialog:
 				print "Error send pin %s" % msg
 				self.pin_error_label.set_markup('<b>%s</b>' % _("There is a problem with your mobile device. The application can not communicate with it"))
 				self.error_hbox.show_all()
-				return 
+				return
+		self.dialog.hide()
 
 
 class  MobileChangePinDialog:

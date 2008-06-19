@@ -123,8 +123,13 @@ class MobileDeviceHuawei(MobileDevice):
             self.dbg_msg ("SYSCFG (HSPA stuff) : %s" % res)
             if res[2] == 'OK' :
                 tech = int(res[1][0][-1])
-                if tech >= 5 :
+                if tech == 5 :
+                    tech_in_use = CARD_TECH_HSDPA
+                elif tech == 6 :
+                    tech_in_use = CARD_TECH_HSUPA
+                elif tech == 7 :
                     tech_in_use = CARD_TECH_HSPA
+                    
             
         return tech_in_use, card_mode, card_domain, carrier, carrier_mode
 

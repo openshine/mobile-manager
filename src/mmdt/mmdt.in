@@ -259,6 +259,10 @@ class Mmdt :
             rstatus = "UTMS"
         elif status == CARD_TECH_HSPA:
             rstatus = "HSPA"
+        elif status == CARD_TECH_HSDPA:
+            rstatus = "HSDPA"
+        elif status == CARD_TECH_HSUPA:
+            rstatus = "HSUPA"
 
         if rstatus != "" :
             self.active_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
@@ -373,6 +377,10 @@ class Mmdt :
             rstatus = "UTMS"
         elif status == CARD_TECH_HSPA:
             rstatus = "HSPA"
+        elif status == CARD_TECH_HSDPA:
+            rstatus = "HSDPA"
+        elif status == CARD_TECH_HSUPA:
+            rstatus = "HSUPA"
 
         if rstatus != "" :
             self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
