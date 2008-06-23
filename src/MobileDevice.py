@@ -748,49 +748,61 @@ class MobileDevice(gobject.GObject) :
     @pin_status_required (PIN_STATUS_WAITING_PIN)
     def send_pin (self, pin):
         res = self.send_at_command('AT+CPIN="%s"' % pin)
-        self.dbg_msg ("SEND PIN : %s" % res) 
-        if res[2] == 'OK':
-            return True
-        else:
+        self.dbg_msg ("SEND PIN : %s" % res)
+        try:
+            if res[2] == 'OK':
+                return True
+            else:
+                return False
+        except:
+            self.dbg_msg ("SEND PIN (excpt): %s" % res)
             return False
 
     @pin_status_required (PIN_STATUS_READY)
     def set_pin(self, old_pin, new_pin):
         res = self.send_at_command('AT+CPWD="SC", "%s", "%s"'  % (old_pin, new_pin))
-        self.dbg_msg ("SET PIN : %s" % res) 
-        if res[2] == 'OK' :
-            return True
-        else:
+        self.dbg_msg ("SET PIN : %s" % res)
+        try:
+            if res[2] == 'OK' :
+                return True
+            else:
+                return False
+        except:
+            self.dbg_msg ("SET PIN (excpt): %s" % res)
             return False
     
     @pin_status_required (PIN_STATUS_READY)
     def set_pin_active(self, pin, active=True):
-        if active == True:
-            res = self.send_at_command('AT+CLCK="SC",1,"%s"' % pin)
-            self.dbg_msg ("SET PIN ACTIVE TRUE : %s" % res) 
-            if res[2] == 'OK':
-                emit_signal = False
-                if self.cached_status_values["is_pin_active"] != True :
-                    emit_signal = True
-                self.cached_status_values["is_pin_active"] = True
-                if emit_signal == True:
-                    self.mcontroller.emit('active-dev-pin-act-status-changed' , True)
-                return True
+        try:
+            if active == True:
+                res = self.send_at_command('AT+CLCK="SC",1,"%s"' % pin)
+                self.dbg_msg ("SET PIN ACTIVE TRUE : %s" % res) 
+                if res[2] == 'OK':
+                    emit_signal = False
+                    if self.cached_status_values["is_pin_active"] != True :
+                        emit_signal = True
+                    self.cached_status_values["is_pin_active"] = True
+                    if emit_signal == True:
+                        self.mcontroller.emit('active-dev-pin-act-status-changed' , True)
+                    return True
+                else:
+                    return False
             else:
-                return False
-        else:
-            res = self.send_at_command('AT+CLCK="SC",0,"%s"' % pin)
-            self.dbg_msg ("SET PIN ACTIVE FALSE : %s" % res) 
-            if res[2] == 'OK':
-                emit_signal = False
-                if self.cached_status_values["is_pin_active"] != False :
-                    emit_signal = True
-                self.cached_status_values["is_pin_active"] = False
-                if emit_signal == True:
-                    self.mcontroller.emit('active-dev-pin-act-status-changed' , False)
-                return True
-            else:
-                return False
+                res = self.send_at_command('AT+CLCK="SC",0,"%s"' % pin)
+                self.dbg_msg ("SET PIN ACTIVE FALSE : %s" % res) 
+                if res[2] == 'OK':
+                    emit_signal = False
+                    if self.cached_status_values["is_pin_active"] != False :
+                        emit_signal = True
+                    self.cached_status_values["is_pin_active"] = False
+                    if emit_signal == True:
+                        self.mcontroller.emit('active-dev-pin-act-status-changed' , False)
+                    return True
+                else:
+                    return False
+        except:
+            self.dbg_msg ("SET PIN ACTIVE (excpt) : %s" % res)
+            return False
 
     @pin_status_required (PIN_STATUS_READY)
     def is_pin_active(self):
@@ -799,29 +811,36 @@ class MobileDevice(gobject.GObject) :
         
         res = self.send_at_command('AT+CLCK="SC",2', accept_null_response=False)
         self.dbg_msg ("IS PIN ACTIVE : %s" % res)
-        
-        if res[2] == 'OK':
-            pattern = re.compile("\+CLCK:\ +(?P<active>[01])")
-            matched_res = pattern.match(res[1][0])
-            if matched_res != None:
-                if matched_res.group("active") == "1" :
-                    self.cached_status_values["is_pin_active"] = True
-                    return True
+        try:
+            if res[2] == 'OK':
+                pattern = re.compile("\+CLCK:\ +(?P<active>[01])")
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    if matched_res.group("active") == "1" :
+                        self.cached_status_values["is_pin_active"] = True
+                        return True
+                    else:
+                        self.cached_status_values["is_pin_active"] = False
+                        return False
                 else:
-                    self.cached_status_values["is_pin_active"] = False
-                    return False
-            else:
-                print "Response Not Mached !"
-                print "res -> (%s)" % res
-                return None
+                    print "Response Not Mached !"
+                    print "res -> (%s)" % res
+                    return None
+        except:
+            self.dbg_msg ("IS PIN ACTIVE (except): %s" % res)
+            return None
                     
     @pin_status_required (PIN_STATUS_WAITING_PUK)
     def send_puk (self, puk, pin):
         res = self.send_at_command('AT+CPIN="%s", "%s"'  % (puk, pin))
-        self.dbg_msg ("SEND PUK : %s" % res) 
-        if res[2] == 'OK':
-            return True
-        else:
+        self.dbg_msg ("SEND PUK : %s" % res)
+        try:
+            if res[2] == 'OK':
+                return True
+            else:
+                return False
+        except:
+            self.dbg_msg ("SEND PUK (except): %s" % res)
             return False
 
     def pin_status(self):
@@ -857,50 +876,61 @@ class MobileDevice(gobject.GObject) :
     def get_signal(self):
         res = self.send_at_command('AT+CSQ', accept_null_response=False)
         self.dbg_msg ("GET SIGNAL : %s" % res)
-        if res[2] == 'OK':
-            pattern = re.compile('\+CSQ:\ +(?P<signal>\d{1,2})')
-            matched_res = pattern.match(res[1][0])
-            if matched_res != None:
-                return int(matched_res.group("signal"))
+        try:
+            if res[2] == 'OK':
+                pattern = re.compile('\+CSQ:\ +(?P<signal>\d{1,2})')
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    return int(matched_res.group("signal"))
+                else:
+                    return 0
             else:
+                print "Response Not Mached !"
+                print "res -> (%s)" % res
                 return 0
-        else:
-            print "Response Not Mached !"
-            print "res -> (%s)" % res
+        except:
+            self.dbg_msg ("GET SIGNAL (excpt) : %s" % res)
             return 0
         
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error="NO CARRIER")
     def get_carrier(self):
         res = self.send_at_command('AT+COPS?',  accept_null_response=False)
         self.dbg_msg ("GET CARRIER : %s" % res)
-        if res[2] == 'OK':
-            pattern = re.compile('\+COPS:\ +\d*,\d*,"(?P<carrier>.*)"')
-            matched_res = pattern.match(res[1][0])
-            if matched_res != None:
-                return matched_res.group("carrier")
+        try:
+            if res[2] == 'OK':
+                pattern = re.compile('\+COPS:\ +\d*,\d*,"(?P<carrier>.*)"')
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    return matched_res.group("carrier")
+                else:
+                    return "NO CARRIER"
             else:
+                print "Response Not Mached !"
+                print "res -> (%s)" % res
                 return "NO CARRIER"
-        else:
-            print "Response Not Mached !"
-            print "res -> (%s)" % res
+        except:
+            self.dbg_msg ("GET CARRIER (excpt) : %s" % res)
             return "NO CARRIER"
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=-1)
     def get_carrier_selection_mode(self):
         res = self.send_at_command('AT+COPS?',  accept_null_response=False)
         self.dbg_msg ("GET CARRIER SELECTION : %s" % res)
-        if res[2] == 'OK' :
-            pattern = re.compile('\+COPS:\ +(?P<mode>\d*),')
-            matched_res = pattern.match(res[1][0])
-            if matched_res != None:
-                return int(matched_res.group("mode"))
+        try:
+            if res[2] == 'OK' :
+                pattern = re.compile('\+COPS:\ +(?P<mode>\d*),')
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    return int(matched_res.group("mode"))
+                else:
+                    return -1
             else:
-                return -1
-        else:
-            print "Response Not Mached !"
-            print "res -> (%s)" % res
-            return -1  
-
+                print "Response Not Mached !"
+                print "res -> (%s)" % res
+                return -1  
+        except:
+            self.dbg_msg ("GET CARRIER SELECTION (except): %s" % res)
+            return -1
 
     def is_on(self):
         if self.card_is_on != None :
@@ -908,28 +938,35 @@ class MobileDevice(gobject.GObject) :
         
         res = self.send_at_command('AT+CFUN?', accept_null_response=False)
         self.dbg_msg ("IS ON : %s" % res)
-        
-        if res[2] == 'OK' :
-            pattern = re.compile('\+CFUN:\ +(?P<is_on>\d*)')
-            matched_res = pattern.match(res[1][0])
-            if matched_res != None:
-                self.card_is_on =  bool(int(matched_res.group("is_on")))
-                return bool(int(matched_res.group("is_on")))
+
+        try:
+            if res[2] == 'OK' :
+                pattern = re.compile('\+CFUN:\ +(?P<is_on>\d*)')
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    self.card_is_on =  bool(int(matched_res.group("is_on")))
+                    return bool(int(matched_res.group("is_on")))
+                else:
+                    return False
             else:
+                print "Response Not Mached !"
+                print "res -> (%s)" % res
                 return False
-        else:
-            print "Response Not Mached !"
-            print "res -> (%s)" % res
+        except:
+            self.dbg_msg ("IS ON (except): %s" % res)
             return False
-        
 
     def turn_on(self):        
         res = self.send_at_command('AT+CFUN=1')
         self.dbg_msg ("TURN ON : %s" % res)
-        if res[2] == 'OK':
-            self.card_is_on = True
-            return True
-        else:
+        try:
+            if res[2] == 'OK':
+                self.card_is_on = True
+                return True
+            else:
+                return False
+        except:
+            self.dbg_msg ("TURN ON (except): %s" % res)
             return False
         
     def turn_off(self):
@@ -938,33 +975,36 @@ class MobileDevice(gobject.GObject) :
         
         res = self.send_at_command('AT+CFUN=0')
         self.dbg_msg ("TURN OFF : %s" % res)
-        if res[2] == 'OK':
-            self.card_is_on = False
-            card_status = CARD_STATUS_OFF
-            signal_level = 99
-            self.cached_status_values["card_status"] = CARD_STATUS_OFF
-            if self.__is_active_device():
-                self.mcontroller.emit('active-dev-card-status-changed', card_status)
-                self.mcontroller.emit('dev-card-status-changed', self.dev_props["info.udi"], card_status)
-                self.mcontroller.emit('active-dev-signal-status-changed', signal_level)
-                self.mcontroller.emit('dev-signal-status-changed', self.dev_props["info.udi"], signal_level)
+        try:
+            if res[2] == 'OK':
+                self.card_is_on = False
+                card_status = CARD_STATUS_OFF
+                signal_level = 99
+                self.cached_status_values["card_status"] = CARD_STATUS_OFF
+                if self.__is_active_device():
+                    self.mcontroller.emit('active-dev-card-status-changed', card_status)
+                    self.mcontroller.emit('dev-card-status-changed', self.dev_props["info.udi"], card_status)
+                    self.mcontroller.emit('active-dev-signal-status-changed', signal_level)
+                    self.mcontroller.emit('dev-signal-status-changed', self.dev_props["info.udi"], signal_level)
+                else:
+                    self.mcontroller.emit('dev-card-status-changed', self.dev_props["info.udi"], card_status)
+                    self.mcontroller.emit('dev-signal-status-changed', self.dev_props["info.udi"], signal_level)
+
+                self.cached_status_values = { "card_status" : None,
+                                              "tech" : None,
+                                              "mode" : None,
+                                              "domain" : None,
+                                              "signal_level" : None,
+                                              "is_pin_active" : None,
+                                              "is_roaming" : None,
+                                              "carrier_name" : None,
+                                              "carrier_selection_mode" : None}
+                return True
             else:
-                self.mcontroller.emit('dev-card-status-changed', self.dev_props["info.udi"], card_status)
-                self.mcontroller.emit('dev-signal-status-changed', self.dev_props["info.udi"], signal_level)
-
-            self.cached_status_values = { "card_status" : None,
-                                          "tech" : None,
-                                          "mode" : None,
-                                          "domain" : None,
-                                          "signal_level" : None,
-                                          "is_pin_active" : None,
-                                          "is_roaming" : None,
-                                          "carrier_name" : None,
-                                          "carrier_selection_mode" : None}
-            return True
-        else:
+                return False
+        except:
+            self.dbg_msg ("TURN OFF (except) : %s" % res)
             return False
-
 
     def get_net_info(self):
         tech_in_use = None
@@ -976,27 +1016,30 @@ class MobileDevice(gobject.GObject) :
         res = self.send_at_command("AT+COPS?", accept_null_response=False)
         
         self.dbg_msg ("GET TECH MODE DOMAIN : %s" % res)
-        if res[2] == 'OK' :
-            tech_in_use = int(res[1][0][-1])
-            
-            pattern = re.compile('\+COPS:\ +(?P<carrier_selection_mode>\d*),(?P<carrier_format>\d*),"(?P<carrier>.*)"')
-            matched_res = pattern.match(res[1][0])
-            if matched_res != None:
-                if matched_res.group("carrier_format") != "0" :
-                    res = self.send_at_command("AT+COPS=3,0")
-                    self.dbg_msg ("ATCOPS : %s" % res)
-                    if res[2] != "OK" :
-                        self.dbg_msg ("error changing to correct format")
-                    return self.get_net_info()
-                
-                carrier = matched_res.group("carrier")
-                carrier_mode = int(matched_res.group("carrier_selection_mode"))
+        try:
+            if res[2] == 'OK' :
+                tech_in_use = int(res[1][0][-1])
 
-        card_mode, card_domain = self.get_mode_domain()
+                pattern = re.compile('\+COPS:\ +(?P<carrier_selection_mode>\d*),(?P<carrier_format>\d*),"(?P<carrier>.*)"')
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    if matched_res.group("carrier_format") != "0" :
+                        res = self.send_at_command("AT+COPS=3,0")
+                        self.dbg_msg ("ATCOPS : %s" % res)
+                        if res[2] != "OK" :
+                            self.dbg_msg ("error changing to correct format")
+                        return self.get_net_info()
 
-        return tech_in_use, card_mode, card_domain, carrier, carrier_mode
+                    carrier = matched_res.group("carrier")
+                    carrier_mode = int(matched_res.group("carrier_selection_mode"))
+
+            card_mode, card_domain = self.get_mode_domain()
+
+            return tech_in_use, card_mode, card_domain, carrier, carrier_mode
+        except:
+            self.dbg_msg ("GET TECH MODE DOMAIN (except): %s" % res)
+            return tech_in_use, card_mode, card_domain, carrier, carrier_mode
         
-
     def get_mode_domain(self):
         card_mode = None
         card_domain = None
@@ -1010,24 +1053,31 @@ class MobileDevice(gobject.GObject) :
     def get_card_info(self):
         res = self.send_at_command('ATI')
         self.dbg_msg ("GET CARD INFO : %s" % res)
-        if res[2] == 'OK' :
-            return res[1]
-        else:
+        try:
+            if res[2] == 'OK' :
+                return res[1]
+            else:
+                return []
+        except:
+            self.dbg_msg ("GET CARD INFO (except): %s" % res)
             return []
 
     def __get_carrier_list_from_raw(self, raw) :
         print "__get_carrier_list_from_raw in"
-        if raw[2] == 'OK':
-            pattern = re.compile("\+COPS:\ +(?P<list>.*),,(?P<supported_modes>\(.*\)),(?P<supported_formats>\(.*\))")
-            matched_res = pattern.match(raw[1][0])
-            if matched_res != None :
-                exec ('dict = {"carrier_list" : [%s] , "supported_modes" : %s, "supported_formats" : %s}'
-                      % (matched_res.group("list"), matched_res.group("supported_modes"), matched_res.group("supported_formats")))
-                print "__get_carrier_list_from_raw out"
-                return dict
+        try:
+            if raw[2] == 'OK':
+                pattern = re.compile("\+COPS:\ +(?P<list>.*),,(?P<supported_modes>\(.*\)),(?P<supported_formats>\(.*\))")
+                matched_res = pattern.match(raw[1][0])
+                if matched_res != None :
+                    exec ('dict = {"carrier_list" : [%s] , "supported_modes" : %s, "supported_formats" : %s}'
+                          % (matched_res.group("list"), matched_res.group("supported_modes"), matched_res.group("supported_formats")))
+                    print "__get_carrier_list_from_raw out"
+                    return dict
+                else:
+                    return None
             else:
                 return None
-        else:
+        except:
             return None
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=None)
@@ -1041,14 +1091,16 @@ class MobileDevice(gobject.GObject) :
         res2 = self.send_at_command('AT+COPS=3,0')
         self.dbg_msg ("SET CARRIER 2 : %s" % res2)
 
-        if res == None:
-            return False
-        
-        if res[2] != 'OK' :
-            return False
-        else:
-            return True
+        try:
+            if res == None:
+                return False
 
+            if res[2] != 'OK' :
+                return False
+            else:
+                return True
+        except:
+            return False
 
     def get_ussd_cmd_handler(self, fd, condition, at_command, func):
         self.dbg_msg("__get_ussd_cmd_hadler in")
@@ -1087,7 +1139,7 @@ class MobileDevice(gobject.GObject) :
     def get_ussd_cmd(self, ussd_cmd, func):
         res = self.send_at_command(ussd_cmd)
         self.dbg_msg ("GET USSD : %s" % res)
-
+        
         if res[2] == 'OK':
             self.pause_polling_necesary = True
             self.serial.flush()
@@ -1101,73 +1153,90 @@ class MobileDevice(gobject.GObject) :
     def set_carrier_auto_selection(self):
         res = self.send_at_command('AT+COPS=0')
         print res
-        if res[2] == "OK":
-            return True
-        else:
+        try:
+            if res[2] == "OK":
+                return True
+            else:
+                return False
+        except:
             return False
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def is_carrier_auto(self):
         res = self.send_at_command('AT+COPS?',  accept_null_response=False)
         self.dbg_msg ("IS CARRIER AUTO ? : %s" % res)
-
-        if res[2] == 'OK':
-            pattern = re.compile("\+COPS:\ +(?P<mode>\d+)")
-            matched_res = pattern.match(res[1][0])
-            if matched_res != None:
-                if matched_res.group("mode") == "0" :
-                    return True
-                else:
-                    return False
-        return False
+        try:
+            if res[2] == 'OK':
+                pattern = re.compile("\+COPS:\ +(?P<mode>\d+)")
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    if matched_res.group("mode") == "0" :
+                        return True
+                    else:
+                        return False
+            return False
+        except:
+            return False
     
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def is_attached(self):
         res = self.send_at_command('AT+CGREG?', accept_null_response=False)
         self.dbg_msg ("IS ATTACHED ? : %s" % res)
-        if res[2] == 'OK':
-            pattern = re.compile("\+CGREG:.*,(?P<state>\d+)")
-            matched_res = pattern.match(res[1][0])
-            if matched_res != None:
-                if matched_res.group("state") == "1" or  matched_res.group("state") == "5":
-                    return True
+        try:
+            if res[2] == 'OK':
+                pattern = re.compile("\+CGREG:.*,(?P<state>\d+)")
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    if matched_res.group("state") == "1" or  matched_res.group("state") == "5":
+                        return True
+                    else:
+                        return False
                 else:
                     return False
             else:
                 return False
-        else:
+        except:
+            self.dbg_msg ("IS ATTACHED ? (except): %s" % res)
             return False
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=0)
     def get_attach_state(self):
         res = self.send_at_command('AT+CGREG?', accept_null_response=False)
         self.dbg_msg ("GET ATTACH STATE : %s" % res)
-        if res[2] == 'OK':
-            pattern = re.compile("\+CGREG:.*,(?P<state>\d+)")
-            matched_res = pattern.match(res[1][0])
-            if matched_res != None:
-                if matched_res.group("state") == "1" or  matched_res.group("state") == "5":
-                    return int(matched_res.group("state"))
+        try:
+            if res[2] == 'OK':
+                pattern = re.compile("\+CGREG:.*,(?P<state>\d+)")
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    if matched_res.group("state") == "1" or  matched_res.group("state") == "5":
+                        return int(matched_res.group("state"))
+                else:
+                    return 0
             else:
                 return 0
-        else:
+        except:
+            self.dbg_msg ("GET ATTACH STATE (except): %s" % res)
             return 0
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def is_roaming(self):
         res = self.send_at_command('AT+CGREG?',  accept_null_response=False)
         self.dbg_msg ("IS ROAMING ? : %s" % res)
-        if res[2] == 'OK':
-            pattern = re.compile("\+CGREG:.*,(?P<state>\d+)")
-            matched_res = pattern.match(res[1][0])
-            if matched_res != None:
-                if matched_res.group("state") == "5" :
-                    return True
+        try:
+            if res[2] == 'OK':
+                pattern = re.compile("\+CGREG:.*,(?P<state>\d+)")
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    if matched_res.group("state") == "5" :
+                        return True
+                    else:
+                        return False
                 else:
                     return False
             else:
                 return False
-        else:
+        except:
+            self.dbg_msg ("IS ROAMING ? (excepet): %s" % res)
             return False
     
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=None)

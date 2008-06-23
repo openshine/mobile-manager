@@ -1,3 +1,9 @@
+2008-06-23  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDevice.py: Add try patch
+	* src/devices/MobileDeviceHuawei.py: Fix bug HS*PA
+	
+
 2008-06-19  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/ui/MobilePinDialog.py (MobileAskPinDialog.run): UI bug fixed. Don't show ask dialog if pin is ready

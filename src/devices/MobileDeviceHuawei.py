@@ -29,7 +29,7 @@ from MobileDevice import MobileDevice, AT_COMM_CAPABILITY, X_ZONE_CAPABILITY
 from MobileStatus import CARD_TECH_SELECTION_GPRS, CARD_TECH_SELECTION_UMTS
 from MobileStatus import CARD_TECH_SELECTION_GRPS_PREFERED, CARD_TECH_SELECTION_UMTS_PREFERED
 from MobileStatus import CARD_TECH_SELECTION_AUTO , CARD_DOMAIN_CS, CARD_DOMAIN_PS, CARD_DOMAIN_CS_PS
-from MobileStatus import CARD_DOMAIN_ANY, CARD_TECH_UMTS, CARD_TECH_HSPA
+from MobileStatus import CARD_DOMAIN_ANY, CARD_TECH_UMTS, CARD_TECH_HSPA, CARD_TECH_HSDPA, CARD_TECH_HSUPA
 
 class MobileDeviceHuawei(MobileDevice):
     def __init__(self, mcontroller, dev_props):
