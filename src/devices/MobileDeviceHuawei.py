@@ -226,32 +226,9 @@ class MobileDeviceHuawei(MobileDevice):
         return ret
         
     def actions_on_open_port(self):
-        self.dbg_msg ("ACTIONS ON OPEN PORT INIT --------")
-
-        if self.get_using_data_device() == False :
-            io = MobileDeviceIO(self.get_property("data-device"))
-            io.open()
-
-            io.write("ATZ\r")
-            self.dbg_msg ("Send to DATA PORT : ATZ")
-            attempts = 5
-            res = io.readline()
-            while attempts != 0 :
-                self.dbg_msg ("Recv from DATA PORT : %s" % res)
-
-                if res == "OK" :
-                    break
-                elif res == None :
-                    attempts = attempts - 1
-
-                res = io.readline()
-
-            if res != "OK" :
-                self.dbg_msg ("ACTIONS ON OPEN PORT END FAILED--------")
-                io.close()
-                return False
-
-            io.close()
+        ret = MobileDevice.actions_on_open_port(self)
+        if ret == False :
+            return False
         
         self.serial.write("ATZ\r")
         self.dbg_msg ("Send : ATZ")

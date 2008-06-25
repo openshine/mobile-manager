@@ -724,6 +724,56 @@ class MobileDevice(gobject.GObject) :
         return result
 
     def actions_on_open_port(self):
+        if MobileManager.AT_COMM_CAPABILITY not in self.capabilities :
+            return True
+        
+        self.dbg_msg ("ACTIONS ON OPEN PORT INIT --------")    
+
+        if self.get_using_data_device() == False :
+            io = MobileDeviceIO(self.get_property("data-device"))
+            io.open()
+
+            io.write("ATZ\r")
+            self.dbg_msg ("Send to DATA PORT : ATZ")
+            attempts = 2
+            res = io.readline()
+            while attempts != 0 :
+                self.dbg_msg ("Recv from DATA PORT : %s" % res)
+
+                if res == "OK" :
+                    break
+                elif res == None :
+                    attempts = attempts - 1
+
+                res = io.readline()
+
+            if res != "OK" :
+                io.close()
+                
+                io = MobileDeviceIO(self.get_property("data-device"))
+                io.open()
+
+                io.write("ATZ\r")
+                self.dbg_msg ("Send to DATA PORT (2nd): ATZ")
+                attempts = 2
+                res = io.readline()
+                while attempts != 0 :
+                    self.dbg_msg ("Recv from DATA PORT (2nd) : %s" % res)
+
+                    if res == "OK" :
+                        break
+                    elif res == None :
+                        attempts = attempts - 1
+
+                res = io.readline()
+                io.close()
+                
+                self.dbg_msg ("ACTIONS ON OPEN PORT END FAILED--------")
+                
+                return False
+
+            io.close()
+        
         return True
 
     def __at_async_handler(self, fd, condition, at_command, get_info_from_raw, func):
