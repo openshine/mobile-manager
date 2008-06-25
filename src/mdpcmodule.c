@@ -53,7 +53,7 @@ py_open_port(PyObject* self, PyObject* args) {
 		printf("Can't change port options");
 		return Py_BuildValue("i", -1);;
 	}
-	usleep(200000);
+	usleep(600000);
 	
 	return Py_BuildValue("i", fd);
 } 
@@ -148,7 +148,8 @@ static PyObject*
 py_close_port(PyObject* self, PyObject* args){
 	int fd;
 
-	PyArg_ParseTuple(args, "i", &fd);	
+	PyArg_ParseTuple(args, "i", &fd);
+	usleep(200000);
 
 	return Py_BuildValue("i", close(fd));
 }

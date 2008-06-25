@@ -1,3 +1,13 @@
+2008-06-25  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDevice.py : Changes in reopen device stuff 
+	* src/MobileDialWvdial.py: Changes in reopen device stuff and monitors
+	* src/devices/MobileDeviceHuawei.py (MobileDeviceHuawei.actions_on_open_port): New commands
+
+2008-06-24  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDialWvdial.py (MobileDialWvdial.__pppd_options): Use replacedefaultroute in ubuntu/debian
+
 2008-06-23  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileDevice.py: Add try patch

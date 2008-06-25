@@ -62,9 +62,9 @@ class MobileDialWvdial(MobileDial):
         wvdial_conf = wvdial_conf + "ISDN = 0\n"
         wvdial_conf = wvdial_conf + "Dial Attempts = 3\n"
         wvdial_conf = wvdial_conf + "Init1 = ATZ\n"
-        wvdial_conf = wvdial_conf + "Init2 = ATQ0 V1 E1 S0=0 &C1 &D2 +FCLASS=0\n"
+        #wvdial_conf = wvdial_conf + "Init2 = ATQ0 V1 E1 S0=0 &C1 &D2 +FCLASS=0\n"
         
-        init5 = 'Init3 = AT+CGDCONT=1,"IP","%s","0.0.0.0",0,0;\n' % apn
+        init5 = 'Init2 = AT+CGDCONT=1,"IP","%s","0.0.0.0",0,0;\n' % apn
         wvdial_conf = wvdial_conf + init5
         
         active_device = self.mcontroller.get_active_device()
@@ -112,7 +112,11 @@ class MobileDialWvdial(MobileDial):
         print >>out,"debug"
         print >>out,"noauth"
         print >>out,"name wvdial"
-        print >>out,"replacedefaultroute"
+        if os.path.exists("/etc/debian_version") :
+            print >>out,"replacedefaultroute"
+        else:
+            os.system("/sbin/route del default")
+            print >>out,"defaultroute"
         print >>out,"nomagic"
         print >>out,"ipcp-accept-local"
         print >>out,"ipcp-accept-remote"
@@ -166,6 +170,9 @@ class MobileDialWvdial(MobileDial):
     def __start_wvdial(self):
         print "Starting Wvdial"
         self.emit('connecting')
+        active_device = self.mcontroller.get_active_device()
+        active_device.set_using_data_device(True)
+        
         self.status_flag = PPP_STATUS_CONNECTING
         
         cmd = "/usr/bin/wvdial -C %s" % self.wvdial_conf_file
@@ -182,7 +189,6 @@ class MobileDialWvdial(MobileDial):
         else:
             print  "Wvdial monitor : Wvdial killed"
             self.wvdial_p = None
-            self.emit('disconnected')
             self.wvdial_p = None
             self.wvdial_pid = None
             self.pppd_pid = None
@@ -195,20 +201,29 @@ class MobileDialWvdial(MobileDial):
             if active_device != None :
                 if MobileManager.AT_COMM_CAPABILITY in active_device.capabilities :
                     #Some devices need reopen port when wdial is killed
+                    active_device = self.mcontroller.get_active_device()
+                    active_device.set_using_data_device(False)
                     active_device.serial.reopen()
-                    active_device.actions_on_reopen_port()
                     active_device.start_polling()
-            
+
+            print "emit disconnected"
+            self.emit('disconnected')
             return False
         
     def __pppd_monitor(self):
         if self.wvdial_p == None:
-            print "pppd monitor : Wvdial is not working"
+            print "pppd monitor stopped, not wvdial running"
+            return False
+        elif self.wvdial_p.poll() != None:
+            print "pppd monitor stopped, not wvdial running"
             return False
         
         if self.pppd_pid == None :
             if self.wvdial_pid == None :
-                self.wvdial_pid = self.__get_real_wvdial_pid()
+                if os.path.exists("/etc/debian_version") :
+                    self.wvdial_pid = self.__get_real_wvdial_pid()
+                else:
+                    self.wvdial_pid = self.wvdial_p.pid
                 print "--------> WVDIAL PID %s" % self.wvdial_pid
                 if self.wvdial_pid == None :
                     return True
@@ -254,7 +269,7 @@ class MobileDialWvdial(MobileDial):
         if self.dns_data == None :
             return
         
-        os.system("echo ';Mobile manager dns data' > /etc/resolv.conf")
+        #os.system("echo ';Mobile manager dns data' > /etc/resolv.conf")
         if self.dns_data[2] != "" :
             os.system("echo 'search %s' >> /etc/resolv.conf" % self.dns_data[2])
 
@@ -276,6 +291,13 @@ class MobileDialWvdial(MobileDial):
             return int(rb) , int(tb)           
 
     def __stats_monitor(self):
+        if self.wvdial_p == None:
+            print "stats monitor stopped, not wvdial running"
+            return False
+        elif self.wvdial_p.poll() != None:
+            print "stats monitor stopped, not wvdial running"
+            return False
+        
         if self.ppp_if == None :
             return False
         
@@ -297,6 +319,9 @@ class MobileDialWvdial(MobileDial):
 
         if self.wvdial_p == None:
             return
+        elif self.wvdial_p.poll() != None:
+            return
+            
         
         if self.wvdial_pid != None :
             active_device = self.mcontroller.get_active_device()
@@ -305,6 +330,7 @@ class MobileDialWvdial(MobileDial):
                     active_device.stop_polling()
              
             print "emit disconnecting"
-            os.kill(int(self.wvdial_pid), 1)
+            print "kill -15 %s" % self.wvdial_pid
+            os.kill(int(self.wvdial_pid), 15)
             self.emit('disconnecting')
             self.status_flag = PPP_STATUS_DISCONNECTING

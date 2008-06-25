@@ -30,6 +30,7 @@ from MobileStatus import CARD_TECH_SELECTION_GPRS, CARD_TECH_SELECTION_UMTS
 from MobileStatus import CARD_TECH_SELECTION_GRPS_PREFERED, CARD_TECH_SELECTION_UMTS_PREFERED
 from MobileStatus import CARD_TECH_SELECTION_AUTO , CARD_DOMAIN_CS, CARD_DOMAIN_PS, CARD_DOMAIN_CS_PS
 from MobileStatus import CARD_DOMAIN_ANY, CARD_TECH_UMTS, CARD_TECH_HSPA, CARD_TECH_HSDPA, CARD_TECH_HSUPA
+from MobileManager import MobileDeviceIO
 
 class MobileDeviceHuawei(MobileDevice):
     def __init__(self, mcontroller, dev_props):
@@ -94,16 +95,17 @@ class MobileDeviceHuawei(MobileDevice):
         else:
             return False
 
-    def open_device(self):
-        MobileDevice.open_device(self)
+    ## def open_device(self):
+    ##     MobileDevice.open_device(self)
         
-        res = self.send_at_command("AT^PORTSEL=1",  attempt=2)
-        if res[2] != "OK" :
-            print "error opening huawei device"
+    ##     res = self.send_at_command("AT^PORTSEL=1",  attempt=2)
+    ##     if res[2] != "OK" :
+    ##         print "error opening huawei device"
 
-        res = self.send_at_command("AT+COPS=3,0",  attempt=2)
-        if res[2] != "OK" :
-            print "error opening huawei device"
+    ##     res = self.send_at_command("AT+COPS=3,0",  attempt=2)
+    ##     if res[2] != "OK" :
+    ##         print "error opening huawei device"
+
 
     def is_device_supported(self):
         if self.dev_props.has_key("info.bus"):
@@ -214,27 +216,100 @@ class MobileDeviceHuawei(MobileDevice):
         
 
     def turn_off(self):
-        self.actions_on_reopen_port()
+        self.actions_on_open_port()
         return MobileDevice.turn_off(self)
 
     def turn_on(self):
         ret = MobileDevice.turn_on(self)
-        
-        self.actions_on_reopen_port()
+        self.actions_on_open_port()
         
         return ret
         
-    def actions_on_reopen_port(self):
-        
-        res = self.send_at_command("AT^PORTSEL=1", attempt=2)
-        self.dbg_msg ("PORTSEL : %s" % res)
-        if res[2] != "OK" :
-            print "error opening huawei device"
+    def actions_on_open_port(self):
+        self.dbg_msg ("ACTIONS ON OPEN PORT INIT --------")
 
-        res = self.send_at_command("AT+COPS=3,0", attempt=2)
-        self.dbg_msg ("ATCOPS : %s" % res)
-        if res[2] != "OK" :
-            print "error opening huawei device"
+        if self.get_using_data_device() == False :
+            io = MobileDeviceIO(self.get_property("data-device"))
+            io.open()
+
+            io.write("ATZ\r")
+            self.dbg_msg ("Send to DATA PORT : ATZ")
+            attempts = 5
+            res = io.readline()
+            while attempts != 0 :
+                self.dbg_msg ("Recv from DATA PORT : %s" % res)
+
+                if res == "OK" :
+                    break
+                elif res == None :
+                    attempts = attempts - 1
+
+                res = io.readline()
+
+            if res != "OK" :
+                self.dbg_msg ("ACTIONS ON OPEN PORT END FAILED--------")
+                io.close()
+                return False
+
+            io.close()
+        
+        self.serial.write("ATZ\r")
+        self.dbg_msg ("Send : ATZ")
+        attempts = 5
+        res = self.serial.readline()
+        while attempts != 0 :
+            self.dbg_msg ("Recv : %s" % res)
+            
+            if res == "OK" :
+                break
+            elif res == None :
+                attempts = attempts - 1
+
+            res = self.serial.readline()
+
+        if res != "OK" :
+            self.dbg_msg ("ACTIONS ON OPEN PORT END FAILED--------")
+            return False
+        
+        self.serial.write("AT^PORTSEL=1\r")
+        self.dbg_msg ("Send : AT^PORTSEL=1")
+        attempts = 5
+        res = self.serial.readline()
+        while attempts != 0 :
+            self.dbg_msg ("Recv : %s" % res)
+            
+            if res == "OK" :
+                break
+            elif res == None :
+                attempts = attempts - 1
+
+            res = self.serial.readline()
+        
+        if res != "OK" :
+            self.dbg_msg ("ACTIONS ON OPEN PORT END FAILED--------")
+            return False
+
+        self.serial.write("AT+COPS=3,0\r")
+        self.dbg_msg ("Send : AT+COPS=3,0")
+        
+        attempts = 5
+        res = self.serial.readline()
+        while attempts != 0 :
+            self.dbg_msg ("Recv : %s" % res)
+            if res == "OK" or res == "ERROR":
+                break
+            elif res == None :
+                attempts = attempts - 1
+
+            res = self.serial.readline()
+            
+        if res == None  :
+            self.dbg_msg ("ACTIONS ON OPEN PORT END FAILED--------")
+            return False
+
+        self.dbg_msg ("ACTIONS ON OPEN PORT END --------")
+        return True
+        
 
     def get_ussd_cmd_handler(self, fd, at_command, condition, func):
         ret = MobileDevice.get_ussd_cmd_handler(self, fd, at_command, condition, func)

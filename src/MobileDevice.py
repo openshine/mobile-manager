@@ -29,25 +29,38 @@ from MobileStatus import *
 from MobileCapabilities import *
 from MobileManagerDbus import MobileManagerDbusDevice
 import MobileManager
+import time
 
 
 class MobileDeviceIO():
-    def __init__(self, path, attempts=1, timeout=2):
+    def __init__(self, path, actions=None, attempts=1, timeout=2):
         self.path = path
-        self.fd = MobileManager.mdpc.open(path)
+        self.fd = None
         self.attempts = attempts
         self.timeout = timeout
+        self.actions = actions
+
+    def open(self):
+        self.fd = MobileManager.mdpc.open(self.path)
+        print ("Open fd : %s" % self.fd)
+        self.flush()
+        if self.actions != None:
+            self.actions()
 
     def close(self):
         if self.fd != None :
-            MobileManager.mdpc.close(self.fd)
+            print ("Close fd : %s" % MobileManager.mdpc.close(self.fd))
             self.fd = None
 
     def reopen(self):
         self.flush()
         self.close()
         self.fd = MobileManager.mdpc.open(self.path)
+        print ("Open fd : %s" % self.fd)
         self.flush()
+
+        if self.actions != None:
+            self.actions()
         
     def readline(self):
         attempts = 0
@@ -55,7 +68,7 @@ class MobileDeviceIO():
             string = MobileManager.mdpc.read_string(self.fd, self.timeout)
             if string != None:
                 return string
-            print "Attempts %s" % attempts
+            #print "Attempts %s" % attempts
             attempts = attempts + 1
         return None
             
@@ -149,6 +162,7 @@ class MobileDevice(gobject.GObject) :
         self.device_icon = ''
         self.priority = "0"
 
+        self.using_data_device=False
 
         path_device_conf = os.path.join("/etc", "MobileManager/", "Devices/")
         os.system ("mkdir -p %s" % path_device_conf)
@@ -622,9 +636,10 @@ class MobileDevice(gobject.GObject) :
     def open_device(self):
         if AT_COMM_CAPABILITY in self.capabilities :
             conf_port = self.get_property("conf-device")
-            self.serial = MobileDeviceIO(conf_port)
+            self.serial = MobileDeviceIO(conf_port, self.actions_on_open_port)
+            self.serial.open()
             
-            self.status_polling_timeout_id = gobject.timeout_add(3000, self.status_polling)
+            self.status_polling_timeout_id = gobject.timeout_add(5000, self.status_polling)
         
     def close_device(self):
         if AT_COMM_CAPABILITY in self.capabilities :
@@ -674,7 +689,6 @@ class MobileDevice(gobject.GObject) :
                 else:
                     print "reopening and resending command %s" % str
                     self.serial.reopen()
-                    self.actions_on_reopen_port()
                     if  accept_null_response == False:
                         return self.send_at_command(str, attempt - 1, accept_null_response=False)
                     else:
@@ -688,7 +702,6 @@ class MobileDevice(gobject.GObject) :
                     return result
                 print "Reopening and resending , the response is ok but there isn't echo (%s, attempt=%s)" % (result, attempt)
                 self.serial.reopen()
-                self.actions_on_reopen_port()
                 return self.send_at_command(str, attempt - 1, accept_null_response=False)
         else:
             if len(result[1]) == 0 and result[0] == "OK" :            
@@ -703,7 +716,6 @@ class MobileDevice(gobject.GObject) :
                 return result
             print "Reopening and resending , wrong echo command field  (%s, attempt=%s)" % (result, attempt)
             self.serial.reopen()
-            self.actions_on_reopen_port()
             if  accept_null_response == False:
                 return self.send_at_command(str, attempt - 1, accept_null_response=False)
             else:
@@ -711,8 +723,8 @@ class MobileDevice(gobject.GObject) :
         
         return result
 
-    def actions_on_reopen_port(self):
-        pass
+    def actions_on_open_port(self):
+        return True
 
     def __at_async_handler(self, fd, condition, at_command, get_info_from_raw, func):
         print "__at_async_handler in"
@@ -1338,6 +1350,13 @@ class MobileDevice(gobject.GObject) :
     def stop_polling(self):
         print "stop polling"
         self.pause_polling_necesary = True
+
+    def set_using_data_device(self, value):
+        self.using_data_device=value
+
+    def get_using_data_device(self):
+        return self.using_data_device
+    
 
 gobject.type_register(MobileDevice)
  
