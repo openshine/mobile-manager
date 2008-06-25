@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-22 12:57+0200\n"
+"POT-Creation-Date: 2008-06-25 17:09+0200\n"
 "PO-Revision-Date: 2008-06-02 10:31+0200\n"
 "Last-Translator: Roberto Majadas <telemaco@openshine.com>\n"
 "Language-Team: spanish <telemaco@openshine.com>\n"
@@ -54,7 +54,7 @@ msgstr "<b><big>Activar código PIN</big></b>"
 
 #: ../data/glade/mm_pin_dialog.glade.h:2
 msgid "<b><big>Change PIN code</big></b>"
-msgstr "<b><big>Cambia el código PIN</big></b>"
+msgstr "<b><big>Cambiar código PIN</big></b>"
 
 #: ../data/glade/mm_pin_dialog.glade.h:3
 msgid "<b><big>Enter PIN code</big></b>"
@@ -66,7 +66,7 @@ msgstr "Activar código PIN"
 
 #: ../data/glade/mm_pin_dialog.glade.h:5
 msgid "Change PIN code"
-msgstr "Cambia código PIN"
+msgstr "Cambiar código PIN"
 
 #: ../data/glade/mm_pin_dialog.glade.h:6
 msgid "Confirm PIN code : "
@@ -74,7 +74,7 @@ msgstr "Confirma el nuevo PIN: "
 
 #: ../data/glade/mm_pin_dialog.glade.h:7
 msgid "Enter PIN code"
-msgstr "Introduce código PIN"
+msgstr "Introduce iel código PIN"
 
 #: ../data/glade/mm_pin_dialog.glade.h:8
 msgid "New PIN code : "
@@ -326,11 +326,11 @@ msgstr ""
 
 #: ../src/ui/MobilePinDialog.py:385
 msgid "<b><big>Deactivate PIN code</big></b>"
-msgstr "<b><big>Desactiva el código PIN</big></b> "
+msgstr "<b><big>Desactivar código PIN</big></b> "
 
 #: ../src/ui/MobilePinDialog.py:386
 msgid "Deactivate PIN code"
-msgstr "Desactiva el código PIN"
+msgstr "Desactivar código PIN"
 
 #: ../src/ui/MobilePinDialog.py:434
 msgid "<b>Wrong insertion of PIN code</b>"

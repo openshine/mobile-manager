@@ -1,3 +1,7 @@
+2008-06-25  Cesar Garcia <tapia@openshine.com>
+
+	* po/es.po: Bug #716
+
 2008-06-25  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileDevice.py : Changes in reopen device stuff 
