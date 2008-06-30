@@ -4,6 +4,7 @@
 
 2008-06-30  Roberto Majadas  <telemaco@openshine.com>
 
+	* src/MobileDialWvdial.py (MobileDialWvdial.__set_dns_info): Fix dns resolv.conf bug
 	* src/devices/MobileDeviceHuawei.py: Fix bug +CME ERROR
 	* src/devices/MobileDeviceSierra.py: Experimental support for sierra devices
 	* src/devices/MobileDeviceNovatel.py: Experimental support for novatel devices

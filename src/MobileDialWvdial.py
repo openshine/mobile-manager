@@ -269,7 +269,7 @@ class MobileDialWvdial(MobileDial):
         if self.dns_data == None :
             return
         
-        #os.system("echo ';Mobile manager dns data' > /etc/resolv.conf")
+        os.system("echo ';Mobile manager dns data' > /etc/resolv.conf")
         if self.dns_data[2] != "" :
             os.system("echo 'search %s' >> /etc/resolv.conf" % self.dns_data[2])
 
