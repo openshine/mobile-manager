@@ -133,7 +133,8 @@ class MobileAskPinDialog:
 			bucle = bucle + 1 
 			if response != gtk.RESPONSE_OK:           
 				dlg = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, _("You have canceled the PIN code insertion, the mobile device will be turn off"))
-				dlg.set_icon ("gtk-dialog-authentication")
+				icon = dlg.render_icon(gtk.STOCK_DIALOG_AUTHENTICATION, gtk.ICON_SIZE_MENU)
+				dlg.set_icon(icon)
 				dlg.set_title(_("PIN code insertion canceled"))
 				dlg.run()
 				dlg.destroy()
