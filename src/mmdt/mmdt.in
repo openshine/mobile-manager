@@ -271,9 +271,22 @@ class Mmdt :
             
         
     def ActiveDevModeStatusChanged_cb(self, status):
+        rstatus = "??"
+        
+        if status == CARD_TECH_SELECTION_GPRS :
+            rstatus = "GPRS_ONLY"
+        elif status == CARD_TECH_SELECTION_UMTS :
+            rstatus = "UMTS ONLY"
+        elif status == CARD_TECH_SELECTION_GRPS_PREFERED :
+            rstatus = "GPRS_PREFERED"
+        elif status == CARD_TECH_SELECTION_UMTS_PREFERED :
+            rstatus = "UMTS_PREFERED"
+        elif status == CARD_TECH_SELECTION_AUTO :
+            rstatus = "AUTO"
+        
         self.active_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
                                         "<b>Mode Status Changed</b>",
-                                        status])
+                                        rstatus])
         
     def ActiveDevDomainStatusChanged_cb(self, status):
         rstatus = ""
@@ -387,10 +400,23 @@ class Mmdt :
                                           "<b>Tech Status Changed</b>",
                                           device, rstatus])
         
-    def DevModeStatusChanged_cb(self, device, status):        
+    def DevModeStatusChanged_cb(self, device, status):
+        rstatus = "??"
+        
+        if status == CARD_TECH_SELECTION_GPRS :
+            rstatus = "GPRS_ONLY"
+        elif status == CARD_TECH_SELECTION_UMTS :
+            rstatus = "UMTS ONLY"
+        elif status == CARD_TECH_SELECTION_GRPS_PREFERED :
+            rstatus = "GPRS_PREFERED"
+        elif status == CARD_TECH_SELECTION_UMTS_PREFERED :
+            rstatus = "UMTS_PREFERED"
+        elif status == CARD_TECH_SELECTION_AUTO :
+            rstatus = "AUTO"
+            
         self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
                                       "<b>Mode Status Changed</b>",
-                                      device, status])
+                                      device, rstatus])
         
     def DevDomainStatusChanged_cb(self, device, status):
         rstatus = ""

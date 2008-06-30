@@ -273,7 +273,7 @@ class MobileDeviceHuawei(MobileDevice):
         res = self.serial.readline()
         while attempts != 0 :
             self.dbg_msg ("Recv : %s" % res)
-            if res == "OK" or res == "ERROR":
+            if res == "OK" or res == "ERROR" or "ERROR" in res:
                 break
             elif res == None :
                 attempts = attempts - 1

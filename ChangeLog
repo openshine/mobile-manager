@@ -1,3 +1,10 @@
+2008-06-30  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/devices/MobileDeviceHuawei.py: Fix bug +CME ERROR
+	* src/devices/MobileDeviceSierra.py: Experimental support for sierra devices
+	* src/devices/MobileDeviceNovatel.py: Experimental support for novatel devices
+	* src/MobileDevice.py: Add "try" to poll
+
 2008-06-25  Cesar Garcia <tapia@openshine.com>
 
 	* po/es.po: Bug #716

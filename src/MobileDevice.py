@@ -373,14 +373,14 @@ class MobileDevice(gobject.GObject) :
             return _f
         return wrap
 
-    def status_polling(self):
+    def __real_status_polling(self):
         
         self.dbg_msg ("----------------------> INIT poll round %s" % self.poll_round)
-       
+
         if self.pause_polling_necesary == True :
             self.dbg_msg ("Pause Polling") 
             return True
-        
+
         card_status = None
         tech = None
         mode = None
@@ -435,7 +435,7 @@ class MobileDevice(gobject.GObject) :
                     self.mcontroller.emit('dev-tech-status-changed', self.dev_props["info.udi"], tech)
                 else:
                     self.mcontroller.emit('dev-tech-status-changed', self.dev_props["info.udi"], tech)
-                    
+
             if self.cached_status_values["mode"] != mode :
                 if mode != None:
                     self.cached_status_values["mode"] = mode
@@ -444,7 +444,7 @@ class MobileDevice(gobject.GObject) :
                         self.mcontroller.emit('dev-mode-status-changed', self.dev_props["info.udi"], mode)
                     else:
                         self.mcontroller.emit('dev-mode-status-changed', self.dev_props["info.udi"], mode)
-                    
+
             if self.cached_status_values["domain"] != domain :
                 self.cached_status_values["domain"] = domain
                 if self.__is_active_device():
@@ -468,7 +468,7 @@ class MobileDevice(gobject.GObject) :
                     self.mcontroller.emit('dev-carrier-changed', self.dev_props["info.udi"], carrier_name)
                 else:
                     self.mcontroller.emit('dev-carrier-changed', self.dev_props["info.udi"], carrier_name)
-                    
+
             if self.cached_status_values["carrier_selection_mode"] != carrier_selection_mode :
                 self.cached_status_values["carrier_selection_mode"] = carrier_selection_mode
                 if self.__is_active_device():
@@ -480,6 +480,14 @@ class MobileDevice(gobject.GObject) :
         self.dbg_msg ("----------------------> END poll round %s" % self.poll_round)
         self.poll_round = self.poll_round + 1
         return True
+        
+    def status_polling(self):
+        try:
+            return self.__real_status_polling()
+        except:
+            self.dbg_msg ("----------------------> END poll round %s (poll exception) " % self.poll_round)
+            self.poll_round = self.poll_round + 1
+            return True
 
     def emit_status_signals(self):
         if not MobileManager.AT_COMM_CAPABILITY in self.capabilities :
@@ -733,8 +741,8 @@ class MobileDevice(gobject.GObject) :
             io = MobileDeviceIO(self.get_property("data-device"))
             io.open()
 
-            io.write("ATZ\r")
-            self.dbg_msg ("Send to DATA PORT : ATZ")
+            io.write("AT\r")
+            self.dbg_msg ("Send to DATA PORT : AT")
             attempts = 2
             res = io.readline()
             while attempts != 0 :
@@ -753,24 +761,29 @@ class MobileDevice(gobject.GObject) :
                 io = MobileDeviceIO(self.get_property("data-device"))
                 io.open()
 
-                io.write("ATZ\r")
-                self.dbg_msg ("Send to DATA PORT (2nd): ATZ")
+                io.write("AT\r")
+                self.dbg_msg ("Send to DATA PORT (2nd): AT")
                 attempts = 2
+                attempts_msg = 2
+                
                 res = io.readline()
-                while attempts != 0 :
+                while attempts != 0 and attempts_msg != 0 :
                     self.dbg_msg ("Recv from DATA PORT (2nd) : %s" % res)
 
                     if res == "OK" :
                         break
+                    elif res !="OK" and res != None:
+                        attempts_msg = attempts_msg - 1
                     elif res == None :
                         attempts = attempts - 1
 
                 res = io.readline()
                 io.close()
-                
-                self.dbg_msg ("ACTIONS ON OPEN PORT END FAILED--------")
-                
-                return False
+                if res == None :
+                    self.dbg_msg ("ACTIONS ON OPEN PORT END FAILED--------")
+                    return False
+                else:
+                    return True
 
             io.close()
         
@@ -1167,6 +1180,8 @@ class MobileDevice(gobject.GObject) :
     def get_ussd_cmd_handler(self, fd, condition, at_command, func):
         self.dbg_msg("__get_ussd_cmd_hadler in")
         tt_res = [at_command]
+
+        attempts = 2
         
         while True :
             res = self.serial.readline()
@@ -1174,8 +1189,11 @@ class MobileDevice(gobject.GObject) :
             gobject.main_context_default ().iteration()
 
             if res == None :
-                self.serial.flush()
-                print "ussd (reopening)\n"
+                if attempts == 0 :
+                    tt_res.append("No service available")
+                    tt_res.append("OK")
+                    break
+                attempts = attempts - 1
                 continue
             
             if len(res.strip("\r\n")) > 0:
