@@ -1,3 +1,8 @@
+2008-06-30  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/devices/MobileDeviceSierra.py (MobileDeviceSierra.init_device): Fix detection bug
+	* src/devices/MobileDeviceNovatel.py (MobileDeviceNovatel.init_device): Fix detection bug
+
 2008-06-30  Cesar Garcia <tapia@openshine.com>
 
 	* src/ui/MobilePinDialog.py: Bug #710

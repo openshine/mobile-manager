@@ -65,14 +65,13 @@ class MobileDeviceSierra(MobileDevice):
             except:
                 return False
 
-            device_tmp = self.dev_props["info.udi"]
+            device_tmp = props["info.udi"]
             
             if device_tmp.startswith(device_udi):
                 if props.has_key("serial.device") :
                     ports.append(os.path.basename(props["serial.device"]))
             
         ports.sort()
-        print ports
         
         if len(ports) >= 3 :
             self.set_property("data-device", "/dev/%s" % ports[0])

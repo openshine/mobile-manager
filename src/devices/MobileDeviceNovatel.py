@@ -62,7 +62,7 @@ class MobileDeviceNovatel(MobileDevice):
             except:
                 return False
 
-            device_tmp = self.dev_props["info.udi"]
+            device_tmp = props["info.udi"]
             
             if device_tmp.startswith(device_udi):
                 if props.has_key("serial.device") :
