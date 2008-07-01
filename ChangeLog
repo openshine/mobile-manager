@@ -1,3 +1,7 @@
+2008-07-01  Cesar Garcia <tapia@openshine.com>
+
+	* po/es.po: Bug #746
+
 2008-06-30  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/devices/MobileDeviceSierra.py (MobileDeviceSierra.init_device): Fix detection bug

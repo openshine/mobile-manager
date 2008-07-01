@@ -74,7 +74,7 @@ msgstr "Confirma el nuevo PIN: "
 
 #: ../data/glade/mm_pin_dialog.glade.h:7
 msgid "Enter PIN code"
-msgstr "Introduce iel código PIN"
+msgstr "Introduce el código PIN"
 
 #: ../data/glade/mm_pin_dialog.glade.h:8
 msgid "New PIN code : "
