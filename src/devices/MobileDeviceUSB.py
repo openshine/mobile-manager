@@ -33,8 +33,8 @@ class MobileDeviceUSB(MobileDevice):
 
     def is_device_supported(self):
         
-        if self.dev_props.has_key("info.bus") :
-            if self.dev_props["info.bus"] == "usb_device" :
+        if self.dev_props.has_key("info.subsystem") :
+            if self.dev_props["info.subsystem"] == "usb_device" :
                 acm_ok = False
                 serial_ok = False
         

@@ -39,8 +39,8 @@ class MobileDeviceNovatel(MobileDevice):
         MobileDevice.__init__(self, mcontroller, dev_props)
 
     def is_device_supported(self):
-        if self.dev_props.has_key("info.bus"):
-            if self.dev_props["info.bus"] ==  "usb_device":
+        if self.dev_props.has_key("info.subsystem"):
+            if self.dev_props["info.subsystem"] ==  "usb_device":
                 if self.dev_props.has_key("usb_device.product_id") and self.dev_props.has_key("usb_device.product_id"):
                     dev = (self.dev_props["usb_device.product_id"],
                            self.dev_props["usb_device.vendor_id"])

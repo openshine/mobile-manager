@@ -63,8 +63,8 @@ class MobileDeviceBluetooth(MobileDevice):
             MobileDevice.init_device(self)
             return True
 
-        if parent_props.has_key("info.bus") :
-            if parent_props["info.bus"] == "usb_device" :
+        if parent_props.has_key("info.subsystem") :
+            if parent_props["info.subsystem"] == "usb_device" :
                 if parent_props.has_key("info.product") :
                     self.pretty_name = parent_props["info.product"]
                     if self.pretty_name == "Bluetooth Host Controller Interface":
