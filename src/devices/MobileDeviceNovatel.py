@@ -153,3 +153,84 @@ class MobileDeviceNovatel(MobileDevice):
             return CARD_STATUS_PUK_REQUIRED
 
         return MobileDevice.get_card_status(self)
+
+
+    def get_net_info(self):
+        tech_in_use, card_mode, card_domain, carrier, carrier_mode = MobileDevice.get_net_info(self)
+        if tech_in_use == CARD_TECH_UMTS :
+            res = self.send_at_command("AT$CNTI=0",  accept_null_response=False)
+            self.dbg_msg ("AT$CNTI=0 (HSPA stuff) : %s" % res)
+            tech = res[1][0]
+            
+            if res[2] == 'OK' :
+                if "HSDPA" in tech :
+                    tech_in_use == CARD_TECH_HSDPA
+                elif "HSUPA" in tech :
+                    tech_in_use = CARD_TECH_HSUPA
+                    
+        return tech_in_use, card_mode, card_domain, carrier, carrier_mode
+
+    def get_mode_domain(self):
+        mode = None
+        domain = None
+
+        res = self.send_at_command('AT$NWRAT?',  accept_null_response=False)
+        self.dbg_msg ("GET DOMAIN ($NWRAT?) : %s" % res)
+
+        if res[2] == 'OK':
+            pattern = re.compile("\$NWRAT:\ +(?P<mode>\d+),+(?P<domain>\d+)")
+            matched_res = pattern.match(res[1][0])
+            if matched_res != None:
+                if matched_res.group("domain") == "0" :
+                    domain = CARD_DOMAIN_CS
+                elif matched_res.group("domain") == "1" :
+                    domain = CARD_DOMAIN_PS
+                elif matched_res.group("domain") == "2" :
+                    domain = CARD_DOMAIN_CS_PS
+                else:
+                    domain = CARD_DOMAIN_ANY
+
+                if matched_res.group("mode") == "0" :
+                    mode = CARD_TECH_SELECTION_AUTO
+                elif matched_res.group("mode") == "2" :
+                    mode = CARD_TECH_SELECTION_UMTS
+                elif matched_res.group("mode") == "1" :
+                    mode = CARD_TECH_SELECTION_GPRS
+        
+        if domain != None and mode != None :
+            return mode, domain
+        else:
+            self.dbg_msg ("GET MODE DOMAIN FAILED")
+            return None, None
+
+    def set_mode_domain(self, mode, domain):
+        rmode = None
+        rdomain = None
+        
+        if mode == CARD_TECH_SELECTION_GPRS :
+            rmode = "1"
+        elif mode == CARD_TECH_SELECTION_UMTS :
+            rmode = "2"
+        elif mode == CARD_TECH_SELECTION_GRPS_PREFERED :
+            rmode = "1"
+        elif mode == CARD_TECH_SELECTION_UMTS_PREFERED :
+            rmode = "2"
+        elif mode == CARD_TECH_SELECTION_AUTO :
+            rmode = "0"
+        else:
+            rmode = "0"
+
+        if domain == CARD_DOMAIN_CS:
+            rdomain = "0"
+        elif domain == CARD_DOMAIN_PS:
+            rdomain = "1"
+        elif domain == CARD_DOMAIN_CS_PS :
+            rdomain = "2"
+        elif domain == CARD_DOMAIN_ANY:
+            rdomain = "2"
+        else:
+            rdomain = "2"
+
+        res = self.send_at_command("AT$NWRAT=%s,%s" % (rmode, rdomain))
+        self.dbg_msg ("SET DOMAIN : %s" % res)
+            

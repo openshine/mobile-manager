@@ -1,3 +1,7 @@
+2008-07-02  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/devices/MobileDeviceNovatel.py (MobileDeviceNovatel): Support for Novatel M950D
+
 2008-07-01  Cesar Garcia <tapia@openshine.com>
 
 	* po/es.po: Bug #746
