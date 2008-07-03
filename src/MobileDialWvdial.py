@@ -169,18 +169,15 @@ class MobileDialWvdial(MobileDial):
 
     def __start_wvdial(self):
         print "Starting Wvdial"
-        self.emit('connecting')
         active_device = self.mcontroller.get_active_device()
         active_device.set_using_data_device(True)
-        
-        self.status_flag = PPP_STATUS_CONNECTING
         
         cmd = "/usr/bin/wvdial -C %s" % self.wvdial_conf_file
         self.wvdial_p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE,
                               stderr=PIPE, close_fds=True)
          
         gobject.timeout_add(2000, self.__wvdial_monitor)
-        gobject.timeout_add(5000, self.__pppd_monitor)
+        gobject.timeout_add(3000, self.__pppd_monitor)
 
     def __wvdial_monitor(self):
         if self.wvdial_p.poll() == None :
@@ -227,6 +224,9 @@ class MobileDialWvdial(MobileDial):
                 print "--------> WVDIAL PID %s" % self.wvdial_pid
                 if self.wvdial_pid == None :
                     return True
+                else:
+                    self.emit('connecting')
+                    self.status_flag = PPP_STATUS_CONNECTING
                 
             print  "pppd monitor : looking for pppd"
             cmd = "ps -eo ppid,pid | grep '^[ ]*%s' | awk '{print $2}'" % self.wvdial_pid
@@ -318,8 +318,10 @@ class MobileDialWvdial(MobileDial):
         print "Stopping pppd"
 
         if self.wvdial_p == None:
+            print "Stop : no wvdial_p"  
             return
         elif self.wvdial_p.poll() != None:
+            print "Stop : wvdial_p.poll() != None"
             return
             
         

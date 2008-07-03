@@ -1,3 +1,7 @@
+2008-07-03  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDialWvdial.py (MobileDialWvdial.__pppd_monitor): Emit connecting later
+
 2008-07-02  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/devices/MobileDeviceNovatel.py (MobileDeviceNovatel): Support for Novatel M950D
