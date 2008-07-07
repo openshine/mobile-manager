@@ -1,5 +1,7 @@
 2008-07-07  Roberto Majadas  <telemaco@openshine.com>
 
+	* src/devices/MobileDeviceOption.py (MobileDeviceOption.__init__): Option GlobberTrotter support (0x6901)
+
 	* src/MobileDialWvdial.py (MobileDialWvdial): Fix ppp abort bug
 
 2008-07-03  Roberto Majadas  <telemaco@openshine.com>

@@ -36,7 +36,7 @@ class MobileDeviceOption(MobileDevice):
         self.capabilities = [AT_COMM_CAPABILITY, X_ZONE_CAPABILITY]
         
         #Device list with tuplas representating the device (product_id, vendor_id)
-        self.device_list = [(0x6000,0xaf0), (0x6100, 0xaf0), (0x6300, 0xaf0)]
+        self.device_list = [(0x6000,0xaf0), (0x6100, 0xaf0), (0x6300, 0xaf0), (0x6901, 0xaf0)]
         
         MobileDevice.__init__(self, mcontroller, dev_props)
 
