@@ -1,3 +1,7 @@
+2008-07-07  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDialWvdial.py (MobileDialWvdial): Fix ppp abort bug
+
 2008-07-03  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileDialWvdial.py (MobileDialWvdial.__pppd_monitor): Emit connecting later

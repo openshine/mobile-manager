@@ -169,6 +169,9 @@ class MobileDialWvdial(MobileDial):
 
     def __start_wvdial(self):
         print "Starting Wvdial"
+        self.emit('connecting')
+        self.status_flag = PPP_STATUS_CONNECTING
+        
         active_device = self.mcontroller.get_active_device()
         active_device.set_using_data_device(True)
         
@@ -176,10 +179,15 @@ class MobileDialWvdial(MobileDial):
         self.wvdial_p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE,
                               stderr=PIPE, close_fds=True)
          
-        gobject.timeout_add(2000, self.__wvdial_monitor)
+        gobject.timeout_add(1, self.__wvdial_monitor)
         gobject.timeout_add(3000, self.__pppd_monitor)
 
     def __wvdial_monitor(self):
+        self.__real_wvdial_monitor()
+        gobject.timeout_add(2000, self.__real_wvdial_monitor)
+        return False
+
+    def __real_wvdial_monitor(self):
         if self.wvdial_p.poll() == None :
             print "Wvdial monitor : Wvdial running"
             return True
@@ -208,6 +216,12 @@ class MobileDialWvdial(MobileDial):
             return False
         
     def __pppd_monitor(self):
+        if self.status_flag == PPP_STATUS_DISCONNECTING or self.status_flag == PPP_STATUS_DISCONNECTED :
+            print "pppd monitor stopped, status disconnecting or disconected"
+            self.pppd_pid == None
+            self.ppp_if = None
+            return False
+        
         if self.wvdial_p == None:
             print "pppd monitor stopped, not wvdial running"
             return False
@@ -224,9 +238,6 @@ class MobileDialWvdial(MobileDial):
                 print "--------> WVDIAL PID %s" % self.wvdial_pid
                 if self.wvdial_pid == None :
                     return True
-                else:
-                    self.emit('connecting')
-                    self.status_flag = PPP_STATUS_CONNECTING
                 
             print  "pppd monitor : looking for pppd"
             cmd = "ps -eo ppid,pid | grep '^[ ]*%s' | awk '{print $2}'" % self.wvdial_pid
@@ -291,6 +302,10 @@ class MobileDialWvdial(MobileDial):
             return int(rb) , int(tb)           
 
     def __stats_monitor(self):
+        if self.status_flag == PPP_STATUS_DISCONNECTING or self.status_flag == PPP_STATUS_DISCONNECTED :
+            print "stats monitor stopped, status flag disconnecting or disconnected"
+            return False
+            
         if self.wvdial_p == None:
             print "stats monitor stopped, not wvdial running"
             return False
@@ -309,8 +324,9 @@ class MobileDialWvdial(MobileDial):
                 new_time = time.time()
                 interval_time = new_time - self.last_traffic_time
                 self.last_traffic_time = new_time
-                self.emit("pppstats_signal", recived_bytes, sent_bytes, interval_time)
-                print "stats monitor : %i %i %d" % (recived_bytes, sent_bytes, interval_time)
+                if self.status_flag == PPP_STATUS_CONNECTED :
+                    self.emit("pppstats_signal", recived_bytes, sent_bytes, interval_time)
+                    print "stats monitor : %i %i %d" % (recived_bytes, sent_bytes, interval_time)
 
         return True
     
@@ -332,7 +348,29 @@ class MobileDialWvdial(MobileDial):
                     active_device.stop_polling()
              
             print "emit disconnecting"
-            print "kill -15 %s" % self.wvdial_pid
-            os.kill(int(self.wvdial_pid), 15)
             self.emit('disconnecting')
             self.status_flag = PPP_STATUS_DISCONNECTING
+            print "kill -15 %s" % self.wvdial_pid
+            os.kill(int(self.wvdial_pid), 15)
+            
+        elif self.wvdial_p != None :
+            if os.path.exists("/etc/debian_version") :
+                self.wvdial_pid = self.__get_real_wvdial_pid()
+            else:
+                self.wvdial_pid = self.wvdial_p.pid
+            
+            self.emit('disconnecting')
+            print "emit disconnecting"
+            self.status_flag = PPP_STATUS_DISCONNECTING
+            
+            active_device = self.mcontroller.get_active_device()
+            if active_device != None :
+                if MobileManager.AT_COMM_CAPABILITY in active_device.capabilities :
+                    active_device.stop_polling()
+            
+            print "kill -15 %s" % self.wvdial_pid
+            os.kill(int(self.wvdial_pid), 15)
+
+
+            
+            
