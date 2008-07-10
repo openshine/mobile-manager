@@ -1,3 +1,7 @@
+2008-07-10  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/devices/MobileDeviceNovatel.py (MobileDeviceNovatel.get_carrier_list_from_raw): Add get_carrier_list_from_raw
+
 2008-07-07  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/devices/MobileDeviceOption.py (MobileDeviceOption.__init__): Option GlobberTrotter support (0x6901)

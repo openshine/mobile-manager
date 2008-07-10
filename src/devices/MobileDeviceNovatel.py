@@ -233,4 +233,31 @@ class MobileDeviceNovatel(MobileDevice):
 
         res = self.send_at_command("AT$NWRAT=%s,%s" % (rmode, rdomain))
         self.dbg_msg ("SET DOMAIN : %s" % res)
+        
+    def get_carrier_list_from_raw(self, raw):
+        print "__get_carrier_list_from_raw in"
+        try:
+            print "-----> raw : %s" % raw
+            
+            if raw[2] == 'OK':
+                carrier_list = "" 
+                pattern = re.compile("\+COPS:\ +(?P<list>.*)")
+                for line in raw[1] :
+                    matched_res = pattern.match(line)
+                    if matched_res != None :
+                        if carrier_list == "" :
+                            carrier_list = matched_res.group("list")
+                        else:
+                            carrier_list = carrier_list + "," + matched_res.group("list")
+                        
+                exec ('dict = {"carrier_list" : [%s] , "supported_modes" : %s, "supported_formats" : %s}'
+                      % (carrier_list, "(0,1,2,3,4)", "(0,1,2)"))
+                print "__get_carrier_list_from_raw out"
+                
+                return dict
+            else:
+                return None
+            
+        except:
+            return None
             

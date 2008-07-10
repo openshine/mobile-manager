@@ -1137,7 +1137,7 @@ class MobileDevice(gobject.GObject) :
             self.dbg_msg ("GET CARD INFO (except): %s" % res)
             return []
 
-    def __get_carrier_list_from_raw(self, raw) :
+    def get_carrier_list_from_raw(self, raw) :
         print "__get_carrier_list_from_raw in"
         try:
             if raw[2] == 'OK':
@@ -1157,7 +1157,7 @@ class MobileDevice(gobject.GObject) :
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=None)
     def get_carrier_list(self, func):
-        self.send_at_command_async('AT+COPS=?', self.__get_carrier_list_from_raw, func)
+        self.send_at_command_async('AT+COPS=?', self.get_carrier_list_from_raw, func)
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def set_carrier(self, carrier_id, tech):
