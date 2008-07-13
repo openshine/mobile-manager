@@ -207,10 +207,11 @@ class MobileController(gobject.GObject):
     def __unplug_device_cb(self, udi):
         for x in self.available_devices :
             if x[2] == udi :
+                dev_id = x[3].dbus_device.__dbus_object_path__
                 x[3].close_device()
                 x[3].disconnect_dbus()
-                self.available_devices.remove(x) 
-                self.emit('removed-device', udi)                   
+                self.available_devices.remove(x)
+                self.emit('removed-device', dev_id)                   
                 return
 
     def get_active_device(self):

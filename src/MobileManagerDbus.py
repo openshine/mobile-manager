@@ -185,7 +185,7 @@ class MobileManagerDbusController(dbus.service.Object):
         self.AddedDevice(self.__FromDevIdGetObject(dev_id))
         
     def __removed_device_cb(self,mcontroller, dev_id):
-        self.RemovedDevice(self.__FromDevIdGetObject(dev_id))
+        self.RemovedDevice(dev_id)
 
     def __supported_device_detected_cb(self, mcontroller, dev_id):
         print "Supported Device in MobileManagerDbus"

@@ -1,3 +1,11 @@
+2008-07-14  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileController.py (MobileController.__unplug_device_cb): Fix bug (correct device id send in removed-device signal)
+
+2008-07-13  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDialWvdial.py (MobileDialWvdial.__detect_roaming): detection roaming support on start up dialup connection
+
 2008-07-10  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/devices/MobileDeviceNovatel.py (MobileDeviceNovatel.get_carrier_list_from_raw): Add get_carrier_list_from_raw

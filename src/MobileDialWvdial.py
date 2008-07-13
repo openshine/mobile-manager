@@ -29,6 +29,10 @@ from subprocess import Popen, PIPE
 from MobileDial import *
 import StringIO
 import MobileManager
+import re
+
+
+from MobileManager import MobileDeviceIO
 
 class MobileDialWvdial(MobileDial):
 
@@ -101,7 +105,51 @@ class MobileDialWvdial(MobileDial):
         fd.close()
 
         self.__pppd_options(hfc, hec, hc, auto_dns)
+        self.__detect_roaming()
         self.__start_wvdial()
+
+    def __detect_roaming(self):
+        print "__detect_roaming"
+        
+        active_device = self.mcontroller.get_active_device()
+
+        if not os.path.exists(active_device.get_property("data-device")) :
+            return
+        
+        io = MobileDeviceIO(active_device.get_property("data-device"))
+        io.open()
+        io.write("AT+CGREG?\r")
+
+        active_device.dbg_msg("DETECTING ROAMING SUPPORT (AT+CGREG?)")
+
+        attempts = 2
+        res = io.readline()
+        while attempts != 0 :
+            active_device.dbg_msg ("Recv from DATA PORT : %s" % res)
+            if res == "OK" :
+                return
+            elif "ERROR" in res :
+                return
+            elif res.startswith("+CGREG"):
+                pattern = re.compile("\+CGREG:.*,(?P<state>\d+)")
+                matched_res = pattern.match(res)
+                if matched_res != None:
+                    if matched_res.group("state") == "5" :
+                        active_device.dbg_msg ("YES ROAMING")
+                        active_device.cached_status_values["is_roaming"] = True
+                        self.mcontroller.emit('active-dev-roaming-status-changed', True)
+                        self.mcontroller.emit('dev-roaming-status-changed', active_device.dev_props["info.udi"], True)
+                    else:
+                        active_device.dbg_msg ("NO ROAMING")
+                        active_device.cached_status_values["is_roaming"] = False
+                        self.mcontroller.emit('active-dev-roaming-status-changed', False)
+                        self.mcontroller.emit('dev-roaming-status-changed', active_device.dev_props["info.udi"], False)
+            
+            res = io.readline()
+            attempts = attempts - 1
+
+        io.close()
+        
 
     def __pppd_options(self, hfc, hec, hc, auto_dns):
         print "__pppd_options"
