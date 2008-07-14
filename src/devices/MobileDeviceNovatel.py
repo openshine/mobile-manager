@@ -25,6 +25,7 @@
 import os
 import re
 import gobject
+import time
 
 from MobileDevice import MobileDevice, MobileDeviceIO, AT_COMM_CAPABILITY, X_ZONE_CAPABILITY
 from MobileStatus import *
@@ -136,6 +137,10 @@ class MobileDeviceNovatel(MobileDevice):
         return True
 
     def get_card_status(self):
+        self.dbg_msg ("get_card_status init")
+        if not self.is_on() :
+            return CARD_STATUS_OFF
+        
         pin_status = self.pin_status()
         if pin_status == None:
             return CARD_STATUS_ERROR
@@ -151,7 +156,8 @@ class MobileDeviceNovatel(MobileDevice):
 
         if pin_status == PIN_STATUS_WAITING_PUK:
             return CARD_STATUS_PUK_REQUIRED
-
+        
+        self.dbg_msg ("get_card_status init superclass")
         return MobileDevice.get_card_status(self)
 
 
@@ -260,4 +266,49 @@ class MobileDeviceNovatel(MobileDevice):
             
         except:
             return None
+
+    def is_on(self):
+        if self.card_is_on != None :
+            return self.card_is_on 
+        else:
+            return True
+
+    def __is_active_device(self):
+        if self.mcontroller.get_active_device() == self :
+            return True
+        else:
+            return False
+
+    def turn_on(self):
+        time.sleep(2)
+        self.card_is_on = True
+        return True
+
+    def turn_off(self):
+        time.sleep(2)
+        self.card_is_on = False
+        card_status = CARD_STATUS_OFF
+        signal_level = 99
+        self.cached_status_values["card_status"] = CARD_STATUS_OFF
+        if self.__is_active_device():
+            self.mcontroller.emit('active-dev-card-status-changed', card_status)
+            self.mcontroller.emit('dev-card-status-changed', self.dev_props["info.udi"], card_status)
+            self.mcontroller.emit('active-dev-signal-status-changed', signal_level)
+            self.mcontroller.emit('dev-signal-status-changed', self.dev_props["info.udi"], signal_level)
+        else:
+            self.mcontroller.emit('dev-card-status-changed', self.dev_props["info.udi"], card_status)
+            self.mcontroller.emit('dev-signal-status-changed', self.dev_props["info.udi"], signal_level)
+            
+        self.cached_status_values = { "card_status" : None,
+                                      "tech" : None,
+                                      "mode" : None,
+                                      "domain" : None,
+                                      "signal_level" : None,
+                                      "is_pin_active" : None,
+                                      "is_roaming" : None,
+                                      "carrier_name" : None,
+                                      "carrier_selection_mode" : None}
+        return True
+
+            
             
