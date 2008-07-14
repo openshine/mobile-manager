@@ -1,5 +1,7 @@
 2008-07-14  Roberto Majadas  <telemaco@openshine.com>
 
+	* src/MobileDialWvdial.py (MobileDialWvdial.start): Try to detect roaming support
+
 	* src/devices/MobileDeviceNovatel.py (MobileDeviceNovatel.is_on , turn_off, turn_on): Novatel at+cfun simulation
 
 	* src/MobileController.py (MobileController.__unplug_device_cb): Fix bug (correct device id send in removed-device signal)

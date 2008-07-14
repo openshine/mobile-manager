@@ -105,7 +105,11 @@ class MobileDialWvdial(MobileDial):
         fd.close()
 
         self.__pppd_options(hfc, hec, hc, auto_dns)
-        self.__detect_roaming()
+        try:
+            self.__detect_roaming()
+        except:
+            print "Not possible detect roaming"
+            
         self.__start_wvdial()
 
     def __detect_roaming(self):
