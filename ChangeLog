@@ -1,3 +1,9 @@
+2008-07-15  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDialWvdial.py (MobileDialWvdial.__detect_roaming): remove bluetooth roaming detection
+
+	* src/ui/MobileATOptionsButton.py (MobileATOptionsButton.__on_card_deactivate): Timeout wait while wvdial is stopping
+
 2008-07-14  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileDialWvdial.py (MobileDialWvdial.start): Try to detect roaming support

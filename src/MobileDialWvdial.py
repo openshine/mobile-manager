@@ -119,6 +119,10 @@ class MobileDialWvdial(MobileDial):
 
         if not os.path.exists(active_device.get_property("data-device")) :
             return
+
+        data_dev = active_device.get_property("data-device")
+        if data_dev.startswith("/dev/rfcomm") == True:
+            return
         
         io = MobileDeviceIO(active_device.get_property("data-device"))
         io.open()

@@ -336,9 +336,33 @@ class MobileATOptionsButton(gtk.Button) :
         if dev_path != "":
             if self.mdialer.Status() != MobileManager.PPP_STATUS_DISCONNECTED :
                self.mdialer.Stop()
+               gobject.timeout_add(1500, self.__on_card_deactivate_timeout, 6)
+               return
+               
             if dev_info.HasCapability(MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI):
                 dev_state =  self.__get_device_state_from_path(dev_path)
                 dev_state.TurnOff()
+
+    def __on_card_deactivate_timeout(self, attempt):
+        print "Deactivate timeout (attempt = %s)" % attempt
+        dev_path = self.mcontroller.GetActiveDevice()
+        
+        if attempt == 0 :
+            dev_state = self.__get_device_state_from_path(dev_path)
+            dev_state.TurnOff()
+            return False
+        
+        dev_info = self.__get_device_info_from_path(dev_path)
+        if dev_path != "":
+            if self.mdialer.Status() == MobileManager.PPP_STATUS_DISCONNECTED :
+                dev_state =  self.__get_device_state_from_path(dev_path)
+                dev_state.TurnOff()
+                return False
+            else:
+                gobject.timeout_add(1000, self.__on_card_deactivate_timeout, attempt - 1)
+                return False
+        
+        return False
             
     def __on_auto_tech_activate (self, widget):
         self.menu.hide()
