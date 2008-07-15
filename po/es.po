@@ -286,11 +286,11 @@ msgstr ""
 
 #: ../src/ui/MobilePinDialog.py:280
 msgid "The two PIN codes are not equal"
-msgstr "Lo dos códigos PIN no son iguales"
+msgstr "Los dos códigos PIN no son iguales."
 
 #: ../src/ui/MobilePinDialog.py:293
 msgid "<b>Error changing PIN code</b>"
-msgstr "<b>Error cambiando el código PIN</b>"
+msgstr "<b>Error cambiando el código PIN.</b>"
 
 #: ../src/ui/MobilePinDialog.py:294
 msgid ""

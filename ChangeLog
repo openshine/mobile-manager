@@ -1,3 +1,7 @@
+2008-07-15  Cesar Garcia <tapia@openshine.com>
+
+	* po/es.po: Bug #784
+
 2008-07-15  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileDialWvdial.py (MobileDialWvdial.__detect_roaming): remove bluetooth roaming detection
