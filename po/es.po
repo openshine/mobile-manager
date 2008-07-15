@@ -148,7 +148,7 @@ msgid ""
 "search new networks pressing Refresh button."
 msgstr ""
 "Selecciona una operadora de la lista disponible presionando el botón Aceptar "
-"o busca nuevas redes presionando el boton Refrescar."
+"o busca nuevas redes presionando el botón Refrescar."
 
 #: ../data/glade/mm_menu_at_options.glade.h:2
 msgid "G_PRS/2.5G preferred"
