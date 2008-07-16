@@ -1,7 +1,11 @@
+%define is_mandrake %(test -e /etc/mandrake-release && echo 1 || echo 0)
+%define is_suse %(test -e /etc/SuSE-release && echo 1 || echo 0)
+%define is_fedora %(test -e /etc/fedora-release && echo 1 || echo 0)
+
 Name: mobile-manager
 Summary: Mobile Manager daemon (GPRS/3g support)
-Version: 0.6
-Release: 1%{?dist}
+Version: 0.7
+Release: 1 
 License: GPLv2+
 Group: Applications/Internet
 Source: mobile-manager-%{version}.tar.gz
@@ -10,21 +14,47 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Requires: gtk2 >= 2.4.0
 Requires: python
-Requires: dbus-1-python
-Requires: python-gtk
 Requires: libusb
-Requires: dbus-1
 
+%if %is_suse
+Requires: python-gtk
+Requires: dbus-1
+Requires: dbus-1-python
+%endif 
+
+%if %is_fedora
+Requires: pygtk2
+Requires: dbus
+Requires: dbus-python
+%endif 
+
+%if %is_suse
 BuildRequires: python-gtk-devel
 BuildRequires: dbus-1-python-devel
 BuildRequires: dbus-1-glib-devel
 BuildRequires: dbus-1-devel
+%endif
+
+%if %is_fedora
+BuildRequires: pygtk2-devel
+BuildRequires: dbus-devel >= 0.90
+BuildRequires: dbus-python-devel
+%endif 
+
 BuildRequires: automake
 BuildRequires: autoconf
 BuildRequires: python-devel
 BuildRequires: gettext
 BuildRequires: gcc
+
+%if %is_suse
 BuildRequires: gnome-doc-utils-devel
+%endif
+
+%if %is_fedora
+BuildRequires: gnome-doc-utils
+%endif 
+
 BuildRequires: intltool
 BuildRequires: libtool
 BuildRequires: libusb-devel
@@ -39,9 +69,18 @@ over GPRS/3G
 %setup -q 
 
 %build
+
+%if 0%{?suse_version} > 1020 
+
 %configure --prefix=/usr --sysconfdir=/etc  --with-init-scripts=suse
 make %{?_smp_mflags}
 
+%else 
+
+%configure --prefix=/usr --sysconfdir=/etc  --with-init-scripts=redhat
+make %{?_smp_mflags}
+
+%endif 
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -70,6 +109,10 @@ if [ -f /etc/init.d/boot.udev ] && [ -x /etc/init.d/boot.udev ] ; then
 	/etc/init.d/boot.udev reload
 fi
 
+if [ -f /etc/init.d/udev ] && [ -x /etc/init.d/udev ] ; then
+        /etc/init.d/udev reload
+fi
+
 if [ -f /etc/init.d/mobile-manager ] && [ -x /etc/init.d/mobile-manager ] ; then
 	/etc/init.d/mobile-manager start
 fi
@@ -83,5 +126,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
-* Tue Nov 6 2007 Roberto Majadas <roberto.majadas@openshine.com> - 0.6
+* Wed Jun 25 2008 Roberto Majadas <roberto.majadas@openshine.com> - 0.7-1
+- New upstream version
+* Fri Jun 20 2008 Roberto Majadas <roberto.majadas@openshine.com> - 0.6-2
+- Fedora and opensuse support
+* Thu Jun 19 2008 Roberto Majadas <roberto.majadas@openshine.com> - 0.6-1
 - Initial
