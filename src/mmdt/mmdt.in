@@ -71,6 +71,8 @@ class Mmdt :
         self.mcontroller.connect_to_signal("ActiveDevCarrierChanged", self.ActiveDevCarrierChanged_cb)
         self.mcontroller.connect_to_signal("ActiveDevCarrierSmStatusChanged", self.ActiveDevCarrierSmStatusChanged_cb)
         self.mcontroller.connect_to_signal("ActiveDevXZoneChanged", self.ActiveDevXZoneChanged_cb)
+        self.mcontroller.connect_to_signal("ActiveDevSmsReceived", self.ActiveDevSmsReceived_cb)
+        self.mcontroller.connect_to_signal("ActiveDevSmsSpoolChanged", self.ActiveDevSmsSpoolChanged_cb)
         self.mcontroller.connect_to_signal("DevCardStatusChanged", self.DevCardStatusChanged_cb)
         self.mcontroller.connect_to_signal("DevTechStatusChanged", self.DevTechStatusChanged_cb)
         self.mcontroller.connect_to_signal("DevModeStatusChanged", self.DevModeStatusChanged_cb)
@@ -80,6 +82,8 @@ class Mmdt :
         self.mcontroller.connect_to_signal("DevRoamingActStatusChanged", self.DevRoamingActStatusChanged_cb)
         self.mcontroller.connect_to_signal("DevCarrierChanged", self.DevCarrierChanged_cb)
         self.mcontroller.connect_to_signal("DevCarrierSmStatusChanged", self.DevCarrierSmStatusChanged_cb)
+        self.mcontroller.connect_to_signal("DevSmsReceived", self.DevSmsReceived_cb)
+        self.mcontroller.connect_to_signal("DevSmsSpoolChanged", self.DevSmsSpoolChanged_cb)
         self.mcontroller.connect_to_signal("AddedDevice", self.AddedDevice_cb)
         self.mcontroller.connect_to_signal("RemovedDevice", self.RemovedDevice_cb)
         self.mcontroller.connect_to_signal("SupportedDeviceDetected", self.SupportedDeviceDetected_cb)
@@ -333,7 +337,25 @@ class Mmdt :
     def ActiveDevXZoneChanged_cb(self, xzone_name):
         self.active_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
                                       "<b>X Zone Changed</b>",
-                                       xzone_name])        
+                                       xzone_name])
+
+    def ActiveDevSmsReceived_cb(self, index):
+        self.active_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>SMS Received</b>",
+                                       index])
+
+    def ActiveDevSmsSpoolChanged_cb(self, index):
+        text=""
+        if index == 0:
+            text = "RECEIVED"
+        elif index == 1:
+            text = "SENDED"
+        else:
+            text = "DRAFT"
+            
+        self.active_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>SMS Spool Changed</b>",
+                                       text])
         
     def ActiveDeviceChanged_cb(self, device):
         dev_path = self.mcontroller.GetActiveDevice()
@@ -459,6 +481,25 @@ class Mmdt :
         self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
                                       "<b>Carrier SM Status Changed</b>",
                                       device, status])
+
+    def DevSmsReceived_cb(self, device, index):
+        self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>SMS Received</b>",
+                                      device,  index])
+
+
+    def DevSmsSpoolChanged_cb(self, device, index):
+        text=""
+        if index == 0:
+            text = "RECEIVED"
+        elif index == 1:
+            text = "SENDED"
+        else:
+            text = "DRAFT"
+
+        self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),
+                                      "<b>SMS Spool Changed</b>",
+                                      device,  text])
     
     def AddedDevice_cb(self, device):
         self.main_event_model.append([time.strftime("%H:%M:%S", time.localtime()),

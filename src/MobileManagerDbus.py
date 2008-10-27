@@ -42,6 +42,7 @@ MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI=MOBILE_MANAGER_DEVICE_URI+".DeviceAuth"
 MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI=MOBILE_MANAGER_DEVICE_URI+".DeviceState"
 MOBILE_MANAGER_DEVICE_XZONE_INTERFACE_URI=MOBILE_MANAGER_DEVICE_URI+".DeviceXZone"
 MOBILE_MANAGER_DEVICE_DEBUG_INTERFACE_URI=MOBILE_MANAGER_DEVICE_URI+".DeviceDebug"
+MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI=MOBILE_MANAGER_DEVICE_URI+".DeviceSMS"
 
 class MobileManagerDbusController(dbus.service.Object):
     def __init__(self, bus_name, path=MOBILE_MANAGER_CONTROLLER_PATH, mcontroller=None):
@@ -54,6 +55,8 @@ class MobileManagerDbusController(dbus.service.Object):
         self.mcontroller.connect("active-dev-pin-act-status-changed", self.__active_dev_pin_act_status_changed_cb)
         self.mcontroller.connect("active-dev-roaming-status-changed", self.__active_dev_roaming_status_changed_cb)
         self.mcontroller.connect("active-dev-carrier-changed", self.__active_dev_carrier_changed_cb)
+        self.mcontroller.connect("active-dev-sms-received", self.__active_dev_sms_received_cb)
+        self.mcontroller.connect("active-dev-sms-spool-changed", self.__active_dev_sms_spool_changed_cb)
         self.mcontroller.connect("active-dev-carrier-sm-status-changed", self.__active_dev_carrier_sm_status_changed_cb)
         self.mcontroller.connect("active-dev-x-zone-changed", self.__active_dev_x_zone_changed_cb)
         self.mcontroller.connect("dev-card-status-changed", self.__dev_card_status_changed_cb)
@@ -64,6 +67,8 @@ class MobileManagerDbusController(dbus.service.Object):
         self.mcontroller.connect("dev-pin-act-status-changed", self.__dev_pin_act_status_changed_cb)
         self.mcontroller.connect("dev-roaming-status-changed", self.__dev_roaming_status_changed_cb)
         self.mcontroller.connect("dev-carrier-changed", self.__dev_carrier_changed_cb)
+        self.mcontroller.connect("dev-sms-received", self.__dev_sms_received_cb)
+        self.mcontroller.connect("dev-sms-spool-changed", self.__dev_sms_spool_changed_cb)
         self.mcontroller.connect("dev-carrier-sm-status-changed", self.__dev_carrier_sm_status_changed_cb)
         self.mcontroller.connect("added-device", self.__added_device_cb)
         self.mcontroller.connect("removed-device", self.__removed_device_cb)
@@ -150,6 +155,12 @@ class MobileManagerDbusController(dbus.service.Object):
     def __active_dev_carrier_sm_status_changed_cb(self,mcontroller, status):
         self.ActiveDevCarrierSmStatusChanged(status)
 
+    def __active_dev_sms_received_cb(self,mcontroller, index):
+        self.ActiveDevSmsReceived(index)
+
+    def __active_dev_sms_spool_changed_cb(self,mcontroller, index):
+        self.ActiveDevSmsSpoolChanged(index)
+
     def __active_dev_x_zone_changed_cb(self,mcontroller, xzone_name):
         if xzone_name != None :
             self.ActiveDevXZoneChanged(xzone_name)
@@ -180,7 +191,13 @@ class MobileManagerDbusController(dbus.service.Object):
         
     def __dev_carrier_sm_status_changed_cb(self,mcontroller, dev_id, status):
         self.DevCarrierSmStatusChanged(self.__FromDevIdGetObject(dev_id), status)
-        
+
+    def __dev_sms_received_cb(self,mcontroller, dev_id, index):
+        self.DevSmsReceived(self.__FromDevIdGetObject(dev_id), index)
+
+    def __dev_sms_spool_changed_cb(self,mcontroller, dev_id, index):
+        self.DevSmsSpoolChanged(self.__FromDevIdGetObject(dev_id), index)
+                              
     def __added_device_cb(self,mcontroller, dev_id):
         self.AddedDevice(self.__FromDevIdGetObject(dev_id))
         
@@ -210,8 +227,7 @@ class MobileManagerDbusController(dbus.service.Object):
 
     def __dialer_ppp_stats_cb(self, dialer, rb, tb, it):
         self.Stats(rb, tb, it)
-    
-        
+            
     #Exported Signals
 
     @dbus.service.signal(MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,
@@ -257,6 +273,16 @@ class MobileManagerDbusController(dbus.service.Object):
     @dbus.service.signal(MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,
                          signature='i')
     def ActiveDevCarrierSmStatusChanged(self, status):
+        pass
+
+    @dbus.service.signal(MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,
+                         signature='i')
+    def ActiveDevSmsReceived(self, index):
+        pass
+
+    @dbus.service.signal(MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,
+                         signature='i')
+    def ActiveDevSmsSpoolChanged(self, type):
         pass
 
     @dbus.service.signal(MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,
@@ -307,6 +333,16 @@ class MobileManagerDbusController(dbus.service.Object):
     @dbus.service.signal(MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,
                          signature='si')
     def DevCarrierSmStatusChanged(self, device, status):
+        pass
+
+    @dbus.service.signal(MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,
+                         signature='si')
+    def DevSmsReceived(self, device, index):
+        pass
+
+    @dbus.service.signal(MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,
+                         signature='si')
+    def DevSmsSpoolChanged(self, device, index):
         pass
 
     @dbus.service.signal(MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,
@@ -673,6 +709,91 @@ class MobileManagerDbusDevice(dbus.service.Object):
             return x_zone
         else:
             return ''
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='', out_signature='a(ubsd)')
+    def ListReceived(self):
+        return self.device.sms_list_spool("received")
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='', out_signature='a(ubsd)')
+    def ListSended(self):
+        return self.device.sms_list_spool("sended")
+        pass
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='', out_signature='a(ubsd)')
+    def ListDrafts(self):
+        return self.device.sms_list_spool("draft")
+        pass
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='u', out_signature='b')
+    def DeleteReceived(self, index):
+        return self.device.sms_delete_spool_item("received", index)
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='u', out_signature='b')
+    def DeleteSended(self, index):
+        return self.device.sms_delete_spool_item("sended", index)
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='u', out_signature='b')
+    def DeleteDraft(self, index):
+        return self.device.sms_delete_spool_item("draft", index)
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='u', out_signature='ubsds')
+    def GetReceived(self, index):
+        return self.device.sms_get_spool_item("received", index)
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='u', out_signature='ubsds')
+    def GetSended(self, index):
+        return self.device.sms_get_spool_item("sended", index)
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='u', out_signature='ubsds')
+    def GetDraft(self, index):
+        return self.device.sms_get_spool_item("draft", index)
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='ss', out_signature='b')
+    def SetDraft(self, number, text):
+        return self.device.sms_set_spool_item("draft", number, text)
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='uss', out_signature='b')
+    def EditDraft(self, index, number, text):
+        return self.device.sms_edit_draft(index, number, text)
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='u', out_signature='b')
+    def MarkReceivedReaded(self, index):
+        return self.device.sms_mark_item("received", index, True)
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='u', out_signature='b')
+    def MarkReceivedUnReaded(self, index):
+        return self.device.sms_mark_item("received", index, False)
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='u', out_signature='b')
+    def MarkSendedReaded(self, index):
+        return self.device.sms_mark_item("sended", index, True)
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='u', out_signature='b')
+    def MarkSendededUnReaded(self, index):
+        return self.device.sms_mark_item("sended", index, False)
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='sss', out_signature='u')
+    def Send(self, number, smsc, text):
+        if self.device.sms_send(number, smsc, text) == True :
+            return True
+        else:
+            return False
     
     
 if __name__ == '__main__':

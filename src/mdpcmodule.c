@@ -95,6 +95,24 @@ int read_one_byte(int fd){
 }
 
 static PyObject* 
+py_read_c(PyObject* self, PyObject* args) {
+	int fd;
+	char c;
+	
+	PyArg_ParseTuple(args, "i", &fd);
+	
+	c = read_one_byte(fd);
+
+	if (c != -1) {
+		return Py_BuildValue("c", c);
+	}else{
+		printf ("read_c ERROR");
+		return Py_BuildValue("c", "");	
+	}
+}
+
+
+static PyObject* 
 py_read_string(PyObject* self, PyObject* args) {
 	
 	int fd;
@@ -159,6 +177,7 @@ py_close_port(PyObject* self, PyObject* args){
 static PyMethodDef mdpc_methods[] = {
 	{"open", py_open_port, METH_VARARGS},
 	{"write_string", py_write_string, METH_VARARGS},
+	{"read_c", py_read_c, METH_VARARGS},
 	{"read_string", py_read_string, METH_VARARGS},
 	{"close",py_close_port, METH_VARARGS}, 
 	{"flush", py_flush_buffers, METH_VARARGS}, 

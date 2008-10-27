@@ -28,6 +28,7 @@ import re
 from MobileStatus import *
 from MobileCapabilities import *
 from MobileManagerDbus import MobileManagerDbusDevice
+from pdu import PDU
 import MobileManager
 import time
 
@@ -61,6 +62,10 @@ class MobileDeviceIO():
 
         if self.actions != None:
             self.actions()
+
+    def read_c(self):
+        c = MobileManager.mdpc.read_c(self.fd)
+        return c
         
     def readline(self):
         attempts = 0
@@ -133,7 +138,10 @@ class MobileDevice(gobject.GObject) :
         'device-icon' : (gobject.TYPE_STRING, 'device icon',
                          'string that represents the icon of the device',
                          '', gobject.PARAM_READWRITE),
-
+        
+        'smsc-number' : (gobject.TYPE_STRING, 'smsc-number',
+                         'string that represents the smsc number',
+                         '', gobject.PARAM_READABLE),
         }
     
     def __init__ (self, mcontroller, dev_props) :
@@ -147,6 +155,8 @@ class MobileDevice(gobject.GObject) :
         self.dev_props = dev_props
 
         self.serial = None
+
+        self.pdu = PDU()
         
         self.data_device = ''
         self.conf_device = ''
@@ -161,6 +171,8 @@ class MobileDevice(gobject.GObject) :
         self.pretty_name = ''
         self.device_icon = ''
         self.priority = "0"
+        self.smsc_number = ''
+        self.sim_id = None
 
         self.using_data_device=False
 
@@ -232,6 +244,8 @@ class MobileDevice(gobject.GObject) :
         
         elif property.name == 'priority':
             return self.priority
+        elif property.name == 'smsc-number' :
+            return self.smsc_number
         else:
             raise AttributeError, 'unknown property %s' % property.name
 
@@ -260,6 +274,8 @@ class MobileDevice(gobject.GObject) :
             self.device_icon = value
         elif property.name == 'priority':
             self.priority = value
+        elif property.name == 'smsc-number':
+            self.smsc_number = value
         else:
             raise AttributeError, 'unknown property %s' % property.name
 
@@ -313,6 +329,7 @@ class MobileDevice(gobject.GObject) :
         hec_patt = re.compile("^hardware_error_control +(?P<value>[01])")
         hc_patt = re.compile("^hardware_compress +(?P<value>[01])")
         priority_patt = re.compile("^priority +(?P<value>[0-9]+)")
+        smsc_patt = re.compile("^smsc_number +(?P<value>[0-9]+)")
         
         for line in lines :
             if not line.startswith("#") :
@@ -337,6 +354,9 @@ class MobileDevice(gobject.GObject) :
                 elif priority_patt.match(line) != None:
                     value = priority_patt.match(line).group("value")
                     self.set_property("priority", value)
+                elif smsc_patt.match(line) != None:
+                    value = priority_patt.match(line).group("value")
+                    self.set_property("smsc-number", value)
 
         return True
             
@@ -356,6 +376,7 @@ class MobileDevice(gobject.GObject) :
         f.write("hardware_error_control %s\n" % int(self.get_property("hardware-error-control")))
         f.write("hardware_compress %s\n" % int(self.get_property("hardware-compress")))
         f.write("priority %s\n" % self.get_property("priority"))
+        f.write("smsc %s\n" % self.get_property("smsc-number"))
         f.close()
 
     # Decorators (pin_status_required)
@@ -476,6 +497,9 @@ class MobileDevice(gobject.GObject) :
                     self.mcontroller.emit('dev-carrier-sm-status-changed', self.dev_props["info.udi"], carrier_selection_mode)
                 else:
                     self.mcontroller.emit('dev-carrier-sm-status-changed', self.dev_props["info.udi"], carrier_selection_mode)
+
+            self.sms_poll()
+            self.verify_concat_sms_spool()
 
         self.dbg_msg ("----------------------> END poll round %s" % self.poll_round)
         self.poll_round = self.poll_round + 1
@@ -1409,8 +1433,503 @@ class MobileDevice(gobject.GObject) :
                 return None
 
         return None
+
+    def get_sim_id(self):
+        res = self.send_at_command('AT+CGSN')
+        self.dbg_msg ("GET SIM ID : %s" % res)
+        try:
+            if res[2] == 'OK':
+                return res[1][0]
+            else:
+                return None
+        except:
+            self.dbg_msg ("SMS DELETE (except): %s" % res)
+            return None
+
+    def verify_concat_sms_spool(self):
+        self.dbg_msg("VERIFING CONCAT SPOOL")
+        if self.sim_id == None :
+            return
+
+        tmp_sms_spool = os.path.join("/var", "spool/", "MobileManager/", self.sim_id, ".tmp/")
+        sms_list = os.listdir(tmp_sms_spool)
+
+        for sms_dir in sms_list :
+            self.dbg_msg("* Verifing sms_id (%s)" % sms_dir)
+            sms_item_list = os.listdir(os.path.join(tmp_sms_spool, sms_dir))
+            item_completed = True
+            
+            for item in sms_item_list :
+                statinfo = os.stat(os.path.join(tmp_sms_spool, sms_dir, item))
+                if statinfo.st_size == 0 :
+                    item_completed = False
+                    break
+            
+            if item_completed == False:
+                self.dbg_msg("* sms_id (%s) Not completed , waiting for more parts" % sms_dir)
+                continue
+            else:
+                self.dbg_msg("* sms_id (%s) completed" % sms_dir)
+                sms_spool_path = os.path.join("/var", "spool/", "MobileManager/", self.sim_id)
+                sms_files = os.listdir(sms_spool_path + "/received")
+                ids = []
+                
+                for sms_id in sms_files:
+                    try:
+                        i = int(sms_id)
+                        ids.append(i)
+                    except:
+                        self.dbg_msg ("wrong sms filename")
+                
+                ids.sort()
+                last_id = 0
+                
+                if len(ids) > 0:
+                    last_id = ids[-1]
+
+                
+                concat_sms_list = os.listdir(os.path.join(tmp_sms_spool, sms_dir))
+                concat_ids = []
+                
+                for csms_id in concat_sms_list:
+                    try:
+                        i = int(csms_id)
+                        concat_ids.append(i)
+                    except:
+                        self.dbg_msg ("wrong concat sms filename")
+                
+                concat_ids.sort()
+                concat_sms_sorted_paths = ""
+
+                for csms_id in concat_ids:
+                    concat_sms_sorted_paths = concat_sms_sorted_paths + os.path.join(tmp_sms_spool, sms_dir, str(csms_id)) + " "
+
+                new_id = last_id + 1
+                
+                self.dbg_msg("* Coping data to received id (%s)" % new_id)
+                os.system("cat %s > %s" % (concat_sms_sorted_paths,
+                                             os.path.join(sms_spool_path,"received",str(new_id))))
+                
+                self.dbg_msg("* Removing concat sms (%s)" % sms_dir)
+                os.system("rm -fr %s" % os.path.join(tmp_sms_spool, sms_dir))
+
+                if self.__is_active_device() :
+                    self.mcontroller.emit('active-dev-sms-received', new_id)
+                self.mcontroller.emit('dev-sms-received', self.dev_props["info.udi"], new_id)
+
+        self.dbg_msg("VERIFING CONCAT SPOOL END")
+
+    def sms_poll(self):
+        self.dbg_msg("SMS POOL")
+        
+        if self.sim_id == None :
+            sim_id = self.get_sim_id()
+            if sim_id != None:
+                self.sim_id = sim_id
+            else:
+                return
+
+        sms_spool_path = os.path.join("/var", "spool/", "MobileManager/", self.sim_id)
+
+        if os.path.exists(sms_spool_path) == False :
+            os.system ("mkdir -p %s" % sms_spool_path)
+
+        if os.path.exists(sms_spool_path + "/sended" ) == False :
+            os.system ("mkdir -p %s" % sms_spool_path + "/sended")
+
+        if os.path.exists(sms_spool_path + "/received" ) == False :
+            os.system ("mkdir -p %s" % sms_spool_path + "/received")
+
+        if os.path.exists(sms_spool_path + "/draft" ) == False :
+            os.system ("mkdir -p %s" % sms_spool_path + "/draft")
+
+        if os.path.exists(sms_spool_path + "/.tmp" ) == False :
+            os.system ("mkdir -p %s" % sms_spool_path + "/.tmp")
+
+
+        res = self.send_at_command('AT+CPMS="SM","SM","SM"')
+        self.dbg_msg ("* SMS READ MODE : %s" % res)
+        try:
+            if res[2] != 'OK':
+                return
+        except:
+            self.dbg_msg ("* SMS READ MODE (except): %s" % res)
+            return
+
+        res = self.send_at_command('AT+CMGF=0')
+        self.dbg_msg ("* SMS PDU MODE : %s" % res)
+        try:
+            if res[2] != 'OK':
+                return
+        except:
+            self.dbg_msg ("* SMS PDU MODE (except): %s" % res)
+            return
+
+        res = self.send_at_command('AT+CMGL=0')
+        self.dbg_msg ("* GET UNREAD SMS : %s" % res)
+        try:
+            if res[2] != 'OK':
+                return
+            else:
+                
+                if len(res[1]) == 1 :
+                    self.dbg_msg("SMS POOL END")
+                    return
+                
+                sms_files = os.listdir(sms_spool_path + "/received")
+                ids = []
+                
+                for sms_id in sms_files:
+                    try:
+                        i = int(sms_id)
+                        ids.append(i)
+                    except:
+                        self.dbg_msg ("wrong sms filename")
+                
+                ids.sort()
+                last_id = 0
+                
+                if len(ids) > 0:
+                    last_id = ids[-1]
+
+                for i in range(0, len(res[1]), 2) :
+                    pattern = re.compile("\+CMGL:.*(?P<id>\d+),")
+                    matched_res = pattern.match(res[1][i])
+                    if matched_res != None:
+                        sms_id = matched_res.group("id")
+                        
+                        try:
+                            sms_decoded = self.pdu.decode_pdu(res[1][i+1])
+                            if sms_decoded[5] == 0:
+                                new_id = last_id + 1
+                                sms_fd = open(sms_spool_path + "/received/" + str(new_id), "w")
+
+                                sms_fd.write("0|%s|%s|%s\n%s" %
+                                             (sms_decoded[0],
+                                              sms_decoded[3],
+                                              sms_decoded[1],
+                                              sms_decoded[2].encode("utf-8")))
+
+                                sms_fd.close()
+                                self.sms_delete(sms_id)
+                                self.dbg_msg("* Saved sms (%s)" % new_id)
+                                if self.__is_active_device() :
+                                    self.mcontroller.emit('active-dev-sms-received', new_id)
+                                self.mcontroller.emit('dev-sms-received', self.dev_props["info.udi"], new_id)
+                                last_id = last_id + 1
+                            else:
+                                if os.path.exists(sms_spool_path + "/.tmp/" + str(sms_decoded[4])) == False:
+                                    print "* creating dir %s" % sms_spool_path + "/.tmp/" + str(sms_decoded[4])
+                                    os.system ("mkdir -p %s" % sms_spool_path + "/.tmp/" + str(sms_decoded[4]))
+                                for i in range(1, sms_decoded[5] + 1) :
+                                    print "* touching %s" % sms_spool_path + "/.tmp/" + str(sms_decoded[4]) + "/" + str(i)
+                                    os.system ("touch %s" % sms_spool_path + "/.tmp/"
+                                               + str(sms_decoded[4]) + "/"
+                                               + str(i))
+
+                                sms_fd = open(sms_spool_path + "/.tmp/"
+                                              + str(sms_decoded[4]) + "/"
+                                              + str(sms_decoded[6])
+                                              , "w")
+                                
+                                if sms_decoded[6] == 1 :
+                                    sms_fd.write("0|%s|%s|%s\n%s" %
+                                                 (sms_decoded[0],
+                                                  sms_decoded[3],
+                                                  sms_decoded[1],
+                                                  sms_decoded[2].encode("utf-8")))
+                                else:
+                                    sms_fd.write(sms_decoded[2].encode("utf-8"))
+
+                                sms_fd.close()
+                                self.sms_delete(sms_id)
+                                
+                        except:
+                            self.dbg_msg ("* WRONG SMS DECODE")
+                    else:
+                        self.dbg_msg ("* WRONG SMS")
+                    
+        except:
+            self.dbg_msg ("* GET UNREAD SMS (except): %s" % res)
+            return
+        
+        self.dbg_msg("SMS POOL END")
         
 
+    def sms_delete(self, index):
+        res = self.send_at_command('AT+CMGD=%s' % index)
+        self.dbg_msg ("SMS DELETE : %s" % res)
+        try:
+            if res[2] == 'OK':
+                return True
+            else:
+                return False
+        except:
+            self.dbg_msg ("SMS DELETE (except): %s" % res)
+            return False       
+
+    def sms_list_spool(self, spoolname):
+        if self.sim_id == None:
+            return []
+        
+        spool_path = os.path.join("/var", "spool/",
+                                       "MobileManager/", self.sim_id,
+                                       spoolname)
+        sms_files = os.listdir(spool_path)
+        if len(sms_files) == 0 :
+            return []
+
+        ids = []
+        for sms_id in sms_files:
+            try:
+                i = int(sms_id)
+                ids.append(i)
+            except:
+                self.dbg_msg ("wrong sms filename")
+        ids.sort()
+
+        ret = []
+        
+        for sms_id in ids:
+            fd = open(os.path.join(spool_path,str(sms_id)), "r")
+            header = fd.readline()
+            header = header.strip("\n")
+            header = header.split("|")
+            fd.close()
+            ret.append([sms_id, int(header[0]), header[1],
+                        time.mktime(time.strptime(header[3],"%y/%m/%d %H:%M:%S"))])
+
+        return ret
+
+    def sms_get_spool_item(self, spoolname, index):
+        if self.sim_id == None:
+            return 0, 1, "", 0, ""
+        
+        spool_path = os.path.join("/var", "spool/",
+                                       "MobileManager/", self.sim_id,
+                                       spoolname,str(index))
+
+        if os.path.exists(spool_path) :
+            fd = open(os.path.join(spool_path), "r")
+            header = fd.readline()
+            header = header.strip("\n")
+            header = header.split("|")
+            print header
+            sms_text = ""
+            for line in fd:
+                sms_text = sms_text + line
+                
+            fd.close()
+            sms_time = time.mktime(time.strptime(header[3], "%y/%m/%d %H:%M:%S"))
+
+            return index, int(header[0]), header[1], sms_time, sms_text
+        else:
+            return 0, 1, "", 0, ""
+
+    def sms_mark_item(self, spoolname, index, readed):
+        if self.sim_id == None:
+            return False
+        
+        spool_path = os.path.join("/var", "spool/",
+                                  "MobileManager/", self.sim_id,
+                                  spoolname,str(index))
+
+        if os.path.exists(spool_path) :
+            fd = open(os.path.join(spool_path), "r")
+            lines = fd.readlines()
+            lines[0] = str(int(readed)) + lines[0][1:-1]
+            fd.close()
+            os.system("rm %s" % os.path.join(spool_path))
+            
+            fd = open(os.path.join(spool_path), "w")
+            for line in lines:
+                fd.write(line + "\n")
+            fd.close()
+
+            spool_id=None
+            if spoolname == "received" :
+                spool_id = 0
+            elif spoolname == "sended" :
+                spool_id = 1
+            else:
+                spool_id = 2
+            
+            if self.__is_active_device() :
+                self.mcontroller.emit('active-dev-sms-spool-changed', spool_id)
+            self.mcontroller.emit('dev-sms-spool-changed', self.dev_props["info.udi"], spool_id)
+            
+            return True
+        else:
+            return False
+
+    def sms_delete_spool_item(self, spoolname, index):
+        if self.sim_id == None:
+            return False
+        
+        spool_path = os.path.join("/var", "spool/",
+                                  "MobileManager/", self.sim_id,
+                                  spoolname,str(index))
+
+        if os.path.exists(spool_path):
+            os.system("rm %s" % os.path.join(spool_path))
+            spool_id=None
+            if spoolname == "received" :
+                spool_id = 0
+            elif spoolname == "sended" :
+                spool_id = 1
+            else:
+                spool_id = 2
+            
+            if self.__is_active_device() :
+                self.mcontroller.emit('active-dev-sms-spool-changed', spool_id)
+            self.mcontroller.emit('dev-sms-spool-changed', self.dev_props["info.udi"], spool_id)
+            return True
+        else:
+            return False
+
+    def sms_set_spool_item(self, spoolname, number, text):
+        if self.sim_id == None:
+            return False
+        
+        spool_path = os.path.join("/var", "spool/",
+                                  "MobileManager/", self.sim_id,
+                                  spoolname)
+
+        sms_files = os.listdir(spool_path)
+
+        ids = []    
+        for sms_id in sms_files:
+            try:
+                i = int(sms_id)
+                ids.append(i)
+            except:
+                self.dbg_msg ("wrong sms filename")
+
+        ids.sort()
+        last_id = 0
+
+        if len(ids) > 0:
+            last_id = ids[-1]
+
+        new_id = last_id + 1
+        fd = open(spool_path + "/" + str(new_id), "w")
+        fd.write("1|%s|0|%s\n" % (number, time.strftime("%y/%m/%d %H:%M:%S", time.gmtime())))
+        fd.write(text)
+        fd.close()
+        spool_id=None
+        if spoolname == "received" :
+            spool_id = 0
+        elif spoolname == "sended" :
+            spool_id = 1
+        else:
+            spool_id = 2
+            
+        if self.__is_active_device() :
+            self.mcontroller.emit('active-dev-sms-spool-changed', spool_id)
+        self.mcontroller.emit('dev-sms-spool-changed', self.dev_props["info.udi"], spool_id)
+        
+        return True
+
+    def sms_edit_draft(self, index, number, text):
+        if self.sim_id == None:
+            return False
+        
+        spool_path = os.path.join("/var", "spool/",
+                                  "MobileManager/", self.sim_id,
+                                  "draft",str(index))
+
+        if os.path.exists(spool_path) :
+            os.system("rm %s" % os.path.join(spool_path))
+            fd = open(os.path.join(spool_path), "w")
+            fd.write("0|%s|0|%s\n" % (number, time.strftime("%y/%m/%d %H:%M:%S", time.gmtime())))
+            fd.write(text)
+            fd.close()
+            
+            spool_id=2            
+            if self.__is_active_device() :
+                self.mcontroller.emit('active-dev-sms-spool-changed', spool_id)
+            self.mcontroller.emit('dev-sms-spool-changed', self.dev_props["info.udi"], spool_id)
+            return True
+        else:
+            return False
+        
+
+    def sms_get_smsc (self):
+        return self.get_property("smsc-number")
+
+    def sms_send(self, number, smsc, text):
+        sms_list = self.pdu.encode_pdu(number, text, smsc)
+
+        # Set PDU MODE
+        res = self.send_at_command('AT+CMGF=0', accept_null_response=False)
+        self.dbg_msg ("SET PDU MODE : %s" % res)
+        try:
+            if res[2] != 'OK':
+                return False
+        except:
+            self.dbg_msg ("SET PDU MODE (excpt): %s" % res)
+            return False
+
+        # Send Message
+        if self.__send_sms_at_commands(sms_list) == True:
+            self.sms_set_spool_item("sended", number, text)
+            return True
+        else:
+            return False
+
+    def __send_sms_at_commands(self, sms_list):
+        if self.serial == None :
+            return False
+        
+        self.serial.flush()
+
+        for sms in sms_list:
+            self.serial.write("AT+CMGS="+str(sms[0])+"\r")
+            self.serial.readline()
+            c = ""
+            while c != ">":
+                c = self.serial.read_c()
+                if c == "" :
+                    self.dbg_msg("__send_sms_at_commands error")
+                    return False
+            self.serial.read_c()
+
+            pdu_to_send = sms[1] + chr(26)
+
+            i = 0
+            
+            for pdu_c in pdu_to_send :
+                self.serial.write(pdu_c)
+                r_pdu_c = self.serial.read_c()
+
+                if r_pdu_c == "\r" :
+                    self.dbg_msg("PDU sended")
+                    break
+                
+                if r_pdu_c != pdu_c :
+                    self.dbg_msg("ups !!! r_pdu_c (%s) != pdu_c (%s)" % (ord(r_pdu_c),ord(pdu_c)))
+                else:
+                    #print "char[%s]=%s" % (i, pdu_c)
+                    #i = i + 1
+                    pass
+
+            while True :
+                ret = self.serial.readline()
+                if ret == None:
+                    self.dbg_msg("Timeout")
+                    continue
+                if "OK" in ret :
+                    self.dbg_msg("PDU -> OK")
+                    break
+                elif "ERROR" in ret:
+                    self.dbg_msg("PDU -> ERROR")
+                    return False
+
+        return True
+
+    def sms_set_smsc(self, smsc):
+        self.set_property("smsc-number", smsc)
+        
     def start_polling(self):
         print "start polling"
         self.pause_polling_necesary = False

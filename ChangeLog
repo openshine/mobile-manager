@@ -1,3 +1,8 @@
+2008-10-27  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/pdu/* : Initial support for pdus
+	* src/Mobile[Device|Controller|ManagerDbus].py : Initial support for sms
+
 2008-07-15  Cesar Garcia <tapia@openshine.com>
 
 	* po/es.po: Bugs #778 y #784
