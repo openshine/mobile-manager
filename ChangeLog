@@ -1,5 +1,6 @@
 2008-10-27  Roberto Majadas  <telemaco@openshine.com>
 
+	* src/MobileDevice.py (MobileDevice.sms_set_spool_item): Fix bug in encoding
 	* src/pdu/* : Initial support for pdus
 	* src/Mobile[Device|Controller|ManagerDbus].py : Initial support for sms
 
