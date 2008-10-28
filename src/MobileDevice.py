@@ -1435,6 +1435,7 @@ class MobileDevice(gobject.GObject) :
 
         return None
 
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=None)
     def get_sim_id(self):
         res = self.send_at_command('AT+CGSN')
         self.dbg_msg ("GET SIM ID : %s" % res)
@@ -1656,7 +1657,7 @@ class MobileDevice(gobject.GObject) :
         
         self.dbg_msg("SMS POOL END")
         
-
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def sms_delete(self, index):
         res = self.send_at_command('AT+CMGD=%s' % index)
         self.dbg_msg ("SMS DELETE : %s" % res)
@@ -1669,6 +1670,7 @@ class MobileDevice(gobject.GObject) :
             self.dbg_msg ("SMS DELETE (except): %s" % res)
             return False       
 
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=[])
     def sms_list_spool(self, spoolname):
         if self.sim_id == None:
             return []
@@ -1702,6 +1704,7 @@ class MobileDevice(gobject.GObject) :
 
         return ret
 
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=(0,1,"",0,""))
     def sms_get_spool_item(self, spoolname, index):
         if self.sim_id == None:
             return 0, 1, "", 0, ""
@@ -1727,6 +1730,7 @@ class MobileDevice(gobject.GObject) :
         else:
             return 0, 1, "", 0, ""
 
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def sms_mark_item(self, spoolname, index, readed):
         if self.sim_id == None:
             return False
@@ -1763,6 +1767,7 @@ class MobileDevice(gobject.GObject) :
         else:
             return False
 
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def sms_delete_spool_item(self, spoolname, index):
         if self.sim_id == None:
             return False
@@ -1788,6 +1793,7 @@ class MobileDevice(gobject.GObject) :
         else:
             return False
 
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def sms_set_spool_item(self, spoolname, number, text):
         if self.sim_id == None:
             return False
@@ -1831,6 +1837,7 @@ class MobileDevice(gobject.GObject) :
         
         return True
 
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def sms_edit_draft(self, index, number, text):
         if self.sim_id == None:
             return False
@@ -1858,6 +1865,8 @@ class MobileDevice(gobject.GObject) :
     def sms_get_smsc (self):
         return self.get_property("smsc-number")
 
+    
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def sms_send(self, number, smsc, text):
         sms_list = self.pdu.encode_pdu(number, text, smsc)
 
@@ -1931,6 +1940,7 @@ class MobileDevice(gobject.GObject) :
     def sms_set_smsc(self, smsc):
         self.set_property("smsc-number", smsc)
 
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def sms_ab_add(self, name, number):
         item_type = None
         if number.startswith("+") :
@@ -1950,6 +1960,7 @@ class MobileDevice(gobject.GObject) :
             self.dbg_msg ("ADD ITEM TO BOOKMARK (excpt): %s" % res)
             return False
 
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)   
     def sms_ab_del(self, index):
         res = self.send_at_command('AT+CPBW=%s' % index
                                    , accept_null_response=False)
@@ -1963,6 +1974,7 @@ class MobileDevice(gobject.GObject) :
             self.dbg_msg ("DEL BOOKMARK ITEM (excpt): %s" % res)
             return False
 
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=[])   
     def sms_ab_find(self, pattern):
         res = self.send_at_command('AT+CPBF="%s"' % pattern
                                    , accept_null_response=False)
@@ -1987,7 +1999,8 @@ class MobileDevice(gobject.GObject) :
         except:
             self.dbg_msg ("FIND BOOKMARK ITEM (excpt): %s" % res)
             return []
-
+        
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=(0, "", ""))   
     def sms_ab_get(self, index):
         res = self.send_at_command('AT+CPBR=%s' % index
                                    , accept_null_response=False)
@@ -2010,6 +2023,7 @@ class MobileDevice(gobject.GObject) :
             self.dbg_msg ("GET BOOKMARK ITEM (excpt): %s" % res)
             return 0, "", ""
 
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=0)
     def sms_ab_get_size(self):
         if self.cached_status_values["ab_size"] != None :
             return self.cached_status_values["ab_size"]
@@ -2033,6 +2047,7 @@ class MobileDevice(gobject.GObject) :
             self.dbg_msg ("GET ADDRESSBOOK INFO (except) : %s" % res)
             return 0
 
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=[])
     def sms_ab_list(self):
         ab_size = self.sms_ab_get_size()
         if ab_size == 0 :

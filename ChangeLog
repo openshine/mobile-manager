@@ -6,6 +6,7 @@
 	(MobileDevice.sms_ab_get): Get address method
 	(MobileDevice.sms_ab_get_size): GetSize address method
 	(MobileDevice.sms_ab_list): List address method 
+	(MobileDevice): Add decorators
 
 2008-10-27  Roberto Majadas  <telemaco@openshine.com>
 
