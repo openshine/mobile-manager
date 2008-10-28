@@ -1437,7 +1437,7 @@ class MobileDevice(gobject.GObject) :
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=None)
     def get_sim_id(self):
-        res = self.send_at_command('AT+CGSN')
+        res = self.send_at_command('AT+CIMI')
         self.dbg_msg ("GET SIM ID : %s" % res)
         try:
             if res[2] == 'OK':
