@@ -199,7 +199,8 @@ class MobileDevice(gobject.GObject) :
                                       "is_pin_active" : None,
                                       "is_roaming" : None,
                                       "carrier_name" : None,
-                                      "carrier_selection_mode" : None}
+                                      "carrier_selection_mode" : None,
+                                      "ab_size" : None}
 
         self.external_debug_func = None
         self.card_is_on = None
@@ -1929,7 +1930,141 @@ class MobileDevice(gobject.GObject) :
 
     def sms_set_smsc(self, smsc):
         self.set_property("smsc-number", smsc)
+
+    def sms_ab_add(self, name, number):
+        item_type = None
+        if number.startswith("+") :
+            item_type = 145
+        else:
+            item_type = 129
         
+        res = self.send_at_command('AT+CPBW=,"%s",%s,"%s"' % (number, item_type, name)
+                                   , accept_null_response=False)
+        self.dbg_msg ("ADD ITEM TO BOOKMARK : %s" % res)
+        try:
+            if res[2] == 'OK':
+                return True
+            else:
+                return False
+        except:
+            self.dbg_msg ("ADD ITEM TO BOOKMARK (excpt): %s" % res)
+            return False
+
+    def sms_ab_del(self, index):
+        res = self.send_at_command('AT+CPBW=%s' % index
+                                   , accept_null_response=False)
+        self.dbg_msg ("DEL BOOKMARK ITEM : %s" % res)
+        try:
+            if res[2] == 'OK':
+                return True
+            else:
+                return False
+        except:
+            self.dbg_msg ("DEL BOOKMARK ITEM (excpt): %s" % res)
+            return False
+
+    def sms_ab_find(self, pattern):
+        res = self.send_at_command('AT+CPBF="%s"' % pattern
+                                   , accept_null_response=False)
+        self.dbg_msg ("FIND BOOKMARK ITEM : %s" % res)
+        try:
+            if res[2] == 'OK':
+                ab_list = []
+                for item in res[1]:
+                    pattern =  re.compile("\+CPBF:.*(?P<id>\d+),\"(?P<number>.+)\",(?P<i_type>\d+),\"(?P<name>.+)\"")
+                    matched_res = pattern.match(item)
+                    if matched_res != None:
+                        cid = matched_res.group("id")
+                        name = matched_res.group("name")
+                        number = matched_res.group("number")
+                        ab_list.append([cid, name, number])
+                    else:
+                        self.dbg_msg ("FIND ADDRESSBOOK LIST (not matched): %s" % res)
+                    
+                return ab_list
+            else:
+                return []
+        except:
+            self.dbg_msg ("FIND BOOKMARK ITEM (excpt): %s" % res)
+            return []
+
+    def sms_ab_get(self, index):
+        res = self.send_at_command('AT+CPBR=%s' % index
+                                   , accept_null_response=False)
+        self.dbg_msg ("GET BOOKMARK ITEM : %s" % res)
+        try:
+            if res[2] == 'OK':
+                pattern = re.compile("\+CPBR:.*(?P<id>\d+),\"(?P<number>.+)\",(?P<i_type>\d+),\"(?P<name>.+)\"")
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    i_type = matched_res.group("i_type")
+                    name = matched_res.group("name")
+                    number = matched_res.group("number")
+                    return int(i_type), name, number
+                else:
+                    self.dbg_msg ("GET BOOKMARK ITEM (not matched): %s" % res)
+                    return 0, "", ""
+            else:
+                return 0, "", ""
+        except:
+            self.dbg_msg ("GET BOOKMARK ITEM (excpt): %s" % res)
+            return 0, "", ""
+
+    def sms_ab_get_size(self):
+        if self.cached_status_values["ab_size"] != None :
+            return self.cached_status_values["ab_size"]
+        
+        res = self.send_at_command('AT+CPBR=?'
+                                   , accept_null_response=False)
+        self.dbg_msg ("GET ADDRESSBOOK INFO : %s" % res)
+        try:
+            if res[2] == 'OK':
+                pattern = re.compile("\+CPBR:.*\((?P<leni>\d+)-(?P<lene>\d+)\)")
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None :
+                    self.cached_status_values["ab_size"] = int(matched_res.group("lene"))
+                    return int(matched_res.group("lene"))
+                else:
+                    self.dbg_msg ("GET ADDRESSBOOK INFO (not match) : %s" % res)
+                    return 0
+            else:
+                return 0
+        except:
+            self.dbg_msg ("GET ADDRESSBOOK INFO (except) : %s" % res)
+            return 0
+
+    def sms_ab_list(self):
+        ab_size = self.sms_ab_get_size()
+        if ab_size == 0 :
+            self.dbg_msg ("GET ADDRESSBOOK LIST (not ab_size available)")
+            return []
+
+        res = self.send_at_command('AT+CPBR=1,%s' % ab_size
+                                   , accept_null_response=False)
+
+        self.dbg_msg ("GET ADDRESSBOOK LIST : %s" % res)
+        try:
+            ab_list = []
+            if res[2] == 'OK':
+                for item in res[1]:
+                    pattern =  re.compile("\+CPBR:.*(?P<id>\d+),\"(?P<number>.+)\",(?P<i_type>\d+),\"(?P<name>.+)\"")
+                    matched_res = pattern.match(item)
+                    if matched_res != None:
+                        cid = matched_res.group("id")
+                        name = matched_res.group("name")
+                        number = matched_res.group("number")
+                        ab_list.append([cid, name, number])
+                    else:
+                         self.dbg_msg ("GET ADDRESSBOOK LIST (not matched): %s" % res)
+                    
+                return ab_list
+            else:
+                return []
+        except:
+            self.dbg_msg ("GET ADDRESSBOOK LIST (except) : %s" % res)
+            return []
+        
+    
     def start_polling(self):
         print "start polling"
         self.pause_polling_necesary = False

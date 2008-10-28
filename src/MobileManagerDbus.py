@@ -43,6 +43,7 @@ MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI=MOBILE_MANAGER_DEVICE_URI+".DeviceStat
 MOBILE_MANAGER_DEVICE_XZONE_INTERFACE_URI=MOBILE_MANAGER_DEVICE_URI+".DeviceXZone"
 MOBILE_MANAGER_DEVICE_DEBUG_INTERFACE_URI=MOBILE_MANAGER_DEVICE_URI+".DeviceDebug"
 MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI=MOBILE_MANAGER_DEVICE_URI+".DeviceSMS"
+MOBILE_MANAGER_DEVICE_ADDRESSBOOK_INTERFACE_URI=MOBILE_MANAGER_DEVICE_URI+".DeviceAddressBook"
 
 class MobileManagerDbusController(dbus.service.Object):
     def __init__(self, bus_name, path=MOBILE_MANAGER_CONTROLLER_PATH, mcontroller=None):
@@ -794,6 +795,37 @@ class MobileManagerDbusDevice(dbus.service.Object):
             return True
         else:
             return False
+    
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_ADDRESSBOOK_INTERFACE_URI,
+                         in_signature='', out_signature='a(uss)')
+    def ListContacts(self):
+        return self.device.sms_ab_list()
+    
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_ADDRESSBOOK_INTERFACE_URI,
+                         in_signature='ss', out_signature='b')
+    def Add(self, name, number):
+        return self.device.sms_ab_add(name, number)
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_ADDRESSBOOK_INTERFACE_URI,
+                         in_signature='u', out_signature='b')
+    def Delete(self, index):
+        return self.device.sms_ab_del(index)
+
+    ## @dbus.service.method(MOBILE_MANAGER_DEVICE_ADDRESSBOOK_INTERFACE_URI,
+    ##                      in_signature='s', out_signature='a(uss)')
+    ## def FindContact(self, pattern):
+    ##     return self.device.sms_ab_find(pattern)
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_ADDRESSBOOK_INTERFACE_URI,
+                         in_signature='u', out_signature='(uss)')
+    def Get(self, index):
+        return self.device.sms_ab_get(index)
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_ADDRESSBOOK_INTERFACE_URI,
+                         in_signature='', out_signature='u')
+    def GetSize(self):
+        return self.device.sms_ab_get_size()
+
     
     
 if __name__ == '__main__':

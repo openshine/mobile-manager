@@ -1,3 +1,12 @@
+2008-10-28  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDevice.py (MobileDevice.sms_ab_add): Add address method
+	(MobileDevice.sms_ab_del): Del address method
+	(MobileDevice.sms_ab_find): Find address method
+	(MobileDevice.sms_ab_get): Get address method
+	(MobileDevice.sms_ab_get_size): GetSize address method
+	(MobileDevice.sms_ab_list): List address method 
+
 2008-10-27  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileDevice.py (MobileDevice.sms_set_spool_item): Fix bug in encoding
