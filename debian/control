@@ -1,13 +1,15 @@
 Source: mobile-manager 
 Section: net 
 Priority: optional
-Maintainer: Escritorio Movistar <escritorio_movistar@tid.es>
-Build-Depends: debhelper (>= 5), cdbs, python-dev, libc6-dev, libusb-dev, python-gtk2, python-dbus
+Maintainer: Escritorio Movistar <escritorio_movistar@tid.es> 
+Build-Depends: debhelper (>= 5), cdbs, python-dev, libc6-dev (>=2.7-10), libusb-dev, python-gtk2-dev, python-dbus, python-glade2, pkg-config, libdbus-1-dev, gnome-doc-utils
 Standards-Version: 3.7.2
 
 Package: mobile-manager
 Architecture: any
-Depends: python, python-gtk2, python-dbus, ${shlibs:Depends}, ${misc:Depends}
+Replaces: escritorio-movistar (<< 6.5)
+Conflicts: escritorio-movistar (<< 6.5)
+Depends: python, python-gtk2, python-glade2, python-dbus, wvdial, ${shlibs:Depends}, ${misc:Depends}
 Description: Mobile Manager GPRS/3G daemon
  Mobile Manager is a GPRS/3G daemon developed by Telefonica. 
  This daemon cover the GPRS/3G funtions for develop and work
