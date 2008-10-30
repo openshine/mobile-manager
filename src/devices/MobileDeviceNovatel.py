@@ -27,12 +27,13 @@ import re
 import gobject
 import time
 
-from MobileDevice import MobileDevice, MobileDeviceIO, AT_COMM_CAPABILITY, X_ZONE_CAPABILITY
+from MobileDevice import MobileDevice, MobileDeviceIO
 from MobileStatus import *
+from MobileCapabilities import *
 
 class MobileDeviceNovatel(MobileDevice):
     def __init__(self, mcontroller, dev_props):
-        self.capabilities = [AT_COMM_CAPABILITY, X_ZONE_CAPABILITY]
+        self.capabilities = [AT_COMM_CAPABILITY, X_ZONE_CAPABILITY, SMS_CAPABILITY, ADDRESSBOOK_CAPABILITY]
         
         #Device list with tuplas representating the device (product_id, vendor_id)
         self.device_list = [(0x4400,0x1410)]

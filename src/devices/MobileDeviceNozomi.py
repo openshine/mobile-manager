@@ -26,16 +26,15 @@ import os
 import re
 import gobject
 
-from MobileDevice import MobileDevice, MobileDeviceIO, AT_COMM_CAPABILITY, X_ZONE_CAPABILITY
-from MobileStatus import CARD_TECH_SELECTION_GPRS, CARD_TECH_SELECTION_UMTS
-from MobileStatus import CARD_TECH_SELECTION_GRPS_PREFERED, CARD_TECH_SELECTION_UMTS_PREFERED
-from MobileStatus import CARD_TECH_SELECTION_AUTO
+from MobileDevice import MobileDevice, MobileDeviceIO
+from MobileStatus import * 
+from MobileCapabilities import *
 
 from MobileDeviceOption import MobileDeviceOption
 
 class MobileDeviceNozomi(MobileDeviceOption):
     def __init__(self, mcontroller, dev_props):
-        self.capabilities = [AT_COMM_CAPABILITY, X_ZONE_CAPABILITY]
+        self.capabilities = [AT_COMM_CAPABILITY, X_ZONE_CAPABILITY, SMS_CAPABILITY, ADDRESSBOOK_CAPABILITY]
         
         #Device list with tuplas representating the device (product_id, vendor_id)
         self.device_list = [(0xc, 0x1931)]

@@ -1,3 +1,8 @@
+2008-10-30  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileCapabilities.py (SMS_CAPABILITY, ADDRESSBOOK_CAPABILITY): Add new capabilities
+	* src/devices/*.py : update capabilities
+
 2008-10-28  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileDevice.py (MobileDevice.sms_ab_add): Add address method

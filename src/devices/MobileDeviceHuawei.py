@@ -25,16 +25,14 @@
 import os
 import re
 
-from MobileDevice import MobileDevice, AT_COMM_CAPABILITY, X_ZONE_CAPABILITY
-from MobileStatus import CARD_TECH_SELECTION_GPRS, CARD_TECH_SELECTION_UMTS
-from MobileStatus import CARD_TECH_SELECTION_GRPS_PREFERED, CARD_TECH_SELECTION_UMTS_PREFERED
-from MobileStatus import CARD_TECH_SELECTION_AUTO , CARD_DOMAIN_CS, CARD_DOMAIN_PS, CARD_DOMAIN_CS_PS
-from MobileStatus import CARD_DOMAIN_ANY, CARD_TECH_UMTS, CARD_TECH_HSPA, CARD_TECH_HSDPA, CARD_TECH_HSUPA
+from MobileDevice import MobileDevice
+from MobileStatus import *
+from MobileCapabilities import *
 from MobileManager import MobileDeviceIO
 
 class MobileDeviceHuawei(MobileDevice):
     def __init__(self, mcontroller, dev_props):
-        self.capabilities = [AT_COMM_CAPABILITY, X_ZONE_CAPABILITY]
+        self.capabilities = [AT_COMM_CAPABILITY, X_ZONE_CAPABILITY, SMS_CAPABILITY, ADDRESSBOOK_CAPABILITY]
         
         #Device list with tuplas representating the device (product_id, vendor_id)
         self.device_list = [(0x1004,0x12d1), (0x1003,0x12d1), (0x1406,0x12d1)]
