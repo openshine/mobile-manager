@@ -28,7 +28,7 @@ import dbus
 import dbus.service
 import dbus.mainloop.glib
 import time
-from MobileDevice import  AT_COMM_CAPABILITY, X_ZONE_CAPABILITY
+from MobileCapabilities import *
 
 MOBILE_MANAGER_CONTROLLER_PATH="/es/movistar/MobileManager/Manager"
 MOBILE_MANAGER_CONTROLLER_URI="es.movistar.MobileManager"
