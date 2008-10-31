@@ -433,6 +433,12 @@ class MobileManagerDbusDevice(dbus.service.Object):
         if X_ZONE_CAPABILITY in self.device.capabilities :
             ret.append(MOBILE_MANAGER_DEVICE_XZONE_INTERFACE_URI)
 
+        if SMS_CAPABILITY in self.device.capabilities :
+            ret.append(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI)
+
+        if ADDRESSBOOK_CAPABILITY in self.device.capabilities :
+            ret.append(MOBILE_MANAGER_DEVICE_ADDRESSBOOK_INTERFACE_URI)
+
         return ret
     
     @dbus.service.method(MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI,
@@ -455,6 +461,16 @@ class MobileManagerDbusDevice(dbus.service.Object):
                 return False
         elif capability == MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI:
             return True
+        elif capability == MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI :
+            if SMS_CAPABILITY in self.device.capabilities :
+                return True
+            else:
+                return False
+        elif capability == MOBILE_MANAGER_DEVICE_ADDRESSBOOK_INTERFACE_URI :
+            if ADDRESSBOOK_CAPABILITY in self.device.capabilities :
+                return True
+            else:
+                return False
         else:
             return False
 

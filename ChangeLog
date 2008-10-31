@@ -1,3 +1,7 @@
+2008-10-31  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileManagerDbus.py (MobileManagerDbusDevice.[Has|Get]Capability): Add sms and addressbook support
+
 2008-10-30  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileCapabilities.py (SMS_CAPABILITY, ADDRESSBOOK_CAPABILITY): Add new capabilities
