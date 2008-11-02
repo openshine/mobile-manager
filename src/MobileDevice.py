@@ -1747,8 +1747,14 @@ class MobileDevice(gobject.GObject) :
             os.system("rm %s" % os.path.join(spool_path))
             
             fd = open(os.path.join(spool_path), "w")
+            num_lines = len(lines)
+            count_lines = 0
             for line in lines:
-                fd.write(line + "\n")
+                count_lines = count_lines + 1
+                if count_lines == num_lines:
+                    fd.write(line)
+                else:
+                    fd.write(line + "\n")
             fd.close()
 
             spool_id=None
