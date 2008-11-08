@@ -73,7 +73,7 @@ class MobileDeviceBluetooth(MobileDevice):
         
         self.set_property("data-device", port)
         self.set_property("devices-autoconf", True)
-        self.set_property("device-icon", "stock_bluetooth")
+        self.set_property("device-icon", "bluetooth")
 
         MobileDevice.init_device(self)
         

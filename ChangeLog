@@ -1,3 +1,7 @@
+2008-11-08  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/devices/MobileDeviceBluetooth.py (MobileDeviceBluetooth.init_device): Add new icon
+
 2008-11-02  Cesar Garcia <tapia@openshine.com>
 
 	* src/MobileDevice.py: Fix bug marking messages as readed or not readed
