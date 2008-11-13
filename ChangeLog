@@ -1,5 +1,6 @@
 2008-11-13  Roberto Majadas  <telemaco@openshine.com>
 
+	* src/ui/MobileATOptionsButton.py (MobileATOptionsButton): Add no_option_menu capability
 	* src/MobileDevice.py : Initial mono-port works
 	* src/devices/MobileDeviceUSB.py (MobileDeviceUSB): Updated
 	* src/devices/MobileDeviceNovatel.py (MobileDeviceNovatel.__init__): Add new hardware support for novatel 990D

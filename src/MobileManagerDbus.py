@@ -44,6 +44,7 @@ MOBILE_MANAGER_DEVICE_XZONE_INTERFACE_URI=MOBILE_MANAGER_DEVICE_URI+".DeviceXZon
 MOBILE_MANAGER_DEVICE_DEBUG_INTERFACE_URI=MOBILE_MANAGER_DEVICE_URI+".DeviceDebug"
 MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI=MOBILE_MANAGER_DEVICE_URI+".DeviceSMS"
 MOBILE_MANAGER_DEVICE_ADDRESSBOOK_INTERFACE_URI=MOBILE_MANAGER_DEVICE_URI+".DeviceAddressBook"
+MOBILE_MANAGER_DEVICE_NO_OPTIONS_MENU=MOBILE_MANAGER_DEVICE_URI+".NoOptionsMenu"
 
 class MobileManagerDbusController(dbus.service.Object):
     def __init__(self, bus_name, path=MOBILE_MANAGER_CONTROLLER_PATH, mcontroller=None):
@@ -439,6 +440,9 @@ class MobileManagerDbusDevice(dbus.service.Object):
         if ADDRESSBOOK_CAPABILITY in self.device.capabilities :
             ret.append(MOBILE_MANAGER_DEVICE_ADDRESSBOOK_INTERFACE_URI)
 
+        if NO_OPTIONS_MENU in self.device.capabilities :
+            ret.append(MOBILE_MANAGER_DEVICE_NO_OPTIONS_MENU)
+
         return ret
     
     @dbus.service.method(MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI,
@@ -468,6 +472,11 @@ class MobileManagerDbusDevice(dbus.service.Object):
                 return False
         elif capability == MOBILE_MANAGER_DEVICE_ADDRESSBOOK_INTERFACE_URI :
             if ADDRESSBOOK_CAPABILITY in self.device.capabilities :
+                return True
+            else:
+                return False
+        elif capability == MOBILE_MANAGER_DEVICE_NO_OPTIONS_MENU :
+            if NO_OPTIONS_MENU in self.device.capabilities :
                 return True
             else:
                 return False

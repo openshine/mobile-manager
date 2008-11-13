@@ -32,8 +32,7 @@ import dbus
 import dbus.glib
 
 import MobileManager
-from MobileManager.MobileManagerDbus import MOBILE_MANAGER_CONTROLLER_PATH,MOBILE_MANAGER_CONTROLLER_URI,MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,MOBILE_MANAGER_DEVICE_PATH,MOBILE_MANAGER_DEVICE_URI,MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI,MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI,MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI,MOBILE_MANAGER_DEVICE_XZONE_INTERFACE_URI,MOBILE_MANAGER_DIALER_INTERFACE_URI 
-
+from MobileManager.MobileManagerDbus import MOBILE_MANAGER_CONTROLLER_PATH,MOBILE_MANAGER_CONTROLLER_URI,MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,MOBILE_MANAGER_DEVICE_PATH,MOBILE_MANAGER_DEVICE_URI,MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI,MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI,MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI,MOBILE_MANAGER_DEVICE_XZONE_INTERFACE_URI,MOBILE_MANAGER_DIALER_INTERFACE_URI,MOBILE_MANAGER_DEVICE_NO_OPTIONS_MENU
 
 
 class MobileATOptionsButton(gtk.Button) :
@@ -109,6 +108,10 @@ class MobileATOptionsButton(gtk.Button) :
             self.set_sensitive(False)
             return
         else:
+            if dev_info.HasCapability(MOBILE_MANAGER_DEVICE_NO_OPTIONS_MENU) :
+                self.set_sensitive(False)
+                return 
+            
             self.set_sensitive(True)
             dev_state = self.__get_device_state_from_path(dev_path)
             state = dev_state.GetCardStatus()
@@ -157,10 +160,16 @@ class MobileATOptionsButton(gtk.Button) :
         if dev_path == "" :
             self.set_sensitive(False)
             return
+
         dev_info = self.__get_device_info_from_path(dev_path)
         if not dev_info.HasCapability(MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI):
             self.set_sensitive(False)
             return
+
+        if dev_info.HasCapability(MOBILE_MANAGER_DEVICE_NO_OPTIONS_MENU) :
+            self.set_sensitive(False)
+            return False
+
 
         dev_state = self.__get_device_state_from_path(dev_path)
         dev_auth =  self.__get_device_auth_from_path(dev_path)
@@ -223,6 +232,10 @@ class MobileATOptionsButton(gtk.Button) :
             self.set_sensitive(False)
             return
         else:
+            if dev_info.HasCapability(MOBILE_MANAGER_DEVICE_NO_OPTIONS_MENU) :
+                self.set_sensitive(False)
+                return
+            
             self.set_sensitive(True)
             dev_state = self.__get_device_state_from_path(dev_path)
             state = dev_state.GetCardStatus()
@@ -242,6 +255,9 @@ class MobileATOptionsButton(gtk.Button) :
         dev_info = self.__get_device_info_from_path(dev_path)
         
         if not dev_info.HasCapability(MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI) :
+            return False
+
+        if dev_info.HasCapability(MOBILE_MANAGER_DEVICE_NO_OPTIONS_MENU) :
             return False
 
 
