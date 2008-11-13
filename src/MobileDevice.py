@@ -1118,7 +1118,10 @@ class MobileDevice(gobject.GObject) :
         self.dbg_msg ("GET TECH MODE DOMAIN : %s" % res)
         try:
             if res[2] == 'OK' :
-                tech_in_use = int(res[1][0][-1])
+                try :
+                    tech_in_use = int(res[1][0][-1])
+                except:
+                    tech_in_user = 2
 
                 pattern = re.compile('\+COPS:\ +(?P<carrier_selection_mode>\d*),(?P<carrier_format>\d*),"(?P<carrier>.*)"')
                 matched_res = pattern.match(res[1][0])

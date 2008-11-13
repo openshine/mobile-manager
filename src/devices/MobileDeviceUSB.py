@@ -23,10 +23,14 @@
 # Boston, MA 02111-1307, USA.
 #
 from MobileDevice import MobileDevice
+from MobileStatus import *
+from MobileCapabilities import *
+import os
+import re
 
 class MobileDeviceUSB(MobileDevice):
     def __init__(self, mcontroller, dev_props):
-        self.capabilities = []
+        self.capabilities = [AT_COMM_CAPABILITY, X_ZONE_CAPABILITY, SMS_CAPABILITY, ADDRESSBOOK_CAPABILITY, NO_OPTIONS_MENU]
         self.device_port = None
         
         MobileDevice.__init__(self, mcontroller, dev_props)
@@ -78,10 +82,79 @@ class MobileDeviceUSB(MobileDevice):
     def init_device(self):
         if self.device_port != None:
             self.set_property("data-device", self.device_port)
+            self.set_property("conf-device", self.device_port)
             self.set_property("devices-autoconf", True)
             self.set_property("device-icon", "stock_cell-phone")
             MobileDevice.init_device(self)
             return True
         else:
             return False
-        
+    
+    def is_on(self):
+        if self.card_is_on == None:
+            self.card_is_on = True
+
+        return self.card_is_on
+
+    def turn_on(self):
+        self.card_is_on = True
+        return True
+
+    def turn_off(self):
+        self.card_is_on = False
+        return False
+
+    def get_attach_state(self):
+        res = self.send_at_command('AT+CREG?', accept_null_response=False)
+        self.dbg_msg ("GET ATTACH STATE : %s" % res)
+        try:
+            if res[2] == 'OK':
+                pattern = re.compile("\+CREG:.*,(?P<state>\d+)")
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    if matched_res.group("state") == "1" or  matched_res.group("state") == "5":
+                        return int(matched_res.group("state"))
+                else:
+                    return 0
+            else:
+                return 0
+        except:
+            self.dbg_msg ("GET ATTACH STATE (except): %s" % res)
+            return 0
+
+    
+    def sms_poll(self):
+        pass
+
+    def verify_concat_sms_spool(self):
+        pass
+    
+    def get_mode_domain(self):
+        mode = None
+        domain = None
+
+        res = self.send_at_command('AT+COPS?',  accept_null_response=False)
+        self.dbg_msg ("GET MODE DOMAIN (USB) ? : %s" % res)
+        try:
+            if res[2] == 'OK':
+                pattern = re.compile("\+COPS:\ +(?P<data>.+)")
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    list = matched_res.group("data").split(',')
+                    if len(list) == 4 :
+                        if list[3] == "2" :
+                            mode = CARD_TECH_SELECTION_UMTS
+                        else:
+                            mode = CARD_TECH_SELECTION_GPRS
+                    else:
+                        self.dbg_msg ("GET MODE DOMAIN (USB) (AT+COPS not return TECH)) : %s" % res)
+                        mode = CARD_TECH_SELECTION_AUTO
+            return mode, CARD_DOMAIN_ANY
+        except:
+            self.dbg_msg ("GET MODE DOMAIN (except) : %s" % res)
+            return CARD_TECH_SELECTION_AUTO, CARD_DOMAIN_ANY
+
+    def set_mode_domain(self):
+        return True
+
+    

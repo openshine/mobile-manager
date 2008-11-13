@@ -36,7 +36,7 @@ class MobileDeviceNovatel(MobileDevice):
         self.capabilities = [AT_COMM_CAPABILITY, X_ZONE_CAPABILITY, SMS_CAPABILITY, ADDRESSBOOK_CAPABILITY]
         
         #Device list with tuplas representating the device (product_id, vendor_id)
-        self.device_list = [(0x4400,0x1410)]
+        self.device_list = [(0x4400,0x1410),(0x7001, 0x1410)]
         
         MobileDevice.__init__(self, mcontroller, dev_props)
 
