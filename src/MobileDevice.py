@@ -1829,7 +1829,7 @@ class MobileDevice(gobject.GObject) :
 
         new_id = last_id + 1
         fd = open(spool_path + "/" + str(new_id), "w")
-        fd.write("1|%s|0|%s\n" % (number, time.strftime("%y/%m/%d %H:%M:%S", time.gmtime())))
+        fd.write("1|%s|0|%s\n" % (number, time.strftime("%y/%m/%d %H:%M:%S", time.localtime())))
         fd.write(text.encode("utf-8"))
         fd.close()
         spool_id=None
@@ -1858,7 +1858,7 @@ class MobileDevice(gobject.GObject) :
         if os.path.exists(spool_path) :
             os.system("rm %s" % os.path.join(spool_path))
             fd = open(os.path.join(spool_path), "w")
-            fd.write("0|%s|0|%s\n" % (number, time.strftime("%y/%m/%d %H:%M:%S", time.gmtime())))
+            fd.write("0|%s|0|%s\n" % (number, time.strftime("%y/%m/%d %H:%M:%S", time.localtime())))
             fd.write(text)
             fd.close()
             
