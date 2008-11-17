@@ -5,5 +5,6 @@ mobilemanager_PYTHON = 	MobileDeviceHuawei.py		\
 			MobileDeviceNozomi.py		\
 			MobileDeviceNovatel.py		\
 			MobileDeviceSierra.py		\
+			MobileDeviceZTE.py		\
 			MobileDeviceUSB.py		\
 			MobileDeviceSerial.py

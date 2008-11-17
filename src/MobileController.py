@@ -33,7 +33,7 @@ from MobileCapabilities import AT_COMM_CAPABILITY
 from MobileDialWvdial import MobileDialWvdial
 from MobileManager.MobileManagerDbus import MobileManagerDbusController
 
-DeviceDrivers = ["Huawei", "Option", "Nozomi", "Novatel", "Sierra", "Bluetooth", "USB", "Serial"]
+DeviceDrivers = ["Huawei", "Option", "Nozomi", "Novatel", "Sierra", "ZTE", "Bluetooth", "USB", "Serial"]
 
 class MobileController(gobject.GObject):
 

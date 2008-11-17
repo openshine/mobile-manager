@@ -1,3 +1,7 @@
+2008-11-17  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/devices/MobileDeviceZTE.py (MobileDeviceZTE): Add new driver ZTE for MF620
+
 2008-11-13  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/ui/MobileATOptionsButton.py (MobileATOptionsButton): Add no_option_menu capability
