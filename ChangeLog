@@ -1,3 +1,7 @@
+2008-11-18  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDialWvdial.py (MobileDialWvdial.start): Detect monoport mode
+
 2008-11-17  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/devices/MobileDeviceZTE.py (MobileDeviceZTE): Add new driver ZTE for MF620

@@ -31,6 +31,7 @@ import StringIO
 import MobileManager
 import re
 
+from MobileManager.MobileCapabilities import *
 
 from MobileManager import MobileDeviceIO
 
@@ -75,6 +76,11 @@ class MobileDialWvdial(MobileDial):
 
         if active_device == None :
             return
+        else:
+            if AT_COMM_CAPABILITY in active_device.capabilities :
+                multi_port = active_device.get_property("multiport-device")
+                if multi_port == False :
+                    active_device.stop_polling()
 
         data_device = active_device.get_property("data-device")
         velocity = active_device.get_property("velocity")
@@ -426,7 +432,4 @@ class MobileDialWvdial(MobileDial):
             
             print "kill -15 %s" % self.wvdial_pid
             os.kill(int(self.wvdial_pid), 15)
-
-
-            
-            
+        

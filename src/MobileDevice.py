@@ -231,7 +231,7 @@ class MobileDevice(gobject.GObject) :
         elif property.name == 'device-conf-file':
             return self.device_conf_file
         elif property.name == 'multiport-device':
-            if self.data_port != self.conf_port and self.conf_port != '' :
+            if self.data_device != self.conf_device and self.conf_device != '' :
                 return True
             else:
                 return False
