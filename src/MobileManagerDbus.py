@@ -558,6 +558,10 @@ class MobileManagerDbusDevice(dbus.service.Object):
     def GetPriority(self):
         return int(self.device.get_property('priority'))
 
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI,
+                         in_signature='', out_signature='b')
+    def IsMultiPortDevice(self):
+        return self.device.get_property('multiport-device')
 
     @dbus.service.method(MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI,
                          in_signature='s', out_signature='b')

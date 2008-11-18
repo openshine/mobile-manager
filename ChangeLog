@@ -1,5 +1,6 @@
 2008-11-18  Roberto Majadas  <telemaco@openshine.com>
 
+	* src/MobileManagerDbus.py (MobileManagerDbusDevice): Add IsMultiPortDevice
 	* src/MobileDialWvdial.py (MobileDialWvdial.start): Detect monoport mode
 
 2008-11-17  Roberto Majadas  <telemaco@openshine.com>
