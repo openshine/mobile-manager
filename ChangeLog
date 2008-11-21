@@ -1,5 +1,6 @@
 2008-11-21  Roberto Majadas  <telemaco@openshine.com>
 
+	* src/MobileDevice.py (MobileDevice.get_sim_id): Final Fix of this method
 	* src/MobileManagerDbus.py (MobileManagerDbusDevice.GetUSSDCmd): Default response on error
 	* src/devices/MobileDeviceUSB.py (MobileDeviceUSB): Add custom sms_poll method.
 	* src/devices/MobileDevice[Bluetooth|Serial].py : Add custom sms_poll and verify_concat_sms_spool methods.

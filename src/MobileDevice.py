@@ -1440,17 +1440,29 @@ class MobileDevice(gobject.GObject) :
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=None)
     def get_sim_id(self):
+        if self.sim_id != None :
+            self.dbg_msg ("SIM ID (cached) : %s" % self.sim_id)
+            return self.sim_id
+
         res = self.send_at_command('AT+CIMI')
         self.dbg_msg ("GET SIM ID : %s" % res)
         try:
             if res[2] == 'OK':
-                pattern = re.compile('\+CIMI:.*(?P<cimi>\d+)')
+                pattern = re.compile('\+CIMI:\ +(?P<cimi>.+)')
                 matched_res = pattern.match(res[1][0])
                 if matched_res != None:
                     cimi = matched_res.group("cimi")
+                    self.dbg_msg ("* SIM ID : %s" % cimi)
                     return cimi
                 else:
-                    return None
+                    pattern = re.compile('^(?P<cimi>\d+)$')
+                    matched_res = pattern.match(res[1][0])
+                    if matched_res != None:
+                        cimi = matched_res.group("cimi")
+                        self.dbg_msg ("* SIM ID : %s" % cimi)
+                        return cimi
+                    else:
+                        return None
             else:
                 return None
         except:
@@ -1541,6 +1553,7 @@ class MobileDevice(gobject.GObject) :
                 return
 
         sms_spool_path = os.path.join("/var", "spool/", "MobileManager/", self.sim_id)
+        self.dbg_msg( "* spool path = %s" % sms_spool_path)
 
         if os.path.exists(sms_spool_path) == False :
             os.system ("mkdir -p %s" % sms_spool_path)

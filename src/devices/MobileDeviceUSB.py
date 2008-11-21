@@ -124,6 +124,8 @@ class MobileDeviceUSB(MobileDevice):
 
     
     def sms_poll(self):
+        self.dbg_msg("SMS POOL")
+        
         if self.sim_id == None :
             sim_id = self.get_sim_id()
             if sim_id != None:
@@ -132,6 +134,7 @@ class MobileDeviceUSB(MobileDevice):
                 return
 
         sms_spool_path = os.path.join("/var", "spool/", "MobileManager/", self.sim_id)
+        self.dbg_msg( "* spool path %s" % sms_spool_path)
 
         if os.path.exists(sms_spool_path) == False :
             os.system ("mkdir -p %s" % sms_spool_path)
@@ -147,11 +150,15 @@ class MobileDeviceUSB(MobileDevice):
 
         if os.path.exists(sms_spool_path + "/.tmp" ) == False :
             os.system ("mkdir -p %s" % sms_spool_path + "/.tmp")
+
+        self.dbg_msg("SMS POOL END")
         
         return
 
     def verify_concat_sms_spool(self):
+        self.dbg_msg("VERIFING CONCAT SPOOL")
         self.dbg_msg("* Not verifing sms spool")
+        self.dbg_msg("VERIFING CONCAT SPOOL END")
         return
     
     def get_mode_domain(self):
