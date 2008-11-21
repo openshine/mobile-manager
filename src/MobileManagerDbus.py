@@ -651,7 +651,7 @@ class MobileManagerDbusDevice(dbus.service.Object):
         if self.ussd_result != "" :
             ret = self.ussd_result
         else:
-            ret = ""
+            ret = "Servicio no disponible"
         self.ussd_result = ""
 
         return ret
