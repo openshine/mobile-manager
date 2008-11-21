@@ -128,6 +128,26 @@ class MobileDeviceUSB(MobileDevice):
             sim_id = self.get_sim_id()
             if sim_id != None:
                 self.sim_id = sim_id
+            else:
+                return
+
+        sms_spool_path = os.path.join("/var", "spool/", "MobileManager/", self.sim_id)
+
+        if os.path.exists(sms_spool_path) == False :
+            os.system ("mkdir -p %s" % sms_spool_path)
+
+        if os.path.exists(sms_spool_path + "/sended" ) == False :
+            os.system ("mkdir -p %s" % sms_spool_path + "/sended")
+
+        if os.path.exists(sms_spool_path + "/received" ) == False :
+            os.system ("mkdir -p %s" % sms_spool_path + "/received")
+
+        if os.path.exists(sms_spool_path + "/draft" ) == False :
+            os.system ("mkdir -p %s" % sms_spool_path + "/draft")
+
+        if os.path.exists(sms_spool_path + "/.tmp" ) == False :
+            os.system ("mkdir -p %s" % sms_spool_path + "/.tmp")
+        
         return
 
     def verify_concat_sms_spool(self):
