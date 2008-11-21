@@ -78,6 +78,12 @@ class MobileDeviceBluetooth(MobileDevice):
         MobileDevice.init_device(self)
         
         return True
+
+    def sms_poll(self):
+        pass
+
+    def verify_concat_sms_spool(self):
+        pass
         
 
         

@@ -58,3 +58,8 @@ class MobileDeviceSerial(MobileDevice):
         else:
             return False
         
+    def sms_poll(self):
+        pass
+
+    def verify_concat_sms_spool(self):
+        pass

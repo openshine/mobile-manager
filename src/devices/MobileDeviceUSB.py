@@ -124,7 +124,11 @@ class MobileDeviceUSB(MobileDevice):
 
     
     def sms_poll(self):
-        pass
+        if self.sim_id == None :
+            sim_id = self.get_sim_id()
+            if sim_id != None:
+                self.sim_id = sim_id
+        return
 
     def verify_concat_sms_spool(self):
         pass
@@ -156,5 +160,5 @@ class MobileDeviceUSB(MobileDevice):
 
     def set_mode_domain(self):
         return True
-
+    
     

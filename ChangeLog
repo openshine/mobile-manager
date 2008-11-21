@@ -1,3 +1,8 @@
+2008-11-21  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/devices/MobileDeviceUSB.py (MobileDeviceUSB): Add custom sms_poll method.
+	* src/devices/MobileDevice[Bluetooth|Serial].py : Add custom sms_poll and verify_concat_sms_spool methods.
+
 2008-11-18  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileManagerDbus.py (MobileManagerDbusDevice): Add IsMultiPortDevice
