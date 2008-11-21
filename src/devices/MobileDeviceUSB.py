@@ -151,7 +151,8 @@ class MobileDeviceUSB(MobileDevice):
         return
 
     def verify_concat_sms_spool(self):
-        pass
+        self.dbg_msg("* Not verifing sms spool")
+        return
     
     def get_mode_domain(self):
         mode = None

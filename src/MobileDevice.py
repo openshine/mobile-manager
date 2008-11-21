@@ -1444,11 +1444,17 @@ class MobileDevice(gobject.GObject) :
         self.dbg_msg ("GET SIM ID : %s" % res)
         try:
             if res[2] == 'OK':
-                return res[1][0]
+                pattern = re.compile('\+CIMI:.*(?P<cimi>\d+)')
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    cimi = matched_res.group("cimi")
+                    return cimi
+                else:
+                    return None
             else:
                 return None
         except:
-            self.dbg_msg ("SMS DELETE (except): %s" % res)
+            self.dbg_msg ("SMS SIM ID (except): %s" % res)
             return None
 
     def verify_concat_sms_spool(self):
