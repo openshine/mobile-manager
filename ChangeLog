@@ -1,3 +1,7 @@
+2008-12-04  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDialWvdial.py (MobileDialWvdial.start): Don't try to detect roaming at ppp start
+
 2008-11-21  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileDevice.py (MobileDevice.get_sim_id): Final Fix of this method
