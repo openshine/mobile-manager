@@ -2096,7 +2096,7 @@ class MobileDevice(gobject.GObject) :
                         cid = matched_res.group("id")
                         name = matched_res.group("name")
                         number = matched_res.group("number")
-                        ab_list.append([cid, name, number])
+                        ab_list.append([int(cid), name.decode("latin-1"), number])
                     else:
                          self.dbg_msg ("GET ADDRESSBOOK LIST (not matched): %s" % res)
                     
