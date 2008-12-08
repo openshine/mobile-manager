@@ -1,5 +1,6 @@
 2008-12-08  Roberto Majadas  <telemaco@openshine.com>
 
+	* src/ui/MobileDeviceConf.py (MobileDeviceConfWidget): fix bug #796. Don't show action button if there isn't any device.
 	* src/MobileDevice.py (MobileDevice.sms_ab_list): fix bug retriving addressbook contacts
 
 2008-12-04  Roberto Majadas  <telemaco@openshine.com>

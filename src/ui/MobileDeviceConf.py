@@ -182,6 +182,7 @@ class MobileDeviceConfWidget(gtk.HBox):
             self.no_dev_label.show()
             self.devs_combobox.hide()
             self.device_configuration_vbox.hide()
+            self.at_op_button.hide()
 
     def __AddedDevice_cb(self, device):
         for x in self.handlers:
@@ -221,6 +222,10 @@ class MobileDeviceConfWidget(gtk.HBox):
         active_dev = self.mcontroller.GetActiveDevice()
         
         devs_list = self.mcontroller.GetAvailableDevices()
+        
+        if len(devs_list) == 0 :
+            self.at_op_button.hide()
+
         for dev_path in devs_list :
             dev = self.dbus.get_object(MOBILE_MANAGER_DEVICE_URI,
                                        dev_path)
