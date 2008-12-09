@@ -1,3 +1,7 @@
+2008-12-09  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDialWvdial.py (MobileDialWvdial): refactory
+
 2008-12-08  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/ui/MobileDeviceConf.py (MobileDeviceConfWidget): fix bug #796. Don't show action button if there isn't any device.

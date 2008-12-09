@@ -47,6 +47,7 @@ class MobileDialWvdial(MobileDial):
         self.last_traffic_time = 0.0
         self.dns_data = None
         self.status_flag = PPP_STATUS_DISCONNECTED
+        self.active_device = None
          
         MobileDial.__init__(self, mcontroller)
 
@@ -72,26 +73,26 @@ class MobileDialWvdial(MobileDial):
         init5 = 'Init2 = AT+CGDCONT=1,"IP","%s","0.0.0.0",0,0;\n' % apn
         wvdial_conf = wvdial_conf + init5
         
-        active_device = self.mcontroller.get_active_device()
+        self.active_device = self.mcontroller.get_active_device()
 
-        if active_device == None :
+        if self.active_device == None :
             return
         else:
-            if AT_COMM_CAPABILITY in active_device.capabilities :
-                multi_port = active_device.get_property("multiport-device")
+            if AT_COMM_CAPABILITY in self.active_device.capabilities :
+                multi_port = self.active_device.get_property("multiport-device")
                 if multi_port == False :
-                    active_device.stop_polling()
+                    self.active_device.stop_polling()
 
-        data_device = active_device.get_property("data-device")
-        velocity = active_device.get_property("velocity")
+        data_device = self.active_device.get_property("data-device")
+        velocity = self.active_device.get_property("velocity")
 
         wvdial_conf = wvdial_conf + "Modem = %s\n" % data_device
         wvdial_conf = wvdial_conf + "Baud = %s\n" % velocity
         
         
-        hfc = active_device.get_property('hardware-flow-control')
-        hec = active_device.get_property('hardware-error-control')
-        hc = active_device.get_property('hardware-compress')
+        hfc = self.active_device.get_property('hardware-flow-control')
+        hec = self.active_device.get_property('hardware-error-control')
+        hc = self.active_device.get_property('hardware-compress')
 
         if username != "" :
             wvdial_conf = wvdial_conf + "Username = %s\n" % username
@@ -111,35 +112,29 @@ class MobileDialWvdial(MobileDial):
         fd.close()
 
         self.__pppd_options(hfc, hec, hc, auto_dns)
-#        try:
-#            self.__detect_roaming()
-#        except:
-#            print "Not possible detect roaming"
             
         self.__start_wvdial()
 
     def __detect_roaming(self):
         print "__detect_roaming"
-        
-        active_device = self.mcontroller.get_active_device()
 
-        if not os.path.exists(active_device.get_property("data-device")) :
+        if not os.path.exists(self.active_device.get_property("data-device")) :
             return
 
-        data_dev = active_device.get_property("data-device")
+        data_dev = self.active_device.get_property("data-device")
         if data_dev.startswith("/dev/rfcomm") == True:
             return
         
-        io = MobileDeviceIO(active_device.get_property("data-device"))
+        io = MobileDeviceIO(self.active_device.get_property("data-device"))
         io.open()
         io.write("AT+CGREG?\r")
 
-        active_device.dbg_msg("DETECTING ROAMING SUPPORT (AT+CGREG?)")
+        self.active_device.dbg_msg("DETECTING ROAMING SUPPORT (AT+CGREG?)")
 
         attempts = 2
         res = io.readline()
         while attempts != 0 :
-            active_device.dbg_msg ("Recv from DATA PORT : %s" % res)
+            self.active_device.dbg_msg ("Recv from DATA PORT : %s" % res)
             if res == "OK" :
                 return
             elif "ERROR" in res :
@@ -149,15 +144,15 @@ class MobileDialWvdial(MobileDial):
                 matched_res = pattern.match(res)
                 if matched_res != None:
                     if matched_res.group("state") == "5" :
-                        active_device.dbg_msg ("YES ROAMING")
-                        active_device.cached_status_values["is_roaming"] = True
+                        self.active_device.dbg_msg ("YES ROAMING")
+                        self.active_device.cached_status_values["is_roaming"] = True
                         self.mcontroller.emit('active-dev-roaming-status-changed', True)
-                        self.mcontroller.emit('dev-roaming-status-changed', active_device.dev_props["info.udi"], True)
+                        self.mcontroller.emit('dev-roaming-status-changed', self.active_device.dev_props["info.udi"], True)
                     else:
-                        active_device.dbg_msg ("NO ROAMING")
-                        active_device.cached_status_values["is_roaming"] = False
+                        self.active_device.dbg_msg ("NO ROAMING")
+                        self.active_device.cached_status_values["is_roaming"] = False
                         self.mcontroller.emit('active-dev-roaming-status-changed', False)
-                        self.mcontroller.emit('dev-roaming-status-changed', active_device.dev_props["info.udi"], False)
+                        self.mcontroller.emit('dev-roaming-status-changed', self.active_device.dev_props["info.udi"], False)
             
             res = io.readline()
             attempts = attempts - 1
@@ -234,8 +229,7 @@ class MobileDialWvdial(MobileDial):
         self.emit('connecting')
         self.status_flag = PPP_STATUS_CONNECTING
         
-        active_device = self.mcontroller.get_active_device()
-        active_device.set_using_data_device(True)
+        self.active_device.set_using_data_device(True)
         
         cmd = "/usr/bin/wvdial -C %s" % self.wvdial_conf_file
         self.wvdial_p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE,
@@ -264,14 +258,12 @@ class MobileDialWvdial(MobileDial):
             self.dns_data = None
             self.status_flag = PPP_STATUS_DISCONNECTED
 
-            active_device = self.mcontroller.get_active_device()
-            if active_device != None :
-                if MobileManager.AT_COMM_CAPABILITY in active_device.capabilities :
+            if self.active_device != None :
+                if MobileManager.AT_COMM_CAPABILITY in self.active_device.capabilities :
                     #Some devices need reopen port when wdial is killed
-                    active_device = self.mcontroller.get_active_device()
-                    active_device.set_using_data_device(False)
-                    active_device.serial.reopen()
-                    active_device.start_polling()
+                    self.active_device.set_using_data_device(False)
+                    self.active_device.serial.reopen()
+                    self.active_device.start_polling()
 
             print "emit disconnected"
             self.emit('disconnected')
@@ -404,10 +396,10 @@ class MobileDialWvdial(MobileDial):
             
         
         if self.wvdial_pid != None :
-            active_device = self.mcontroller.get_active_device()
-            if active_device != None :
-                if MobileManager.AT_COMM_CAPABILITY in active_device.capabilities :
-                    active_device.stop_polling()
+            
+            if self.active_device != None :
+                if MobileManager.AT_COMM_CAPABILITY in self.active_device.capabilities :
+                    self.active_device.stop_polling()
              
             print "emit disconnecting"
             self.emit('disconnecting')
@@ -425,10 +417,9 @@ class MobileDialWvdial(MobileDial):
             print "emit disconnecting"
             self.status_flag = PPP_STATUS_DISCONNECTING
             
-            active_device = self.mcontroller.get_active_device()
-            if active_device != None :
-                if MobileManager.AT_COMM_CAPABILITY in active_device.capabilities :
-                    active_device.stop_polling()
+            if self.active_device != None :
+                if MobileManager.AT_COMM_CAPABILITY in self.active_device.capabilities :
+                    self.active_device.stop_polling()
             
             print "kill -15 %s" % self.wvdial_pid
             os.kill(int(self.wvdial_pid), 15)
