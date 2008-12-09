@@ -228,6 +228,9 @@ class MobileDeviceHuawei(MobileDevice):
         if ret == False :
             return False
         
+        dev = (self.dev_props["usb_device.product_id"],
+               self.dev_props["usb_device.vendor_id"])
+
         self.serial.write("ATZ\r")
         self.dbg_msg ("Send : ATZ")
         attempts = 5
@@ -281,6 +284,25 @@ class MobileDeviceHuawei(MobileDevice):
         if res == None  :
             self.dbg_msg ("ACTIONS ON OPEN PORT END FAILED--------")
             return False
+
+        if dev == (0x1406,0x12d1) :
+            self.serial.write("AT^CURC=0\r")
+            self.dbg_msg ("Send : AT^CURC")
+            attempts = 5
+            res = self.serial.readline()
+            while attempts != 0 :
+                self.dbg_msg ("Recv : %s" % res)
+
+                if res == "OK" :
+                    break
+                elif res == None :
+                    attempts = attempts - 1
+
+                res = self.serial.readline()
+
+            if res != "OK" :
+                self.dbg_msg ("ACTIONS ON OPEN PORT END FAILED--------")
+                return False
 
         self.dbg_msg ("ACTIONS ON OPEN PORT END --------")
         return True

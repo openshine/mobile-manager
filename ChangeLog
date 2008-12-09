@@ -1,5 +1,6 @@
 2008-12-09  Roberto Majadas  <telemaco@openshine.com>
 
+	* src/devices/MobileDeviceHuawei.py (MobileDeviceHuawei.actions_on_open_port): add CURC=0 in model=0x1406
 	* src/MobileDialWvdial.py (MobileDialWvdial): refactory
 
 2008-12-08  Roberto Majadas  <telemaco@openshine.com>
