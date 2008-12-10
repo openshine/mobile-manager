@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-25 17:09+0200\n"
+"POT-Creation-Date: 2008-12-10 19:54+0100\n"
 "PO-Revision-Date: 2008-06-02 10:31+0200\n"
 "Last-Translator: Roberto Majadas <telemaco@openshine.com>\n"
 "Language-Team: spanish <telemaco@openshine.com>\n"
@@ -48,7 +48,7 @@ msgstr ""
 "Dispones de un máximo de 10 intentos para insertar correctamente el número "
 "PUK o la tarjeta SIM se bloqueará."
 
-#: ../data/glade/mm_pin_dialog.glade.h:1 ../src/ui/MobilePinDialog.py:381
+#: ../data/glade/mm_pin_dialog.glade.h:1 ../src/ui/MobilePinDialog.py:384
 msgid "<b><big>Activate PIN code</big></b>"
 msgstr "<b><big>Activar código PIN</big></b>"
 
@@ -60,7 +60,7 @@ msgstr "<b><big>Cambiar código PIN</big></b>"
 msgid "<b><big>Enter PIN code</big></b>"
 msgstr "<b><big>Introduce el código PIN</big></b>"
 
-#: ../data/glade/mm_pin_dialog.glade.h:4 ../src/ui/MobilePinDialog.py:382
+#: ../data/glade/mm_pin_dialog.glade.h:4 ../src/ui/MobilePinDialog.py:385
 msgid "Activate PIN code"
 msgstr "Activar código PIN"
 
@@ -255,28 +255,28 @@ msgstr "Velocidad: "
 msgid "Options"
 msgstr "Opciones"
 
-#: ../src/ui/MobilePinDialog.py:134
+#: ../src/ui/MobilePinDialog.py:135
 msgid ""
 "You have canceled the PIN code insertion, the mobile device will be turn off"
 msgstr ""
 "Has cancelado la insercción del código PIN, el dispositivo será apagado."
 
-#: ../src/ui/MobilePinDialog.py:135
+#: ../src/ui/MobilePinDialog.py:138
 msgid "PIN code insertion canceled"
 msgstr "Inserción del código PIN cancelada"
 
-#: ../src/ui/MobilePinDialog.py:147 ../src/ui/MobilePinDialog.py:273
-#: ../src/ui/MobilePinDialog.py:421
+#: ../src/ui/MobilePinDialog.py:150 ../src/ui/MobilePinDialog.py:276
+#: ../src/ui/MobilePinDialog.py:424
 msgid "The PIN code requires between 4 and 8 digits"
 msgstr "El código PIN requiere entre 4 y 8 dígitos."
 
-#: ../src/ui/MobilePinDialog.py:163 ../src/ui/MobilePinDialog.py:303
-#: ../src/ui/MobilePinDialog.py:444
+#: ../src/ui/MobilePinDialog.py:166 ../src/ui/MobilePinDialog.py:306
+#: ../src/ui/MobilePinDialog.py:447
 msgid "The PIN code is invalid"
 msgstr "El código PIN no es válido"
 
-#: ../src/ui/MobilePinDialog.py:168 ../src/ui/MobilePinDialog.py:308
-#: ../src/ui/MobilePinDialog.py:449 ../src/ui/MobilePukDialog.py:178
+#: ../src/ui/MobilePinDialog.py:171 ../src/ui/MobilePinDialog.py:311
+#: ../src/ui/MobilePinDialog.py:452 ../src/ui/MobilePukDialog.py:178
 msgid ""
 "There is a problem with your mobile device. The application can not "
 "communicate with it"
@@ -284,15 +284,15 @@ msgstr ""
 "Hay un problema con tu dispositivo. La applicación no puede comunicarse con "
 "él."
 
-#: ../src/ui/MobilePinDialog.py:280
+#: ../src/ui/MobilePinDialog.py:283
 msgid "The two PIN codes are not equal"
 msgstr "Los dos códigos PIN no son iguales."
 
-#: ../src/ui/MobilePinDialog.py:293
+#: ../src/ui/MobilePinDialog.py:296
 msgid "<b>Error changing PIN code</b>"
 msgstr "<b>Error cambiando el código PIN.</b>"
 
-#: ../src/ui/MobilePinDialog.py:294
+#: ../src/ui/MobilePinDialog.py:297
 msgid ""
 "The PIN code change of your SIM card has failed. Now , your card will be "
 "turn off. The next turn on of your card, the PUK code will be required"
@@ -300,7 +300,7 @@ msgstr ""
 "El cambio de código PIN de tu tarjeta SIM ha fallado. Ahora tu dispositivo "
 "será apagado. Cuando enciendas el dispositivo, se te pedirá el código PUK."
 
-#: ../src/ui/MobilePinDialog.py:380
+#: ../src/ui/MobilePinDialog.py:383
 msgid ""
 "The <b>PIN code</b> of your SIM card is not activated. If you want to "
 "activate it, enter your <b>PIN code</b> and press Accept button.\n"
@@ -312,7 +312,7 @@ msgstr ""
 "Dispones de un máximo de <b>3 intentos</b> para introducir correctamente el "
 "código PIN o la tarjeta SIM se bloqueará."
 
-#: ../src/ui/MobilePinDialog.py:384
+#: ../src/ui/MobilePinDialog.py:387
 msgid ""
 "The <b>PIN code</b> of your SIM card is activated. If you want to deactivate "
 "it, enter your <b>PIN code</b> and press Accept button.\n"
@@ -324,19 +324,19 @@ msgstr ""
 "Dispones de un máximo de <b>3 intentos</b> para introducir correctamente el "
 "código PIN o la tarjeta SIM se bloqueará."
 
-#: ../src/ui/MobilePinDialog.py:385
+#: ../src/ui/MobilePinDialog.py:388
 msgid "<b><big>Deactivate PIN code</big></b>"
 msgstr "<b><big>Desactivar código PIN</big></b> "
 
-#: ../src/ui/MobilePinDialog.py:386
+#: ../src/ui/MobilePinDialog.py:389
 msgid "Deactivate PIN code"
 msgstr "Desactivar código PIN"
 
-#: ../src/ui/MobilePinDialog.py:434
+#: ../src/ui/MobilePinDialog.py:437
 msgid "<b>Wrong insertion of PIN code</b>"
 msgstr "<b>Inserción errónea del código PIN</b> "
 
-#: ../src/ui/MobilePinDialog.py:435
+#: ../src/ui/MobilePinDialog.py:438
 msgid ""
 "The PIN code insertion process of your SIM card has failed. Now , your card "
 "will be turn off. The next turn on of your card, the PUK code will be "
