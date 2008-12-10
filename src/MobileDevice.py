@@ -2065,6 +2065,10 @@ class MobileDevice(gobject.GObject) :
                 matched_res = pattern.match(res[1][0])
                 if matched_res != None :
                     self.cached_status_values["ab_size"] = int(matched_res.group("lene"))
+
+                    if self.cached_status_values["ab_size"] > 250 :
+                        self.cached_status_values["ab_size"] = 250
+
                     return int(matched_res.group("lene"))
                 else:
                     self.dbg_msg ("GET ADDRESSBOOK INFO (not match) : %s" % res)

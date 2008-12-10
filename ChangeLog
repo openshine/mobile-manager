@@ -1,3 +1,7 @@
+2008-12-10  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDevice.py (MobileDevice.sms_ab_get_size): if ab_size > 250 => ab_size = 250
+
 2008-12-09  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/devices/MobileDeviceHuawei.py (MobileDeviceHuawei.actions_on_open_port): add CURC=0 in model=0x1406
