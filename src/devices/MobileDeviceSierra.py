@@ -70,7 +70,8 @@ class MobileDeviceSierra(MobileDevice):
             if device_tmp.startswith(device_udi):
                 if props.has_key("serial.device") :
                     ports.append(os.path.basename(props["serial.device"]))
-            
+
+        ports = list(set(ports))
         ports.sort()
 
         dev = (self.dev_props["usb_device.product_id"],
