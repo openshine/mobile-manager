@@ -1,5 +1,6 @@
 2008-12-10  Roberto Majadas  <telemaco@openshine.com>
 
+	* src/devices/MobileDeviceSierra.py (MobileDeviceSierra.init_device): special conf-port compas888
 	* src/MobileDevice.py (MobileDevice.sms_ab_get_size): if ab_size > 250 => ab_size = 250
 
 2008-12-09  Roberto Majadas  <telemaco@openshine.com>

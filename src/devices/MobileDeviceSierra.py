@@ -72,10 +72,20 @@ class MobileDeviceSierra(MobileDevice):
                     ports.append(os.path.basename(props["serial.device"]))
             
         ports.sort()
+
+        dev = (self.dev_props["usb_device.product_id"],
+               self.dev_props["usb_device.vendor_id"])
         
         if len(ports) >= 3 :
             self.set_property("data-device", "/dev/%s" % ports[0])
-            self.set_property("conf-device", "/dev/%s" % ports[2])
+            if dev == (0x6890,0x1199) :
+                self.set_property("conf-device", "/dev/%s" % ports[3])
+            else:
+                self.set_property("conf-device", "/dev/%s" % ports[2])
+
+            print "data ------------> %s" % self.get_property("data-device")
+            print "conf ------------> %s" % self.get_property("conf-device")
+
             self.set_property("device-icon", "network-wireless")
             self.pretty_name = "Sierra"
             self.set_property("devices-autoconf", True)
