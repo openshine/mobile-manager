@@ -1,5 +1,6 @@
 2008-12-10  Roberto Majadas  <telemaco@openshine.com>
 
+	* data/dbus/mobilemanager.conf: update dbus conf
 	* src/devices/MobileDeviceSierra.py (MobileDeviceSierra.init_device): special conf-port compas888
 	(MobileDeviceSierra.init_device): add unique ports assert
 
