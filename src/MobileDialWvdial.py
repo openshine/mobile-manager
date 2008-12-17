@@ -226,6 +226,12 @@ class MobileDialWvdial(MobileDial):
 
     def __start_wvdial(self):
         print "Starting Wvdial"
+        if os.path.exists("/etc/fedora-release") :
+            try:
+                os.system("/etc/init.d/NetworkManager stop")
+            except:
+                print "No network manager to stop"
+
         self.emit('connecting')
         self.status_flag = PPP_STATUS_CONNECTING
         
@@ -265,8 +271,15 @@ class MobileDialWvdial(MobileDial):
                     self.active_device.serial.reopen()
                     self.active_device.start_polling()
 
+            if os.path.exists("/etc/fedora-release") :
+                try:
+                    os.system("/etc/init.d/NetworkManager start")
+                except:
+                    print "No network manager to start"
+
             print "emit disconnected"
             self.emit('disconnected')
+
             return False
         
     def __pppd_monitor(self):

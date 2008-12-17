@@ -1,3 +1,7 @@
+2008-12-17  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDialWvdial.py (MobileDialWvdial): stop/start network manager in fedora core at start/stop ppp
+
 2008-12-10  Roberto Majadas  <telemaco@openshine.com>
 
 	* data/dbus/mobilemanager.conf: update dbus conf
