@@ -1,3 +1,8 @@
+2008-12-18  Roberto Majadas  <telemaco@openshine.com>
+
+	* contrib/usb-modeswitch/usb_modeswitch.c: Update 0.9.5 
+	* data/usbmodeswitch-conf/novatel-MC990D.conf : Add MC990D conf
+
 2008-12-17  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileDialWvdial.py (MobileDialWvdial): stop/start network manager in fedora core at start/stop ppp
