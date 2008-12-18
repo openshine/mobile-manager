@@ -1,5 +1,6 @@
 2008-12-18  Roberto Majadas  <telemaco@openshine.com>
 
+	* src/devices/MobileDeviceSierra.py : Add sms and addressbook support
 	* contrib/usb-modeswitch/usb_modeswitch.c: Update 0.9.5 
 	* data/usbmodeswitch-conf/novatel-MC990D.conf : Add MC990D conf
 
