@@ -31,7 +31,8 @@ import dbus
 import dbus.glib
 import gettext
 
-from MobileManager.MobileManagerDbus import MOBILE_MANAGER_CONTROLLER_PATH,MOBILE_MANAGER_CONTROLLER_URI,MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,MOBILE_MANAGER_DEVICE_PATH,MOBILE_MANAGER_DEVICE_URI,MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI,MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI,MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI,MOBILE_MANAGER_DEVICE_XZONE_INTERFACE_URI
+from MobileManager.MobileManagerDbus import MOBILE_MANAGER_CONTROLLER_PATH,MOBILE_MANAGER_CONTROLLER_URI,MOBILE_MANAGER_CONTROLLER_INTERFACE_URI,MOBILE_MANAGER_DEVICE_PATH,MOBILE_MANAGER_DEVICE_URI,MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI,MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI,MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI,MOBILE_MANAGER_DEVICE_XZONE_INTERFACE_URI, MOBILE_MANAGER_DIALER_INTERFACE_URI
+from MobileManager.MobileStatus import *
 
 VELOCITY = [9600, 14400, 19200, 38400, 56000, 57600, 115200]
 
@@ -54,6 +55,7 @@ class MobileDeviceConfWidget(gtk.HBox):
         self.dbus = None
         self.mm_manager_obj = None
         self.mcontroller = None
+        self.mdialer = None
         if self.__init_bus() == False:
             return        
         
@@ -120,6 +122,9 @@ class MobileDeviceConfWidget(gtk.HBox):
                                                        MOBILE_MANAGER_CONTROLLER_PATH)
             self.mcontroller = dbus.Interface(self.mm_manager_obj,
                                               MOBILE_MANAGER_CONTROLLER_INTERFACE_URI)
+
+            self.mdialer = dbus.Interface(self.mm_manager_obj,
+                                          MOBILE_MANAGER_DIALER_INTERFACE_URI)
             return True
         except:
             print "Not dbus connection available"
@@ -264,6 +269,9 @@ class MobileDeviceConfWidget(gtk.HBox):
         dev_auth = self.__get_device_auth_from_path(dev_path)
         
         if not dev_info.HasCapability(MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI) :
+            return
+
+        if self.mdialer.Status() != PPP_STATUS_DISCONNECTED and not dev_info.IsMultiPortDevice() :
             return
                 
         status = dev_auth.PINStatus()

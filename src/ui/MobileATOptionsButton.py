@@ -244,6 +244,10 @@ class MobileATOptionsButton(gtk.Button) :
     def __pin_activate_status_changed_cb(self, status):
         dev_path = self.mcontroller.GetActiveDevice()
         dev_state = self.__get_device_state_from_path(dev_path)
+        dev_info = self.__get_device_info_from_path(dev_path)
+        if dev_info.HasCapability(MOBILE_MANAGER_DEVICE_NO_OPTIONS_MENU) :
+            return 
+
         state = dev_state.GetCardStatus()
         self.__card_status_changed_cb(state)
         

@@ -1,3 +1,7 @@
+2008-12-22  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/ui/MobileDeviceConf.py|MobileAt*.py : Fix monoport bug 
+
 2008-12-18  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/devices/MobileDeviceSierra.py : Add sms and addressbook support
