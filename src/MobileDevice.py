@@ -1490,6 +1490,11 @@ class MobileDevice(gobject.GObject) :
             
             if item_completed == False:
                 self.dbg_msg("* sms_id (%s) Not completed , waiting for more parts" % sms_dir)
+                st_info = os.stat(os.path.join(tmp_sms_spool, sms_dir))
+                if time.time() - st_info.st_ctime > 24*60*60 :
+                    self.dbg_msg("* Removed : %s" % os.path.join(tmp_sms_spool, sms_dir))
+                    os.system("rm -fr %s" % os.path.join(tmp_sms_spool, sms_dir))
+                    
                 continue
             else:
                 self.dbg_msg("* sms_id (%s) completed" % sms_dir)

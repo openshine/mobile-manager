@@ -1,5 +1,6 @@
 2008-12-22  Roberto Majadas  <telemaco@openshine.com>
 
+	* src/MobileDevice.py (MobileDevice.verify_concat_sms_spool): Remove old concat sms's if any part is not recived in 1 day
 	* src/ui/MobileDeviceConf.py|MobileAt*.py : Fix monoport bug 
 
 2008-12-18  Roberto Majadas  <telemaco@openshine.com>
