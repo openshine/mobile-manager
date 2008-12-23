@@ -343,7 +343,7 @@ msgid ""
 "required"
 msgstr ""
 "Ha fallado el proceso de inserción del código PIN de la tarjeta SIM. A "
-"continuación se apagará la Tarjeta o Módem USB Internet Móvil. La siguiente "
+"continuación se apagará la Dispositivo Internet Móvil. La siguiente "
 "vez que se encienda se pedirá el código PUK de la misma."
 
 #: ../src/ui/MobileCarrierDialog.py:161
@@ -368,8 +368,8 @@ msgstr "<b>Comprobación cancelada</b>"
 msgid ""
 "You have canceled the PUK authentication process, the card will be turn off"
 msgstr ""
-"Has cancelado el proceso de comprobación del código PUK y tu Tarjeta o Módem "
-"USB Internet Móvil se apagará. Para volver a iniciar el proceso selecciona "
+"Has cancelado el proceso de comprobación del código PUK y tu Dispositivo Internet Móvil"
+"se apagará. Para volver a iniciar el proceso selecciona "
 "la opción \"Encender\" del menú de dispositivo."
 
 #: ../src/ui/MobilePukDialog.py:153
