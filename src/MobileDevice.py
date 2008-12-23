@@ -2046,6 +2046,8 @@ class MobileDevice(gobject.GObject) :
                     i_type = matched_res.group("i_type")
                     name = matched_res.group("name")
                     number = matched_res.group("number")
+                    
+                    name = name.decode("latin-1")
                     return int(i_type), name, number
                 else:
                     self.dbg_msg ("GET BOOKMARK ITEM (not matched): %s" % res)
@@ -2074,7 +2076,7 @@ class MobileDevice(gobject.GObject) :
                     if self.cached_status_values["ab_size"] > 250 :
                         self.cached_status_values["ab_size"] = 250
 
-                    return int(matched_res.group("lene"))
+                    return self.cached_status_values["ab_size"]
                 else:
                     self.dbg_msg ("GET ADDRESSBOOK INFO (not match) : %s" % res)
                     return 0
@@ -2084,8 +2086,25 @@ class MobileDevice(gobject.GObject) :
             self.dbg_msg ("GET ADDRESSBOOK INFO (except) : %s" % res)
             return 0
 
+
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=[])
     def sms_ab_list(self):
+        ab_size = self.sms_ab_get_size()
+        if ab_size == 0 :
+            self.dbg_msg ("GET ADDRESSBOOK LIST (not ab_size available)")
+            return []
+        
+        ab_list = []
+        
+        for x in range(1,ab_size+1):
+            index, name, number = self.sms_ab_get(x)
+            if index != 0 :
+                ab_list.append([index, name, number])
+                
+        return ab_list
+
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=[])
+    def sms_ab_list_old(self):
         ab_size = self.sms_ab_get_size()
         if ab_size == 0 :
             self.dbg_msg ("GET ADDRESSBOOK LIST (not ab_size available)")

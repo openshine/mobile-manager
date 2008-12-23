@@ -1,3 +1,7 @@
+2008-12-23  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDevice.py (MobileDevice): Add new implementation of sms_ab_list
+
 2008-12-22  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileDevice.py (MobileDevice.verify_concat_sms_spool): Remove old concat sms's if any part is not recived in 1 day
