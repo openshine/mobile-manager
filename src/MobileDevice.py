@@ -2089,6 +2089,13 @@ class MobileDevice(gobject.GObject) :
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=[])
     def sms_ab_list(self):
+        res = self.send_at_command('AT+CPBS="SM"'
+                                   , accept_null_response=False)
+
+        if res[2] != 'OK':
+            self.dbg_msg ("ENABLE ADDRESSBOOK NOT OK")
+            return []
+            
         ab_size = self.sms_ab_get_size()
         if ab_size == 0 :
             self.dbg_msg ("GET ADDRESSBOOK LIST (not ab_size available)")
