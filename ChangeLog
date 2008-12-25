@@ -1,3 +1,7 @@
+2008-12-25  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDevice.py: Change CGREG -> CREG
+
 2008-12-23  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileDevice.py (MobileDevice): Add new implementation of sms_ab_list

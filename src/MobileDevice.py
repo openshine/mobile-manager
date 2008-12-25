@@ -1288,11 +1288,11 @@ class MobileDevice(gobject.GObject) :
     
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def is_attached(self):
-        res = self.send_at_command('AT+CGREG?', accept_null_response=False)
+        res = self.send_at_command('AT+CREG?', accept_null_response=False)
         self.dbg_msg ("IS ATTACHED ? : %s" % res)
         try:
             if res[2] == 'OK':
-                pattern = re.compile("\+CGREG:.*,(?P<state>\d+)")
+                pattern = re.compile("\+CREG:.*,(?P<state>\d+)")
                 matched_res = pattern.match(res[1][0])
                 if matched_res != None:
                     if matched_res.group("state") == "1" or  matched_res.group("state") == "5":
@@ -1309,11 +1309,11 @@ class MobileDevice(gobject.GObject) :
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=0)
     def get_attach_state(self):
-        res = self.send_at_command('AT+CGREG?', accept_null_response=False)
+        res = self.send_at_command('AT+CREG?', accept_null_response=False)
         self.dbg_msg ("GET ATTACH STATE : %s" % res)
         try:
             if res[2] == 'OK':
-                pattern = re.compile("\+CGREG:.*,(?P<state>\d+)")
+                pattern = re.compile("\+CREG:.*,(?P<state>\d+)")
                 matched_res = pattern.match(res[1][0])
                 if matched_res != None:
                     if matched_res.group("state") == "1" or  matched_res.group("state") == "5":
@@ -1328,11 +1328,11 @@ class MobileDevice(gobject.GObject) :
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def is_roaming(self):
-        res = self.send_at_command('AT+CGREG?',  accept_null_response=False)
+        res = self.send_at_command('AT+CREG?',  accept_null_response=False)
         self.dbg_msg ("IS ROAMING ? : %s" % res)
         try:
             if res[2] == 'OK':
-                pattern = re.compile("\+CGREG:.*,(?P<state>\d+)")
+                pattern = re.compile("\+CREG:.*,(?P<state>\d+)")
                 matched_res = pattern.match(res[1][0])
                 if matched_res != None:
                     if matched_res.group("state") == "5" :
