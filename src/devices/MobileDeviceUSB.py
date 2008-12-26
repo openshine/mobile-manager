@@ -104,25 +104,6 @@ class MobileDeviceUSB(MobileDevice):
     def turn_off(self):
         self.card_is_on = False
         return False
-
-    def get_attach_state(self):
-        res = self.send_at_command('AT+CREG?', accept_null_response=False)
-        self.dbg_msg ("GET ATTACH STATE : %s" % res)
-        try:
-            if res[2] == 'OK':
-                pattern = re.compile("\+CREG:.*,(?P<state>\d+)")
-                matched_res = pattern.match(res[1][0])
-                if matched_res != None:
-                    if matched_res.group("state") == "1" or  matched_res.group("state") == "5":
-                        return int(matched_res.group("state"))
-                else:
-                    return 0
-            else:
-                return 0
-        except:
-            self.dbg_msg ("GET ATTACH STATE (except): %s" % res)
-            return 0
-
     
     def sms_poll(self):
         self.dbg_msg("SMS POOL")

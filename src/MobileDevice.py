@@ -1285,6 +1285,26 @@ class MobileDevice(gobject.GObject) :
             return False
         except:
             return False
+
+    def get_attach_info_by_cgreg(self):
+        res = self.send_at_command('AT+CGREG?', accept_null_response=False)
+        self.dbg_msg ("CGREG INFO : %s" % res)
+        try:
+            if res[2] == 'OK':
+                pattern = re.compile("\+CGREG:.*,(?P<state>\d+)")
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    if matched_res.group("state") == "1" or  matched_res.group("state") == "5":
+                        return int(matched_res.group("state"))
+                    else:
+                        return 0
+                else:
+                    return 0
+            else:
+                return 0
+        except:
+            self.dbg_msg ("CGREG INFO (except): %s" % res)
+            return 0
     
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def is_attached(self):
@@ -1298,13 +1318,25 @@ class MobileDevice(gobject.GObject) :
                     if matched_res.group("state") == "1" or  matched_res.group("state") == "5":
                         return True
                     else:
+                        ret = self.get_attach_info_by_cgreg()
+                        if ret == 1 or ret == 5 :
+                            return True
                         return False
                 else:
+                    ret = self.get_attach_info_by_cgreg()
+                    if ret == 1 or ret == 5 :
+                        return True
                     return False
             else:
+                ret = self.get_attach_info_by_cgreg()
+                if ret == 1 or ret == 5 :
+                    return True
                 return False
         except:
             self.dbg_msg ("IS ATTACHED ? (except): %s" % res)
+            ret = self.get_attach_info_by_cgreg()
+            if ret == 1 or ret == 5 :
+                return True
             return False
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=0)
@@ -1318,13 +1350,15 @@ class MobileDevice(gobject.GObject) :
                 if matched_res != None:
                     if matched_res.group("state") == "1" or  matched_res.group("state") == "5":
                         return int(matched_res.group("state"))
+                    else:
+                        return self.get_attach_info_by_cgreg()
                 else:
-                    return 0
+                    return self.get_attach_info_by_cgreg()
             else:
-                return 0
+                return self.get_attach_info_by_cgreg()
         except:
             self.dbg_msg ("GET ATTACH STATE (except): %s" % res)
-            return 0
+            return self.get_attach_info_by_cgreg()
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def is_roaming(self):
@@ -1338,13 +1372,25 @@ class MobileDevice(gobject.GObject) :
                     if matched_res.group("state") == "5" :
                         return True
                     else:
+                        ret = self.get_attach_info_by_cgreg()
+                        if ret == 5 :
+                            return True
                         return False
                 else:
+                    ret = self.get_attach_info_by_cgreg()
+                    if ret == 5 :
+                        return True
                     return False
             else:
+                ret = self.get_attach_info_by_cgreg()
+                if ret == 5 :
+                    return True
                 return False
         except:
             self.dbg_msg ("IS ROAMING ? (excepet): %s" % res)
+            ret = self.get_attach_info_by_cgreg()
+            if ret == 5 :
+                return True
             return False
     
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=None)

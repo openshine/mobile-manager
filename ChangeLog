@@ -1,5 +1,6 @@
 2008-12-26  Roberto Majadas  <telemaco@openshine.com>
 
+	* src/MobileDevice.py (MobileDevice): if CREG not works use CGREG 
 	* src/MobileDialWvdial.py (MobileDialWvdial.__pppd_options): Remove plugin passwdfd.so from ppp options
 
 2008-12-25  Roberto Majadas  <telemaco@openshine.com>
