@@ -165,7 +165,7 @@ class MobileDialWvdial(MobileDial):
         
         out = StringIO.StringIO()
 
-        print >>out,"plugin passwordfd.so"
+        #print >>out,"plugin passwordfd.so"
         print >>out,"debug"
         print >>out,"noauth"
         print >>out,"name wvdial"
