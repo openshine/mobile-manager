@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-29 08:31+0100\n"
+"POT-Creation-Date: 2008-12-29 12:20+0100\n"
 "PO-Revision-Date: 2008-06-02 10:31+0200\n"
 "Last-Translator: Roberto Majadas <telemaco@openshine.com>\n"
 "Language-Team: spanish <telemaco@openshine.com>\n"
@@ -244,7 +244,7 @@ msgid "Modem parameters:"
 msgstr "Parámetros módem:"
 
 #: ../data/glade/mm_devices_conf.glade.h:11
-msgid "Select the device to use when you connect to GRPS/3G network"
+msgid "Select the device to use when you connect to GPRS/3G network"
 msgstr "Elige el dispositivo que deseas emplear para conectar a redes GPRS/3G."
 
 #: ../data/glade/mm_devices_conf.glade.h:12
