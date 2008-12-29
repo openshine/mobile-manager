@@ -4,7 +4,7 @@
 
 Name: mobile-manager
 Summary: Mobile Manager daemon (GPRS/3g support)
-Version: 0.7
+Version: 0.8
 Release: 1 
 License: GPLv2+
 Group: Applications/Internet
@@ -126,6 +126,8 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Mon Dec 29 2008 Roberto Majadas <roberto.majadas@openshine.com> - 0.8-1
+- New upstream version
 * Wed Jun 25 2008 Roberto Majadas <roberto.majadas@openshine.com> - 0.7-1
 - New upstream version
 * Fri Jun 20 2008 Roberto Majadas <roberto.majadas@openshine.com> - 0.6-2
