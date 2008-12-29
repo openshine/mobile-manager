@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-10 19:54+0100\n"
+"POT-Creation-Date: 2008-12-29 08:31+0100\n"
 "PO-Revision-Date: 2008-06-02 10:31+0200\n"
 "Last-Translator: Roberto Majadas <telemaco@openshine.com>\n"
 "Language-Team: spanish <telemaco@openshine.com>\n"
@@ -251,7 +251,7 @@ msgstr "Elige el dispositivo que deseas emplear para conectar a redes GPRS/3G."
 msgid "Velocity : "
 msgstr "Velocidad: "
 
-#: ../src/ui/MobileDeviceConf.py:64
+#: ../src/ui/MobileDeviceConf.py:66
 msgid "Options"
 msgstr "Opciones"
 
@@ -343,8 +343,8 @@ msgid ""
 "required"
 msgstr ""
 "Ha fallado el proceso de inserción del código PIN de la tarjeta SIM. A "
-"continuación se apagará la Dispositivo Internet Móvil. La siguiente "
-"vez que se encienda se pedirá el código PUK de la misma."
+"continuación se apagará la Dispositivo Internet Móvil. La siguiente vez que "
+"se encienda se pedirá el código PUK de la misma."
 
 #: ../src/ui/MobileCarrierDialog.py:161
 msgid "Attaching to network"
@@ -368,9 +368,9 @@ msgstr "<b>Comprobación cancelada</b>"
 msgid ""
 "You have canceled the PUK authentication process, the card will be turn off"
 msgstr ""
-"Has cancelado el proceso de comprobación del código PUK y tu Dispositivo Internet Móvil"
-"se apagará. Para volver a iniciar el proceso selecciona "
-"la opción \"Encender\" del menú de dispositivo."
+"Has cancelado el proceso de comprobación del código PUK y tu Dispositivo "
+"Internet Móvilse apagará. Para volver a iniciar el proceso selecciona la "
+"opción \"Encender\" del menú de dispositivo."
 
 #: ../src/ui/MobilePukDialog.py:153
 msgid "You have entered an invalid PUK code"

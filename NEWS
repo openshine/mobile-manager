@@ -1,3 +1,9 @@
+=== Mobile Manager 0.8 ===
+
+ * Add SMS support
+ * Add addressbook support
+ * Add monoport support for usb devices. Now the usb devices report information too.
+
 === Mobile Manager 0.7 ===
 
  * New Novatel , Sierra drivers

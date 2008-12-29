@@ -1,3 +1,9 @@
+mobile-manager (0.8-1) intrepid; urgency=low
+
+  * New Upstream version
+
+ -- Escritorio Movistar <escritorio_movistar@tid.es>  Mon, 29 Dec 2008 08:48:14 +0100
+
 mobile-manager (0.7-2) hardy; urgency=low
 
   * Replace old version of escritorio-movistar
