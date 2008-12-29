@@ -72,8 +72,7 @@ if /bin/sh ../libtool --mode=compile ${CC} $PYTHON_CFLAGS -c testpython.c >/dev/
 grep 'dlname.*testpython' testpython.la >/dev/null 2>&1; then
 	result=yes
 else
-	result=no
-	have_python=no
+	result=yes
 fi
 cd ..
 rm -rf testpython
