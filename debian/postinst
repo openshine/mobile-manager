@@ -21,7 +21,10 @@ set -e
 case "$1" in
     configure)
 	/etc/init.d/udev reload
-	/etc/init.d/dbus reload
+	if [ -e /var/run/dbus/system_bus_socket ];
+	then
+		/etc/init.d/dbus reload
+	fi
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
