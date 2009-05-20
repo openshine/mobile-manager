@@ -2190,8 +2190,7 @@ class MobileDevice(gobject.GObject) :
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=True)
     def is_postpaid(self):
-        res = self.send_at_command('AT+CSIM=18,"00A40804047F436F02'
-                                   , accept_null_response=False)
+        res = self.send_at_command('AT+CSIM=18,"00A40804047F436F02', accept_null_response=False)
         
         self.dbg_msg ("LOOKING POSTPAID FILE : %s" % res)
         try:
@@ -2200,8 +2199,7 @@ class MobileDevice(gobject.GObject) :
                 matched_res = pattern.match(res[1][0])
                 if matched_res != None:
                     if matched_res.group("file").startswith("61") or matched_res.group("file") == "9000" :
-                        res2 = self.send_at_command('AT+CSIM=10,"00B0000001"',
-                                                    , accept_null_response=False)
+                        res2 = self.send_at_command('AT+CSIM=10,"00B0000001"', accept_null_response=False)
                         self.dbg_msg ("LOOKING TYPE IN POSTPAID FILE : %s" % res2)
                         try:
                             if res2[2] == 'OK':
