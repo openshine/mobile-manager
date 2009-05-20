@@ -604,6 +604,11 @@ class MobileManagerDbusDevice(dbus.service.Object):
     def GetSingal(self):
         return self.device.get_signal()
 
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI,
+                         in_signature='', out_signature='s')
+    def GetImsi(self):
+        return self.device.get_sim_id()    
+
     def __update_carrier_list(self, data):
         self.carrier_last_check = time.time()
 	if type(data["supported_formats"]) == int :
