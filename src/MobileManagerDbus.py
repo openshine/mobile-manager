@@ -607,7 +607,12 @@ class MobileManagerDbusDevice(dbus.service.Object):
     @dbus.service.method(MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI,
                          in_signature='', out_signature='s')
     def GetImsi(self):
-        return self.device.get_sim_id()    
+        return self.device.get_sim_id()
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI,
+                         in_signature='', out_signature='b')
+    def IsPostpaid(self):
+        return self.device.is_postpaid()
 
     def __update_carrier_list(self, data):
         self.carrier_last_check = time.time()

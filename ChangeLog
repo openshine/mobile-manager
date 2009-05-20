@@ -1,5 +1,6 @@
 2009-05-20  Roberto Majadas  <telemaco@openshine.com>
 
+	* src/MobileDevice.py (MobileDevice.is_postpaid): Add pospaid support
 	* src/MobileManagerDbus.py (MobileManagerDbusDevice.GetImsi): Add getImsi method
 
 2008-12-29  Roberto Majadas  <telemaco@openshine.com>

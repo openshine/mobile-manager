@@ -2187,7 +2187,57 @@ class MobileDevice(gobject.GObject) :
         except:
             self.dbg_msg ("GET ADDRESSBOOK LIST (except) : %s" % res)
             return []
+
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error=True)
+    def is_postpaid(self):
+        res = self.send_at_command('AT+CSIM=18,"00A40804047F436F02'
+                                   , accept_null_response=False)
         
+        self.dbg_msg ("LOOKING POSTPAID FILE : %s" % res)
+        try:
+            if res[2] == 'OK':
+                pattern = re.compile('+CSIM:.*4,\"(?P<file>.+)\"')
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    if matched_res.group("file").startswith("61") or matched_res.group("file") == "9000" :
+                        res2 = self.send_at_command('AT+CSIM=10,"00B0000001"',
+                                                    , accept_null_response=False)
+                        self.dbg_msg ("LOOKING TYPE IN POSTPAID FILE : %s" % res2)
+                        try:
+                            if res2[2] == 'OK':
+                                pattern = re.compile('+CSIM:.*6,\"(?P<file>.+)\"')
+                                matched_res = pattern.match(res2[1][0])
+                                if matched_res != None:
+                                    if matched_res.group("file").endswith("9000") :
+                                        if int(matched_res.group("file")[0:2]) & 0x01 == 1 :
+                                            self.dbg_msg ("---> PREPAID")
+                                            return False
+                                        else:
+                                            self.dbg_msg ("---> POSTPAID")
+                                            return True
+                                    else:
+                                        self.dbg_msg ("LOOKING TYPE IN POSTPAID FILE (not type): %s" % res2)
+                                        return True
+                                else:
+                                    self.dbg_msg ("LOOKING TYPE IN POSTPAID FILE (not type): %s" % res2)
+                                    return True
+                        except:
+                            self.dbg_msg ("LOOKING TYPE IN POSTPAID FILE (except): %s" % res2)
+                            return True
+                            
+                    elif matched_res.group("file") == "6A82" :
+                        #FIXME Add support for old sim cards
+                        self.dbg_msg ("OLD SIM CARD , return TRUE by default")
+                        return True
+                    else:
+                        self.dbg_msg (" LOOKING POSTPAID FILE (not file) : %s" % res)
+                        return True
+            else:
+                self.dbg_msg ("LOOKING POSTPAID FILE (error) : %s" % res)
+                return True
+        except:
+            self.dbg_msg ("IS POSTPAID (except) : %s" % res)
+            return True
     
     def start_polling(self):
         print "start polling"
