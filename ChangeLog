@@ -1,3 +1,7 @@
+2009-05-25  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDevice.py (MobileDevice.is_postpaid): Fix bug in postpaid support
+
 2009-05-20  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileDevice.py (MobileDevice.is_postpaid): Add pospaid support

@@ -2190,12 +2190,12 @@ class MobileDevice(gobject.GObject) :
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=True)
     def is_postpaid(self):
-        res = self.send_at_command('AT+CSIM=18,"00A40804047F436F02', accept_null_response=False)
+        res = self.send_at_command('AT+CSIM=18,"00A40804047F436F02"', accept_null_response=False)
         
         self.dbg_msg ("LOOKING POSTPAID FILE : %s" % res)
         try:
             if res[2] == 'OK':
-                pattern = re.compile('+CSIM:.*4,\"(?P<file>.+)\"')
+                pattern = re.compile('\+CSIM:.*4,\"(?P<file>.+)\"')
                 matched_res = pattern.match(res[1][0])
                 if matched_res != None:
                     if matched_res.group("file").startswith("61") or matched_res.group("file") == "9000" :
@@ -2203,11 +2203,12 @@ class MobileDevice(gobject.GObject) :
                         self.dbg_msg ("LOOKING TYPE IN POSTPAID FILE : %s" % res2)
                         try:
                             if res2[2] == 'OK':
-                                pattern = re.compile('+CSIM:.*6,\"(?P<file>.+)\"')
+                                pattern = re.compile('\+CSIM:.*,\"(?P<file>.+)\"')
+                                self.dbg_msg("LOOKING TYPE IN POSTPAID FILE (step 2) : %s" % res2)
                                 matched_res = pattern.match(res2[1][0])
                                 if matched_res != None:
                                     if matched_res.group("file").endswith("9000") :
-                                        if int(matched_res.group("file")[0:2]) & 0x01 == 1 :
+                                        if int(matched_res.group("file")[1]) == 0 :
                                             self.dbg_msg ("---> PREPAID")
                                             return False
                                         else:
