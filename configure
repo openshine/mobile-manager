@@ -15301,7 +15301,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile po/Makefile.in contrib/Makefile contrib/huawei/Makefile contrib/usb-modeswitch/Makefile data/Makefile data/apport/Makefile data/dbus/Makefile data/glade/Makefile data/initscripts/Makefile data/initscripts/debian/Makefile data/initscripts/redhat/Makefile data/initscripts/suse/Makefile data/pkg-config/mobile-manager.pc data/pkg-config/Makefile data/usbmodeswitch-conf/Makefile data/udev-rules/Makefile src/Makefile src/ui/Makefile src/ui/__init__.py src/devices/Makefile src/mmdt/Makefile src/mmdt/mmdt src/pdu/Makefile doc/Makefile"
+ac_config_files="$ac_config_files Makefile po/Makefile.in contrib/Makefile contrib/huawei/Makefile contrib/usb-modeswitch/Makefile data/Makefile data/apport/Makefile data/dbus/Makefile data/glade/Makefile data/initscripts/Makefile data/initscripts/debian/Makefile data/initscripts/redhat/Makefile data/initscripts/suse/Makefile data/pkg-config/mobile-manager.pc data/pkg-config/Makefile data/usbmodeswitch-conf/Makefile data/udev-rules/Makefile src/Makefile src/ui/Makefile src/ui/__init__.py src/devices/Makefile src/mmdt/Makefile src/mmdt/mmdt src/pdu/Makefile src/messaging/Makefile doc/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -16308,6 +16308,7 @@ do
     "src/mmdt/Makefile") CONFIG_FILES="$CONFIG_FILES src/mmdt/Makefile" ;;
     "src/mmdt/mmdt") CONFIG_FILES="$CONFIG_FILES src/mmdt/mmdt" ;;
     "src/pdu/Makefile") CONFIG_FILES="$CONFIG_FILES src/pdu/Makefile" ;;
+    "src/messaging/Makefile") CONFIG_FILES="$CONFIG_FILES src/messaging/Makefile" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
     "po/stamp-it") CONFIG_COMMANDS="$CONFIG_COMMANDS po/stamp-it" ;;
 

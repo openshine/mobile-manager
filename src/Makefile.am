@@ -1,4 +1,4 @@
-SUBDIRS = ui mmdt devices pdu 
+SUBDIRS = ui mmdt devices messaging pdu 
 
 sbin_SCRIPTS = MobileManagerDaemon
 

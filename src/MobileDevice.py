@@ -28,7 +28,7 @@ import re
 from MobileStatus import *
 from MobileCapabilities import *
 from MobileManagerDbus import MobileManagerDbusDevice
-from pdu import PDU
+from messaging import PDU
 import MobileManager
 import time
 
