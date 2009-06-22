@@ -31,6 +31,7 @@ from MobileManagerDbus import MobileManagerDbusDevice
 from messaging import PDU
 import MobileManager
 import time
+import codecs
 
 
 class MobileDeviceIO():
@@ -1577,6 +1578,8 @@ class MobileDevice(gobject.GObject) :
 
                 for csms_id in concat_ids:
                     concat_sms_sorted_paths = concat_sms_sorted_paths + os.path.join(tmp_sms_spool, sms_dir, str(csms_id)) + " "
+                    os.system("cp %s %s" % (os.path.join(tmp_sms_spool, sms_dir, str(csms_id)),
+                                            os.path.join("/tmp", os.path.basename(os.path.join(tmp_sms_spool, sms_dir, str(csms_id))))))
 
                 new_id = last_id + 1
                 
@@ -1675,15 +1678,19 @@ class MobileDevice(gobject.GObject) :
                         
                         try:
                             sms_decoded = self.pdu.decode_pdu(res[1][i+1])
+                            print "~~~~~~~~~~~~~~~~~~~~"
+                            print sms_decoded
+                            print "~~~~~~~~~~~~~~~~~~~~"
+                            
                             if sms_decoded[5] == 0:
                                 new_id = last_id + 1
-                                sms_fd = open(sms_spool_path + "/received/" + str(new_id), "w")
+                                sms_fd = codecs.open(sms_spool_path + "/received/" + str(new_id), "w", encoding="utf-8")
 
                                 sms_fd.write("0|%s|%s|%s\n%s" %
                                              (sms_decoded[0],
                                               sms_decoded[3],
                                               sms_decoded[1],
-                                              sms_decoded[2].encode("utf-8")))
+                                              sms_decoded[2]))
 
                                 sms_fd.close()
                                 self.sms_delete(sms_id)
@@ -1702,19 +1709,19 @@ class MobileDevice(gobject.GObject) :
                                                + str(sms_decoded[4]) + "/"
                                                + str(i))
 
-                                sms_fd = open(sms_spool_path + "/.tmp/"
+                                sms_fd = codecs.open(sms_spool_path + "/.tmp/"
                                               + str(sms_decoded[4]) + "/"
                                               + str(sms_decoded[6])
-                                              , "w")
+                                              , "w", encoding="utf-8")
                                 
                                 if sms_decoded[6] == 1 :
                                     sms_fd.write("0|%s|%s|%s\n%s" %
                                                  (sms_decoded[0],
                                                   sms_decoded[3],
                                                   sms_decoded[1],
-                                                  sms_decoded[2].encode("utf-8")))
+                                                  sms_decoded[2]))
                                 else:
-                                    sms_fd.write(sms_decoded[2].encode("utf-8"))
+                                    sms_fd.write(sms_decoded[2])
 
                                 sms_fd.close()
                                 self.sms_delete(sms_id)
@@ -1767,7 +1774,7 @@ class MobileDevice(gobject.GObject) :
         ret = []
         
         for sms_id in ids:
-            fd = open(os.path.join(spool_path,str(sms_id)), "r")
+            fd = codecs.open(os.path.join(spool_path,str(sms_id)), "r", encoding="utf-8")
             header = fd.readline()
             header = header.strip("\n")
             header = header.split("|")
@@ -1787,7 +1794,7 @@ class MobileDevice(gobject.GObject) :
                                        spoolname,str(index))
 
         if os.path.exists(spool_path) :
-            fd = open(os.path.join(spool_path), "r")
+            fd = codecs.open(os.path.join(spool_path), "r", encoding="utf-8")
             header = fd.readline()
             header = header.strip("\n")
             header = header.split("|")
@@ -1813,13 +1820,13 @@ class MobileDevice(gobject.GObject) :
                                   spoolname,str(index))
 
         if os.path.exists(spool_path) :
-            fd = open(os.path.join(spool_path), "r")
+            fd = codecs.open(os.path.join(spool_path), "r", encoding="utf-8")
             lines = fd.readlines()
             lines[0] = str(int(readed)) + lines[0][1:-1]
             fd.close()
             os.system("rm %s" % os.path.join(spool_path))
             
-            fd = open(os.path.join(spool_path), "w")
+            fd = codecs.open(os.path.join(spool_path), "w", encoding="utf-8")
             num_lines = len(lines)
             count_lines = 0
             for line in lines:
@@ -1898,9 +1905,9 @@ class MobileDevice(gobject.GObject) :
             last_id = ids[-1]
 
         new_id = last_id + 1
-        fd = open(spool_path + "/" + str(new_id), "w")
+        fd = codecs.open(spool_path + "/" + str(new_id), "w", encoding="utf-8")
         fd.write("1|%s|0|%s\n" % (number, time.strftime("%y/%m/%d %H:%M:%S", time.localtime())))
-        fd.write(text.encode("utf-8"))
+        fd.write(text)
         fd.close()
         spool_id=None
         if spoolname == "received" :
@@ -1927,7 +1934,7 @@ class MobileDevice(gobject.GObject) :
 
         if os.path.exists(spool_path) :
             os.system("rm %s" % os.path.join(spool_path))
-            fd = open(os.path.join(spool_path), "w")
+            fd = codecs.open(os.path.join(spool_path), "w", encoding="utf-8")
             fd.write("0|%s|0|%s\n" % (number, time.strftime("%y/%m/%d %H:%M:%S", time.localtime())))
             fd.write(text)
             fd.close()
@@ -1986,6 +1993,8 @@ class MobileDevice(gobject.GObject) :
             pdu_to_send = sms[1] + chr(26)
 
             i = 0
+
+            time.sleep(0.5)
             
             for pdu_c in pdu_to_send :
                 self.serial.write(pdu_c)
@@ -2012,10 +2021,14 @@ class MobileDevice(gobject.GObject) :
                     break
                 elif "ERROR" in ret:
                     self.dbg_msg("PDU -> ERROR")
+                    self.dbg_msg("PDU SLEEP")
+                    time.sleep(0.5)
                     return False
+            self.dbg_msg("PDU SLEEP")
+            time.sleep(0.5)
 
         return True
-
+    
     def sms_set_smsc(self, smsc):
         self.set_property("smsc-number", smsc)
 

@@ -1,3 +1,7 @@
+2009-06-22  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileDevice.py (MobileDevice.__send_sms_at_commands): timeouts
+
 2009-06-04  Roberto Majadas  <telemaco@openshine.com>
 
 	* configure.ac : Add new pdu encoder/decoder 
