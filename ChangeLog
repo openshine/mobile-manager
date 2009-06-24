@@ -1,3 +1,7 @@
+2009-06-24  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/messaging/pdu.py (PDU._pack_8bits_to_ucs2): Fix bug in udh ucs
+
 2009-06-22  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileDevice.py (MobileDevice.__send_sms_at_commands): timeouts
