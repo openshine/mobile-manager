@@ -1,6 +1,7 @@
 2009-06-24  Roberto Majadas  <telemaco@openshine.com>
 
-	* src/messaging/pdu.py (PDU._pack_8bits_to_ucs2): Fix bug in udh ucs
+	* src/messaging/pdu.py (PDU._pack_8bits_to_ucs2): Fix bug in udh ucs-2
+	(PDU.decode_pdu): Fix bug in ucs-2
 
 2009-06-22  Roberto Majadas  <telemaco@openshine.com>
 

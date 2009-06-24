@@ -242,7 +242,7 @@ class PDU(object):
 
         elif fmt == UNICODE_FORMAT:
             msg = u''.join([unichr(int(msg[x:x+4], 16))
-                            for x in range(0, len(msg), 4)])
+                            for x in range(12, len(msg), 4)])
 
         return sender, datestr, msg.strip(), csca, ref, cnt, seq, fmt
 
