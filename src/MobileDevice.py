@@ -1994,7 +1994,7 @@ class MobileDevice(gobject.GObject) :
 
             i = 0
 
-            time.sleep(0.5)
+            time.sleep(1)
             
             for pdu_c in pdu_to_send :
                 self.serial.write(pdu_c)
@@ -2022,10 +2022,10 @@ class MobileDevice(gobject.GObject) :
                 elif "ERROR" in ret:
                     self.dbg_msg("PDU -> ERROR")
                     self.dbg_msg("PDU SLEEP")
-                    time.sleep(0.5)
+                    time.sleep(1)
                     return False
             self.dbg_msg("PDU SLEEP")
-            time.sleep(0.5)
+            time.sleep(1)
 
         return True
     
