@@ -462,12 +462,13 @@ class PDU(object):
             if limit == SEVENBIT_SIZE :
                 udh = (chr(udh_len) + chr(mid) + chr(data_len) + chr(csms_ref) +
                        chr(total_parts) + chr(i))
+                pdu_msgs.append(packing_func(" " + msg, udh))
             else:
                 udh = (unichr(int("%04x" % ((udh_len << 8) | mid), 16)) +
                        unichr(int("%04x" % ((data_len << 8) | csms_ref), 16)) +
                        unichr(int("%04x" % ((total_parts << 8) | i ), 16))
                        )
-            pdu_msgs.append(packing_func("" + msg, udh))
+                pdu_msgs.append(packing_func("" + msg, udh))
             i += 1
 
         return pdu_msgs
