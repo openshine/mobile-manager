@@ -1954,6 +1954,7 @@ class MobileDevice(gobject.GObject) :
     
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def sms_send(self, number, smsc, text):
+        init_time = time.time()
         sms_list = self.pdu.encode_pdu(number, text, smsc)
 
         # Set PDU MODE
@@ -1969,9 +1970,43 @@ class MobileDevice(gobject.GObject) :
         # Send Message
         if self.__send_sms_at_commands(sms_list) == True:
             self.sms_set_spool_item("sended", number, text)
+            end_time = time.time()
+            self.dbg_msg("SMS TIME : %s" % (init_time - end_time))
             return True
         else:
             return False
+
+    def __send_pdu_to_device(self, sms) :
+        self.serial.flush()
+        
+        self.serial.write("AT+CMGS="+str(sms[0])+"\r")
+        self.serial.readline()
+        c = ""
+        while c != ">":
+            c = self.serial.read_c()
+            if c == "" :
+                self.dbg_msg("__send_sms_at_commands error")
+                return False
+        self.serial.read_c()
+        
+        pdu_to_send = sms[1] + chr(26)
+        
+        time.sleep(1)
+        
+        for pdu_c in pdu_to_send :
+            self.serial.write(pdu_c)
+            r_pdu_c = self.serial.read_c()
+            
+            if r_pdu_c == "\r" :
+                self.dbg_msg("PDU sended")
+                break
+                
+            if r_pdu_c != pdu_c :
+                self.dbg_msg("ups !!! r_pdu_c (%s) != pdu_c (%s)" % (ord(r_pdu_c),ord(pdu_c)))
+            else:
+                #print "char[%s]=%s" % (i, pdu_c)
+                #i = i + 1
+                pass
 
     def __send_sms_at_commands(self, sms_list):
         if self.serial == None :
@@ -1980,50 +2015,41 @@ class MobileDevice(gobject.GObject) :
         self.serial.flush()
 
         for sms in sms_list:
-            self.serial.write("AT+CMGS="+str(sms[0])+"\r")
-            self.serial.readline()
-            c = ""
-            while c != ">":
-                c = self.serial.read_c()
-                if c == "" :
-                    self.dbg_msg("__send_sms_at_commands error")
-                    return False
-            self.serial.read_c()
+            resend_attepts = 3
+            timeout = 3
 
-            pdu_to_send = sms[1] + chr(26)
-
-            i = 0
-
-            time.sleep(1)
+            self.__send_pdu_to_device(sms)
             
-            for pdu_c in pdu_to_send :
-                self.serial.write(pdu_c)
-                r_pdu_c = self.serial.read_c()
-
-                if r_pdu_c == "\r" :
-                    self.dbg_msg("PDU sended")
-                    break
-                
-                if r_pdu_c != pdu_c :
-                    self.dbg_msg("ups !!! r_pdu_c (%s) != pdu_c (%s)" % (ord(r_pdu_c),ord(pdu_c)))
-                else:
-                    #print "char[%s]=%s" % (i, pdu_c)
-                    #i = i + 1
-                    pass
-
             while True :
+                if resend_attepts == 0 :
+                    self.dbg_msg("PDU -> ERROR")
+                    self.dbg_msg("PDU NO MORE TRIES")
+                    return False
+                
+                if timeout == 0 :
+                    self.dbg_msg("PDU -> TIMEOUT")
+                    return False
+                    
                 ret = self.serial.readline()
                 if ret == None:
                     self.dbg_msg("Timeout")
+                    timeout = timeout - 1
                     continue
+                
                 if "OK" in ret :
                     self.dbg_msg("PDU -> OK")
                     break
                 elif "ERROR" in ret:
                     self.dbg_msg("PDU -> ERROR")
                     self.dbg_msg("PDU SLEEP")
-                    time.sleep(1)
-                    return False
+                    time.sleep(3)
+                    self.serial.flush()
+                    self.dbg_msg("PDU RESEND ")
+                    resend_attepts = resend_attepts - 1
+                    self.__send_pdu_to_device(pdu_to_send)
+                    self.dbg_msg("PDU RESENDED ")
+                    continue
+                
             self.dbg_msg("PDU SLEEP")
             time.sleep(1)
 
