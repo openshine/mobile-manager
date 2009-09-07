@@ -2016,7 +2016,7 @@ class MobileDevice(gobject.GObject) :
 
         for sms in sms_list:
             resend_attepts = 3
-            timeout = 3
+            timeout = 5 
 
             self.__send_pdu_to_device(sms)
             
@@ -2032,7 +2032,8 @@ class MobileDevice(gobject.GObject) :
                     
                 ret = self.serial.readline()
                 if ret == None:
-                    self.dbg_msg("Timeout")
+                    self.dbg_msg("PDU -> TIMEOUT (retry in 0.3s)")
+                    time.sleep(0.3)
                     timeout = timeout - 1
                     continue
                 
