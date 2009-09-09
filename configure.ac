@@ -226,7 +226,6 @@ src/ui/__init__.py
 src/devices/Makefile
 src/mmdt/Makefile
 src/mmdt/mmdt
-src/pdu/Makefile
 src/messaging/Makefile
 doc/Makefile
 ])
