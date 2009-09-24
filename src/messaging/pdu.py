@@ -301,6 +301,7 @@ class PDU(object):
             msg = recipient + "|" + scts_str + "|"
         elif status == 48 :
             sender = "SR-STORED"
+            msg = recipient + "|" + scts_str + "|"
         else:
             sender = "SR-UNKNOWN"
             msg = recipient + "|" + scts_str + "|"
