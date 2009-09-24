@@ -1,3 +1,9 @@
+2009-09-24  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/MobileManagerDbus.py (MobileManagerDbusDevice.SendWithRequestStatus): Add request status
+	* src/MobileDevice.py (MobileDevice.sms_send): Add request status 
+	* src/messaging/pdu.py (PDU._decode_status_report_pdu): Add status report 
+
 2009-08-19  Roberto Majadas  <telemaco@openshine.com>
 
 	* data/dbus/mobilemanager.conf: Changes in dbus policy

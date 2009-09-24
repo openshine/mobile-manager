@@ -1953,9 +1953,9 @@ class MobileDevice(gobject.GObject) :
 
     
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
-    def sms_send(self, number, smsc, text):
+    def sms_send(self, number, smsc, text, request_status=False):
         init_time = time.time()
-        sms_list = self.pdu.encode_pdu(number, text, smsc)
+        sms_list = self.pdu.encode_pdu(number, text, smsc, request_status)
 
         # Set PDU MODE
         res = self.send_at_command('AT+CMGF=0', accept_null_response=False)

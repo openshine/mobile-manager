@@ -40,6 +40,7 @@ INTERNATIONAL_NUMBER = 145
 SMS_DELIVER = 0x00
 SMS_SUBMIT = 0x01
 SMS_CONCAT = 0x40
+SMS_STATUS_REPORT = 0x03
 
 # set this to True if you want to poke at PDU encoding/decoding
 DEBUG = False
@@ -154,6 +155,10 @@ class PDU(object):
         # 1st octet position == smscerlen+4
 
         FO = int(pdu[ptr:ptr+2], 16)
+        
+        if FO & SMS_STATUS_REPORT :
+            return self._decode_status_report_pdu(pdu, ptr, csca)
+        
         # is this a SMS_DELIVER or SMS_SUBMIT type?
         sms_type = SMS_DELIVER
         if FO & SMS_SUBMIT:
@@ -247,6 +252,63 @@ class PDU(object):
         return sender, datestr, msg.strip(), csca, ref, cnt, seq, fmt
 
     #Private methods
+    def _decode_status_report_pdu(self, pdu, ptr_st, csca):
+        ptr = ptr_st
+        
+        ptr = ptr+4
+
+        #Phone
+        sndlen = int(pdu[ptr:ptr+2], 16)
+        if sndlen % 2:
+            sndlen += 1
+        sndtype = pdu[ptr+2:ptr+4]
+        recipient = pdu[ptr+4:ptr+4+sndlen]
+        recipient = recipient.replace('F', '')
+        recipient = list(recipient)
+        for n in range(1, len(recipient), 2):
+            recipient[n-1], recipient[n] = recipient[n], recipient[n-1]
+        recipient = ''.join(recipient)
+        recipient = recipient.strip()
+        if sndtype == '91':
+            recipient = '+' + recipient
+        ptr += 4 + sndlen
+
+        #Get service center time stamp
+        scts_str=''
+        date = list(pdu[ptr:ptr+14])
+        for n in range(1, len(date), 2):
+            date[n-1], date[n] = date[n], date[n-1]
+            scts_str = "%s%s/%s%s/%s%s %s%s:%s%s:%s%s" % tuple(date[0:12])
+            
+        ptr += 14
+
+        #Get Discharge time
+        dt_str=''
+        date = list(pdu[ptr:ptr+14])
+        for n in range(1, len(date), 2):
+            date[n-1], date[n] = date[n], date[n-1]
+            dt_str = "%s%s/%s%s/%s%s %s%s:%s%s:%s%s" % tuple(date[0:12])
+            
+        ptr += 14
+
+        status = int(pdu[ptr:ptr+2], 16)
+        msg = recipient + "|" + scts_str + "|" + dt_str
+        sender = ""
+        if status == 0 :
+            sender = "SR-OK"
+        elif status == 1 :
+            sender = "SR-UNKNOWN"
+            msg = recipient + "|" + scts_str + "|"
+        elif status == 48 :
+            sender = "SR-STORED"
+        else:
+            sender = "SR-UNKNOWN"
+            msg = recipient + "|" + scts_str + "|"
+
+        cnt = seq = ref = headlen = 0
+        
+        return sender, scts_str, msg, csca, ref, cnt, seq, UNICODE_FORMAT
+        
     def _get_smsc_pdu(self, number):
         if not len(number.strip()):
             return "00"

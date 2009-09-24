@@ -834,6 +834,14 @@ class MobileManagerDbusDevice(dbus.service.Object):
             return True
         else:
             return False
+
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
+                         in_signature='sss', out_signature='u')
+    def SendWithRequestStatus(self, number, smsc, text):
+        if self.device.sms_send(number, smsc, text, request_status=True) == True :
+            return True
+        else:
+            return False
     
     @dbus.service.method(MOBILE_MANAGER_DEVICE_ADDRESSBOOK_INTERFACE_URI,
                          in_signature='', out_signature='a(uss)')
