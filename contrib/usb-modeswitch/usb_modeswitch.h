@@ -71,6 +71,6 @@ extern char *TempPP;
 
 void release_usb_device(int dummy);
 
-struct usb_device* search_devices(int *numFound, int vendor, int product, int targetClass);
+struct usb_device* search_devices(int *numFound, int vendor, int product, char *productList, int targetClass);
 
 int hexstr2bin(const char *hex, char *buf, int len);

@@ -69,13 +69,26 @@ class MobileDeviceNovatel(MobileDevice):
             if device_tmp.startswith(device_udi):
                 if props.has_key("serial.device") :
                     ports.append(os.path.basename(props["serial.device"]))
-            
+
+        ports = dict(map(lambda i: (i,1),ports)).keys()
         ports.sort()
         print ports
+
+        dev = (self.dev_props["usb_device.product_id"],
+               self.dev_props["usb_device.vendor_id"])
         
         if len(ports) >= 3 :
-            self.set_property("data-device", "/dev/%s" % ports[0])
-            self.set_property("conf-device", "/dev/%s" % ports[1])
+
+            if dev == (0x7001, 0x1410) and len(ports) != 4 :
+                return False
+            
+            if dev == (0x7001, 0x1410) :
+                self.set_property("data-device", "/dev/%s" % ports[3])
+                self.set_property("conf-device", "/dev/%s" % ports[1])
+            else:
+                self.set_property("data-device", "/dev/%s" % ports[0])
+                self.set_property("conf-device", "/dev/%s" % ports[1])
+                
             self.set_property("device-icon", "network-wireless")
             self.pretty_name = "Novatel"
             self.set_property("devices-autoconf", True)

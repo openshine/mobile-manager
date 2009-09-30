@@ -1,3 +1,7 @@
+2009-09-30  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/devices/MobileDeviceNovatel.py (MobileDeviceNovatel.init_device): Add Novatel MC990D support
+
 2009-09-24  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/MobileManagerDbus.py (MobileManagerDbusDevice.SendWithRequestStatus): Add request status
