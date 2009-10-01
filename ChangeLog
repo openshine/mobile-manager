@@ -1,3 +1,7 @@
+2009-10-01  Roberto Majadas  <telemaco@openshine.com>
+
+	* src/messaging/pdu.py (PDU.encode_pdu): fix bug in multi-sms UCS2 notificacion
+
 2009-09-30  Roberto Majadas  <telemaco@openshine.com>
 
 	* src/devices/MobileDeviceNovatel.py (MobileDeviceNovatel.init_device): Add Novatel MC990D support

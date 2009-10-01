@@ -92,13 +92,18 @@ class PDU(object):
             return [((len(pdu) / 2) - len_smsc, pdu.upper())]
 
         # multipart SMS
-        sms_submit_pdu = self._get_sms_submit_pdu(request_status, msgvp,
-                                                  store, udh=True)
         pdu_list = []
+        i = 1
         for sms_msg_pdu_item in sms_msg_pdu:
             pdu = smsc_pdu
             len_smsc = len(smsc_pdu) / 2
-            pdu += sms_submit_pdu
+            if len(sms_msg_pdu) != i :
+                pdu += self._get_sms_submit_pdu(False, msgvp,
+                                                  store, udh=True)
+            else:
+                pdu += self._get_sms_submit_pdu(request_status, msgvp,
+                                                  store, udh=True)
+            i = i + 1
             pdu += tpmessref_pdu
             pdu += sms_phone_pdu
             pdu += tppid_pdu
