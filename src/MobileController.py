@@ -32,6 +32,7 @@ from MobileStatus import CARD_STATUS_DETECTED, CARD_STATUS_CONFIGURED
 from MobileCapabilities import AT_COMM_CAPABILITY
 from MobileDialWvdial import MobileDialWvdial
 from MobileManager.MobileManagerDbus import MobileManagerDbusController
+from MobileDeviceNone import MobileDeviceNone
 
 DeviceDrivers = ["Huawei", "Option", "Nozomi", "Novatel", "Sierra", "ZTE", "Bluetooth", "USB", "Serial"]
 
@@ -126,6 +127,14 @@ class MobileController(gobject.GObject):
         
         for x in DeviceDrivers :
             exec("from MobileDevice%s import MobileDevice%s" % (x,x))
+
+        none_device = MobileDeviceNone(self)
+        none_device.connect_dbus()
+        self.available_devices.append([none_device.get_property("priority"),
+                                       False,
+                                       none_device.dev_props["info.udi"],
+                                       none_device])
+        
         
         devices = self.hal_manager.GetAllDevices()
         for device in devices :
