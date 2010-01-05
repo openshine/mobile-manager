@@ -25,6 +25,10 @@ AC_ARG_ENABLE(eggs-support,
   [  --enable-eggs-support=[yes/no]  Enable eggs support [default=no]],,
   enable_eggs_support=no)
 
+AC_ARG_ENABLE(usb-mode-switch,
+  [  --enable-usb-mode-switch=[yes/no]  Enable usb-mode-switch [default=no]],,
+  enable_usb_mode_switch=no)
+
 dnl check for python
 dnl ----------------------------
 AM_PATH_PYTHON
@@ -184,7 +188,7 @@ fi
 
 AM_CONDITIONAL(MSD_EGGS_SUPPORT, test x$enable_eggs_support = xyes)
 
-
+AM_CONDITIONAL(USB_MODE_SWITCH, test x$enable_usb_mode_switch = xyes)
 
 dnl *******************************
 dnl Internationalization
@@ -239,6 +243,7 @@ echo "
 	prefix:				 ${prefix}
 	sysconfdir:			 ${EXPANDED_SYSCONFDIR}
 	with init scripts:		 ${with_init_scripts}
+	usb-switch-mode			 ${enable_usb_mode_switch}
 
 "
 	

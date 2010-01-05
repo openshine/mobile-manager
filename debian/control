@@ -12,7 +12,7 @@ Architecture: any
 Replaces: escritorio-movistar (<< 6.5)
 Conflicts: escritorio-movistar (<< 6.5)
 XB-Python-Version: ${python:Versions}
-Depends: ${python:Depends}, dbus, python-gtk2, python-glade2, python-dbus, wvdial, ${shlibs:Depends}, ${misc:Depends}
+Depends: ${python:Depends}, dbus, python-gtk2, python-glade2, python-dbus, wvdial, usb-modeswitch, ${shlibs:Depends}, ${misc:Depends}
 Description: Mobile Manager GPRS/3G daemon
  Mobile Manager is a GPRS/3G daemon developed by Telefonica. 
  This daemon cover the GPRS/3G funtions for develop and work
