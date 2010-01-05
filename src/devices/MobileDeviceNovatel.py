@@ -78,7 +78,6 @@ class MobileDeviceNovatel(MobileDevice):
                self.dev_props["usb_device.vendor_id"])
         
         if len(ports) >= 3 :
-
             if dev == (0x7001, 0x1410) and len(ports) != 4 :
                 return False
             
@@ -97,6 +96,19 @@ class MobileDeviceNovatel(MobileDevice):
             MobileDevice.init_device(self)
             return True
         else:
+            if dev == (0x7001, 0x1410) and len(ports) == 1 :            
+                self.set_property("data-device", "/dev/%s" % ports[0])
+                self.set_property("conf-device", "/dev/%s" % ports[0][:-1] + str(int(ports[0][-1]) + 1))
+                print "data --> %s" % self.get_property("data-device")
+                print "conf --> %s" % self.get_property("conf-device")
+                self.set_property("device-icon", "network-wireless")
+                self.pretty_name = "Novatel"
+                self.set_property("devices-autoconf", True)
+                if not self.exists_conf :
+                    self.set_property("priority", "50")
+                MobileDevice.init_device(self)
+                return True
+            
             return False
 
     def actions_on_open_port(self):
