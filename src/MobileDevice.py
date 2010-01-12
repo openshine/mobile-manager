@@ -961,7 +961,7 @@ class MobileDevice(gobject.GObject) :
             else:
                 print "Response Not Mached !"
                 print "res -> (%s)" % res
-                return None
+                return PIN_STATUS_NO_SIM
                 
         elif res[2].startswith("+CME ERROR:"):
             if res[2].find("SIM not inserted") != -1 :
@@ -971,7 +971,7 @@ class MobileDevice(gobject.GObject) :
                 self.dbg_msg("PIN STATUS : ERROR Sim failure")
                 return PIN_STATUS_SIM_FAILURE
 
-        return None
+        return PIN_STATUS_NO_SIM
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=0)  
     def get_signal(self):
