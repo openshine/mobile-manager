@@ -30,6 +30,9 @@ from MobileStatus import *
 from MobileCapabilities import *
 from MobileManager import MobileDeviceIO
 
+import time
+import gobject
+
 class MobileDeviceHuawei(MobileDevice):
     def __init__(self, mcontroller, dev_props):
         self.capabilities = [AT_COMM_CAPABILITY, X_ZONE_CAPABILITY, SMS_CAPABILITY, ADDRESSBOOK_CAPABILITY]
@@ -40,6 +43,14 @@ class MobileDeviceHuawei(MobileDevice):
         MobileDevice.__init__(self, mcontroller, dev_props)
 
     def init_device(self) :
+        t0 = time.time()
+        mainloop =  gobject.MainLoop(is_running=True)
+        context = mainloop.get_context()
+
+        while time.time() - t0 <= 10.0 :
+            if context.pending() :
+                context.iteration()
+        
         ports = []
         devices =  self.hal_manager.GetAllDevices()
         for device in devices :
