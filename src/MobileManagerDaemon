@@ -50,6 +50,15 @@ def write_pid_file(pid_file):
         syslog.syslog(syslog.LOG_INFO,"MobileManager failed : %s" % msg)
         sys.exit(1)
 
+def init_logging(daemon):
+    import logging
+    if daemon == False :
+        ch  = logging.StreamHandler()
+        MobileManager.log.addHandler(ch)
+        
+    fh = logging.FileHandler(MobileManager.log_file)
+    MobileManager.log.addHandler(fh)
+    MobileManager.log.setLevel(logging.DEBUG)
 
 if __name__ == '__main__':
 
@@ -66,6 +75,7 @@ if __name__ == '__main__':
         ret = MobileManager.daemon.create_daemon()
         
     write_pid_file(options.pid_file)
+    init_logging(options.daemon)
     
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
     name = dbus.service.BusName(MOBILE_MANAGER_CONTROLLER_URI, dbus.SystemBus())

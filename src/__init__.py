@@ -32,3 +32,9 @@ from MobileStatus import *
 from MobileCapabilities import *
 import mdpc
 import daemon
+
+import logging
+import sys, os
+ 
+log_file = '/var/log/mobile-manager'
+log = logging.getLogger()

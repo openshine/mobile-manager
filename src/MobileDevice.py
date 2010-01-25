@@ -290,7 +290,7 @@ class MobileDevice(gobject.GObject) :
         if self.external_debug_func != None :
              self.external_debug_func (str)
         else:
-            print str
+            MobileManager.log.debug(str)
 
     def connect_dbus(self):
         self.dbus_device = MobileManagerDbusDevice(self , self.mcontroller.bname,
