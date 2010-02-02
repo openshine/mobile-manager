@@ -38,7 +38,7 @@ class MobileDeviceHuawei(MobileDevice):
         self.capabilities = [AT_COMM_CAPABILITY, X_ZONE_CAPABILITY, SMS_CAPABILITY, ADDRESSBOOK_CAPABILITY]
         
         #Device list with tuplas representating the device (product_id, vendor_id)
-        self.device_list = [(0x1004,0x12d1), (0x1003,0x12d1), (0x1406,0x12d1)]
+        self.device_list = [(0x1004,0x12d1), (0x1003,0x12d1), (0x1406,0x12d1), (0x1417,0x12d1)]
         
         MobileDevice.__init__(self, mcontroller, dev_props)
 
@@ -95,6 +95,15 @@ class MobileDeviceHuawei(MobileDevice):
         elif dev == (0x1406,0x12d1) and len(ports) >= 2 :
             self.set_property("data-device", "/dev/%s" % ports[0])
             self.set_property("conf-device", "/dev/%s" % ports[1])
+            self.pretty_name = "Huawei"
+            self.set_property("devices-autoconf", True)
+            if not self.exists_conf :
+                self.set_property("priority", "50")
+            MobileDevice.init_device(self)
+            return True
+        elif dev == (0x1417,0x12d1) and len(ports) >= 2 :
+            self.set_property("data-device", "/dev/%s" % ports[0])
+            self.set_property("conf-device", "/dev/%s" % ports[3])
             self.pretty_name = "Huawei"
             self.set_property("devices-autoconf", True)
             if not self.exists_conf :
