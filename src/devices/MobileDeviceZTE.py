@@ -33,7 +33,7 @@ class MobileDeviceZTE(MobileDevice):
         self.capabilities = [AT_COMM_CAPABILITY, X_ZONE_CAPABILITY, SMS_CAPABILITY, ADDRESSBOOK_CAPABILITY]
         
         #Device list with tuplas representating the device (product_id, vendor_id)
-        self.device_list = [(0x1,0x19d2),]
+        self.device_list = [(0x1,0x19d2), (0x66,0x19d2) ]
         
         MobileDevice.__init__(self, mcontroller, dev_props)
 
@@ -57,10 +57,17 @@ class MobileDeviceZTE(MobileDevice):
         print ports
 
         self.set_property("device-icon", "network-wireless")
+
+        dev = (self.dev_props["usb_device.product_id"],
+               self.dev_props["usb_device.vendor_id"])
         
         if len(ports) == 4 :
-            self.set_property("data-device", "/dev/%s" % ports[0])
-            self.set_property("conf-device", "/dev/%s" % ports[2])
+            if dev == (0x66,0x19d2) :
+                self.set_property("data-device", "/dev/%s" % ports[1])
+                self.set_property("conf-device", "/dev/%s" % ports[3])
+            else:
+                self.set_property("data-device", "/dev/%s" % ports[0])
+                self.set_property("conf-device", "/dev/%s" % ports[2])
             self.pretty_name = "ZTE"
             self.set_property("devices-autoconf", True)
             if not self.exists_conf :
