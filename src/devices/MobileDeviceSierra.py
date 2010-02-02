@@ -33,7 +33,7 @@ class MobileDeviceSierra(MobileDevice):
         self.capabilities = [AT_COMM_CAPABILITY, X_ZONE_CAPABILITY, SMS_CAPABILITY, ADDRESSBOOK_CAPABILITY]
         
         #Device list with tuplas representating the device (product_id, vendor_id)
-        self.device_list = [(0x6855,0x1199), (0x6890,0x1199)]
+        self.device_list = [(0x6855,0x1199), (0x6890,0x1199), (0x68a3,0x1199)]
         
         MobileDevice.__init__(self, mcontroller, dev_props)
 
