@@ -82,7 +82,7 @@ class MobileDeviceNovatel(MobileDevice):
                 return False
             
             if dev == (0x7001, 0x1410) :
-                self.set_property("data-device", "/dev/%s" % ports[3])
+                self.set_property("data-device", "/dev/%s" % ports[0])
                 self.set_property("conf-device", "/dev/%s" % ports[1])
             else:
                 self.set_property("data-device", "/dev/%s" % ports[0])
