@@ -74,9 +74,12 @@ class MobileDeviceSierra(MobileDevice):
                self.dev_props["usb_device.vendor_id"])
         
         if len(ports) >= 3 :
-            if dev == (0x68a3,0x1199) and  len(ports) >= 4 :
+            if dev == (0x68a3,0x1199) and len(ports) >= 4 :
                 self.set_property("conf-device", "/dev/%s" % ports[2])
                 self.set_property("data-device", "/dev/%s" % ports[3])
+            elif dev == (0x6890,0x1199) and len(ports) >= 4 :
+                self.set_property("conf-device", "/dev/%s" % ports[3])
+                self.set_property("data-device", "/dev/%s" % ports[4])
             else:
                 self.set_property("conf-device", "/dev/%s" % ports[2])
                 self.set_property("data-device", "/dev/%s" % ports[0])
