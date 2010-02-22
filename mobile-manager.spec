@@ -15,6 +15,7 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires: gtk2 >= 2.4.0
 Requires: python
 Requires: libusb
+Requires: usb_modeswitch 
 
 %if %is_suse
 Requires: python-gtk
