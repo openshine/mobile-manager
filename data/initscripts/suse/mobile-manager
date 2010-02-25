@@ -45,12 +45,13 @@ case "$1" in
 
         
 	echo -n "Starting $FULL_NAME";
-        startproc -p $PID_FILE $DAEMON_EXE  $DAEMON_PARAMS
+        #startproc -p $PID_FILE $DAEMON_EXE  $DAEMON_PARAMS
+        $DAEMON_EXE  $DAEMON_PARAMS
         rc_status -v
         ;;
     stop)
 	echo -n "Shutting down $FULL_NAME daemon"
-       	killproc -p $PID_FILE -TERM $DAEMON_EXE
+        kill -9 $(cat $PID_FILE) || echo "no pid file"
        	rm -f $PID_FILE;
        	rc_status -v
         ;;
