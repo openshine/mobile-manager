@@ -1228,9 +1228,12 @@ class MobileDevice(gobject.GObject) :
             if len(res.strip("\r\n")) > 0:
                 if res.startswith("+CUSD:"):
                     pattern = re.compile(".*,+(?P<value>.*),")
-                    matched_res = pattern.match(res)
-                    value = matched_res.group("value")
-                    tt_res.append(value.strip('"'))
+                    try:
+                        matched_res = pattern.match(res)
+                        value = matched_res.group("value")
+                        tt_res.append(value.strip('"'))
+                    except:
+                        tt_res.append("Service error")
                     tt_res.append("OK")
                     break
                 else:
@@ -1245,7 +1248,51 @@ class MobileDevice(gobject.GObject) :
         self.pause_polling_necesary = False
         return False
 
-    def get_ussd_cmd(self, ussd_cmd, func):
+    def get_ussd_cmd_handler_gsm7(self, fd, condition, at_command, func):
+        self.dbg_msg("__get_ussd_cmd_hadler_gsm7 in")
+        tt_res = [at_command]
+
+        attempts = 2
+        
+        while True :
+            res = self.serial.readline()
+            print "ussd ----> %s\n" % res
+            gobject.main_context_default ().iteration()
+
+            if res == None :
+                if attempts == 0 :
+                    tt_res.append("No service available")
+                    tt_res.append("OK")
+                    break
+                attempts = attempts - 1
+                continue
+            
+            if len(res.strip("\r\n")) > 0:
+                if res.startswith("+CUSD:"):
+                    pattern = re.compile(".*,+(?P<value>.*),")
+                    try:
+                        matched_res = pattern.match(res)
+                        value = matched_res.group("value")
+                        tt_res.append(self.from_gsm7(value.strip('"')))
+                    except:
+                        tt_res.append("Service error")
+
+                    tt_res.append("OK")
+                    break
+                else:
+                    continue
+            else:
+                continue
+        
+        result = [tt_res[0],tt_res[1:-1],tt_res[-1]]
+        func(result)
+
+        self.dbg_msg("__get_ussd_cmd_hadler_gsm7 out")
+        self.pause_polling_necesary = False
+        return False
+
+    def get_ussd_cmd(self, cmd, func):
+        ussd_cmd = 'AT+CUSD=1,"%s",15' % cmd
         res = self.send_at_command(ussd_cmd)
         self.dbg_msg ("GET USSD : %s" % res)
         
@@ -1255,8 +1302,65 @@ class MobileDevice(gobject.GObject) :
             gobject.io_add_watch(self.serial.fileno(), gobject.IO_IN,
                                  self.get_ussd_cmd_handler,  ussd_cmd, func)
         else:
-            func([ussd_cmd,[], "ERROR"])
-        
+            ussd_cmd = 'AT+CUSD=1,"%s",15' % self.to_gsm7(cmd)
+            res = self.send_at_command(ussd_cmd)
+            self.dbg_msg ("GET USSD : %s" % res)
+            
+            if res[2] == 'OK':
+                self.pause_polling_necesary = True
+                self.serial.flush()
+                gobject.io_add_watch(self.serial.fileno(), gobject.IO_IN,
+                                     self.get_ussd_cmd_handler_gsm7,  ussd_cmd, func)
+            else:
+                func([ussd_cmd,[], "ERROR"])
+
+    def to_gsm7(self, message):
+        import MobileManager.messaging.gsm0338
+        pdu = ""
+        txt = message.encode("gsm0338")
+
+        tl = len(txt)
+        txt += '\x00'
+        msgl = len(txt) * 7 / 8
+        op = [-1] * msgl
+        c = shift = 0
+
+        for n in range(msgl):
+            if shift == 6:
+                c += 1
+
+            shift = n % 7
+            lb = ord(txt[c]) >> shift
+            hb = (ord(txt[c+1]) << (7-shift) & 255)
+            op[n] = lb + hb
+            c += 1
+        pdu = ''.join([chr(x) for x in op])
+        ret_pdu = ''.join(["%02x" % ord(n) for n in pdu])
+        return ret_pdu
+
+    def from_gsm7(self, message, limit=0x00):
+        import MobileManager.messaging.gsm0338
+
+        count = last = 0
+        result = []
+
+        for i in range(0, len(message), 2):
+            byte = int(message[i:i+2], 16)
+            mask = 0x7F >> count
+            out = ((byte & mask) << count) + last
+            last = byte >> (7 - count)
+            result.append(chr(out))
+
+            if limit and (len(result) >= limit):
+                break
+
+            if count == 6:
+                result.append(chr(last))
+                last = 0
+
+            count = (count + 1) % 7
+
+        return ''.join(result)
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def set_carrier_auto_selection(self):
