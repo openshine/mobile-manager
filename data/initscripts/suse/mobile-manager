@@ -46,7 +46,12 @@ case "$1" in
         
 	echo -n "Starting $FULL_NAME";
         #startproc -p $PID_FILE $DAEMON_EXE  $DAEMON_PARAMS
-        $DAEMON_EXE  $DAEMON_PARAMS
+	while [ ! -e /var/run/hald/haldaemon.pid ] ;
+	do
+	    echo -n "."
+	    sleep 1
+	done
+	$DAEMON_EXE  $DAEMON_PARAMS
         rc_status -v
         ;;
     stop)
