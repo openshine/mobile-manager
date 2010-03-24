@@ -168,8 +168,10 @@ class MobileDialWvdial(MobileDial):
         print "__pppd_options"
         
         out = StringIO.StringIO()
+        
+        if os.system ("test -f /etc/SuSE-release && test 1 == $(/usr/bin/lsb_release -r | grep 11.2 | wc -l)") == 0 :
+            print >>out,"plugin passwordfd.so"
 
-        #print >>out,"plugin passwordfd.so"
         print >>out,"debug"
         print >>out,"noauth"
         print >>out,"name wvdial"
