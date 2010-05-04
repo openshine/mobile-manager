@@ -563,6 +563,11 @@ class MobileManagerDbusDevice(dbus.service.Object):
     def IsMultiPortDevice(self):
         return self.device.get_property('multiport-device')
 
+    @dbus.service.method(MOBILE_MANAGER_DEVICE_INFO_INTERFACE_URI,
+                         in_signature='', out_signature='s')
+    def GetMSISDN(self):
+        return self.device.get_msisdn()
+
     @dbus.service.method(MOBILE_MANAGER_DEVICE_AUTH_INTERFACE_URI,
                          in_signature='s', out_signature='b')
     def SendPIN(self, pin):
@@ -665,6 +670,7 @@ class MobileManagerDbusDevice(dbus.service.Object):
         self.ussd_result = ""
 
         return ret
+
 
     @dbus.service.method(MOBILE_MANAGER_DEVICE_STATE_INTERFACE_URI,
                          in_signature='', out_signature='s')

@@ -1362,6 +1362,52 @@ class MobileDevice(gobject.GObject) :
 
         return ''.join(result)
 
+    @pin_status_required (PIN_STATUS_READY, ret_value_on_error="")
+    def get_msisdn(self):
+        res = self.send_at_command('AT+CSIM=18,"00A40804047F106F40"', accept_null_response=False)
+        
+        self.dbg_msg ("LOOKING MSISDN FILE : %s" % res)
+        try:
+            if res[2] == 'OK':
+                pattern = re.compile('\+CSIM:.*4,\"(?P<file>.+)\"')
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    if matched_res.group("file").startswith("61") or matched_res.group("file") == "9000" :
+                        res2 = self.send_at_command('AT+CSIM=10,"00B2010400"', accept_null_response=False)
+                        self.dbg_msg ("LOOKING THE MSISDN REG : %s" % res2)
+                        try:
+                            if res2[2] == 'OK':
+                                pattern = re.compile('\+CSIM:.*,\"(?P<file>.+)\"')
+                                self.dbg_msg("LOOKING TYPE IN MSISDN FILE (step 2) : %s" % res2)
+                                matched_res = pattern.match(res2[1][0])
+                                if matched_res != None:
+                                    response = matched_res.group("file")
+                                    code = '70' + response.split("70",1)[1][:10]
+                                    ret = ''
+                                    for i in [1,0,3,2,5,4,7,6,9,8,11] :
+                                        ret = ret + str(code[i])
+                                    return ret
+                                else:
+                                    self.dbg_msg ("LOOKING TYPE IN MSISDN FILE (not msisdn): %s" % res2)
+                                    return ""
+                            else:
+                                self.dbg_msg (" LOOKING THE MSISDN REG (not msisdn) : %s" % res)
+                                return ""
+                        except:
+                            self.dbg_msg ("LOOKING THE MSISDN REG (except): %s" % res2)
+                            return ""
+                            
+                    else:
+                        self.dbg_msg ("LOOKING MSISDN FILE (not file) : %s" % res)
+                        return ""
+            else:
+                self.dbg_msg ("LOOKING MSISDN FILE (error) : %s" % res)
+                return ""
+        except:
+            self.dbg_msg ("GET MSISDN (except) : %s" % res)
+            return ""
+
+
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=False)
     def set_carrier_auto_selection(self):
         res = self.send_at_command('AT+COPS=0')
