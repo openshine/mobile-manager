@@ -791,7 +791,11 @@ class MobileManagerDbusDevice(dbus.service.Object):
     @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
                          in_signature='u', out_signature='ubsds')
     def GetReceived(self, index):
-        return self.device.sms_get_spool_item("received", index)
+        i,h1,h2,sms_time, sms_text = self.device.sms_get_spool_item("received", index)
+        if "http://MMSM/" in sms_text :
+            return i,h1,h2,sms_time, 'MMS'
+
+        return i,h1,h2,sms_time, sms_text
 
     @dbus.service.method(MOBILE_MANAGER_DEVICE_SMS_INTERFACE_URI,
                          in_signature='u', out_signature='ubsds')
