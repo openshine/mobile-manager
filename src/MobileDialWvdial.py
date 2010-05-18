@@ -96,13 +96,13 @@ class MobileDialWvdial(MobileDial):
 
         if username != "" :
             wvdial_conf = wvdial_conf + "Username = %s\n" % username
-        #else:
-        #    wvdial_conf = wvdial_conf + "Username = _\n"
+        else:
+            wvdial_conf = wvdial_conf + "Username = ''\n"
 
         if password != "" :
             wvdial_conf = wvdial_conf + "Password = %s\n" % password
-        #else:
-        #    wvdial_conf = wvdial_conf + "Password = _\n"
+        else:
+            wvdial_conf = wvdial_conf + "Password = ''\n"
 
         if auto_dns == False:
             wvdial_conf = wvdial_conf + "Auto DNS = 0\n"
