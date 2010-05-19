@@ -282,6 +282,11 @@ class MobileDialWvdial(MobileDial):
                     os.system("/etc/init.d/NetworkManager start")
                 except:
                     print "No network manager to start"
+            elif os.path.exists("/etc/SuSE-release"):
+                try:
+                    os.system("/etc/init.d/network restart")
+                except:
+                    print "No network to start"
 
             print "emit disconnected"
             self.emit('disconnected')
