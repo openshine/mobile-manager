@@ -214,7 +214,6 @@ class MobileDevice(gobject.GObject) :
         if X_ZONE_CAPABILITY not in self.capabilities :
             self.x_zone_support = False
 
-        self.__upower_actions()
 
     def do_get_property(self, property):
         if property.name == 'data-device': 
@@ -318,6 +317,7 @@ class MobileDevice(gobject.GObject) :
         self.dbus_device = MobileManagerDbusDevice(self , self.mcontroller.bname,
                                                    os.path.basename(self.dev_props["info.udi"]))
         self.dbus_device_path = str(self.dbus_device)
+        self.__upower_actions()
         
     def disconnect_dbus(self):
         print "disconnecting "
