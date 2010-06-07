@@ -49,6 +49,8 @@ class MobileDialWvdial(MobileDial):
         self.status_flag = PPP_STATUS_DISCONNECTED
         self.active_device = None
          
+        self.__upower_actions()
+
         MobileDial.__init__(self, mcontroller)
 
     def status(self):
@@ -448,3 +450,21 @@ class MobileDialWvdial(MobileDial):
             print "kill -15 %s" % self.wvdial_pid
             os.kill(int(self.wvdial_pid), 15)
         
+    def __upower_actions (self):
+        try:
+            import dbus
+            bus = dbus.SystemBus()
+            proxy = bus.get_object('org.freedesktop.UPower', '/org/freedesktop/UPower')
+            iface = dbus.Interface(proxy, 'org.freedesktop.UPower')
+            
+            iface.connect_to_signal("Sleeping", self.__upower_sleeping_cb)
+            iface.connect_to_signal("Resuming", self.__upower_resuming_cb)
+        except:
+            print "May be UPower is not present!"
+
+    def __upower_sleeping_cb(self):
+        print "%s ---> To Sleep" % self
+        self.stop()
+
+    def __upower_resuming_cb(self):
+        print "%s ---> Resuming" % self
