@@ -730,8 +730,11 @@ class MobileDevice(gobject.GObject) :
                                 tt_res_tmp.append(x)
                         
                         if len(tt_res_tmp) == 1 :
-                            tt_res_tmp.append("")
-                            tt_res_tmp.append("OK")
+                            if tt_res_tmp[0].startswith("+") :
+                                tt_res_tmp = [str, tt_res_tmp[0], 'OK']
+                            else:
+                                tt_res_tmp.append("")
+                                tt_res_tmp.append("OK")
                         elif len(tt_res_tmp)>1 :
                             tt_res_tmp.append("OK")
                         else:
@@ -2148,11 +2151,15 @@ class MobileDevice(gobject.GObject) :
         else:
             return False
 
-    def __send_pdu_to_device(self, sms) :
+
+    def send_at_pdu_command_to_device(self, sms):
         self.serial.flush()
-        
-        self.serial.write("AT+CMGS="+str(sms[0])+"\r")
+        self.serial.write("AT+CMGS=" + str(sms[0]) + "\r")
         self.serial.readline()
+
+    def __send_pdu_to_device(self, sms) :
+        self.send_at_pdu_command_to_device(sms)
+        
         c = ""
         while c != ">":
             c = self.serial.read_c()

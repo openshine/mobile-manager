@@ -97,7 +97,7 @@ class MobileDeviceZTE(MobileDevice):
         self.dbg_msg ("GET DOMAIN : %s" % res)
 
         if res[2] == 'OK' :
-            pattern = re.compile("\+ZCSPS:(?P<domain>.*)")
+            pattern = re.compile("\+ZCSPS:\ +(?P<domain>\d*)")
             matched_res = pattern.match(res[1][0])
             if matched_res != None:
                  domain = int(matched_res.group("domain"))
@@ -117,7 +117,7 @@ class MobileDeviceZTE(MobileDevice):
         self.dbg_msg ("GET MODE : %s" % res)
 
         if res[2] == 'OK' :
-            pattern = re.compile("\+ZCSPS:(?P<cm_mode>.*),(?P<net_sel_mode>.*),(?P<acqorder>.*)")
+            pattern = re.compile("\+ZSNT:\ +(?P<cm_mode>\d*),(?P<net_sel_mode>\d*),(?P<acqorder>\d*)")
             matched_res = pattern.match(res[1][0])
             if matched_res != None:
                 cm_mode = int(matched_res.group("cm_mode"))
@@ -179,6 +179,98 @@ class MobileDeviceZTE(MobileDevice):
         else:
             self.dbg_msg ("SET MODE (CRASH) : %s" % res)
             return False
+
+    def get_card_info(self):
+        self.dbg_msg ("GET CARD INFO (ZTE STYLE)" )
+        
+        self.serial.write("ATI\r")
+        attempts = 5
+        
+        info = []
+        
+        res = self.serial.readline()
+        while attempts != 0 :
+            if res == "OK" :
+                break
+            elif res == None :
+                attempts = attempts - 1
+            
+            info.append(res)
+            res = self.serial.readline()
+        
+        return info
+
+    def get_net_info(self):
+        tech_in_use = None
+        card_mode = None
+        card_domain = None
+        carrier = None
+        carrier_mode = None
+        
+        res = self.send_at_command("AT+COPS?", accept_null_response=False)
+        
+        self.dbg_msg ("GET TECH MODE DOMAIN : %s" % res)
+        try:
+            if res[2] == 'OK' :
+                try :
+                    tech_in_use = int(res[1][0][-1])
+                except:
+                    tech_in_user = 2
+
+                pattern = re.compile('\+COPS:\ +(?P<carrier_selection_mode>\d*),(?P<carrier_format>\d*),"(?P<carrier>.*)",')
+                matched_res = pattern.match(res[1][0])
+                if matched_res != None:
+                    if matched_res.group("carrier_format") != "0" :
+                        res = self.send_at_command("AT+COPS=3,0")
+                        self.dbg_msg ("ATCOPS : %s" % res)
+                        if res[2] != "OK" :
+                            self.dbg_msg ("error changing to correct format")
+                        return self.get_net_info()
+
+                    carrier = matched_res.group("carrier")
+                    carrier_mode = int(matched_res.group("carrier_selection_mode"))
+                
+            card_mode, card_domain = self.get_mode_domain()
+
+            return tech_in_use, card_mode, card_domain, carrier, carrier_mode
+        except:
+            self.dbg_msg ("GET TECH MODE DOMAIN (except): %s" % res)
+            return tech_in_use, card_mode, card_domain, carrier, carrier_mode
+
+    def get_sim_id(self):
+        if self.sim_id != None :
+            self.dbg_msg ("SIM ID (cached) : %s" % self.sim_id)
+            return self.sim_id
+
+        cimi = None
+        
+        self.serial.write("AT+CIMI\r")
+        attempts = 5
+        
+        res = self.serial.readline()
+        while attempts != 0 :
+            if cimi == None and res != None and len(res)>0 :
+                cimi = res
+            
+            if res == "OK" :
+                break
+            elif res == None :
+                attempts = attempts - 1
+            
+            res = self.serial.readline()
+        
+        if res == 'OK' :
+            self.dbg_msg ("GET SIM ID (ZTE STYLE)" )
+            self.dbg_msg ("* SIM ID : %s" % cimi)
+            return cimi
+        else:
+            self.dbg_msg ("GET SIM ID (ZTE STYLE)" )
+            self.dbg_msg ("* SIM ID (ZTE STYLE) : (error)")
+            return None
+
+    def send_at_pdu_command_to_device(self, sms):
+        self.serial.flush()
+        self.serial.write("AT+CMGS=" + str(sms[0]) + "\r")
 
     def actions_on_open_port(self):
         ret = MobileDevice.actions_on_open_port(self)
