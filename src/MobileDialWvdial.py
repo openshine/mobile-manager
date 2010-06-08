@@ -292,7 +292,10 @@ class MobileDialWvdial(MobileDial):
 
             print "emit disconnected"
             self.emit('disconnected')
-
+            
+            if os.path.exists("/etc/resolv.conf.mm") :
+                os.system("mv /etc/resolv.conf.mm /etc/resolv.conf")
+                
             return False
         
     def __pppd_monitor(self):
@@ -359,6 +362,7 @@ class MobileDialWvdial(MobileDial):
         print "-----> __set_dns_info (%s)" % self.dns_data
         if self.dns_data == None :
             return
+        os.system("cp /etc/resolv.conf /etc/resolv.conf.mm")
         
         os.system("echo ';Mobile manager dns data' > /etc/resolv.conf")
         if self.dns_data[2] != "" :
