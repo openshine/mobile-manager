@@ -35,7 +35,7 @@ class MobileDeviceOption(MobileDevice):
         self.capabilities = [AT_COMM_CAPABILITY, X_ZONE_CAPABILITY, SMS_CAPABILITY, ADDRESSBOOK_CAPABILITY]
         
         #Device list with tuplas representating the device (product_id, vendor_id)
-        self.device_list = [(0x6000,0xaf0), (0x6100, 0xaf0), (0x6300, 0xaf0), (0x6901, 0xaf0)]
+        self.device_list = [(0x6000,0xaf0), (0x6100, 0xaf0), (0x6300, 0xaf0), (0x6901, 0xaf0),(0x7501, 0xaf0)]
         
         MobileDevice.__init__(self, mcontroller, dev_props)
 
@@ -56,12 +56,37 @@ class MobileDeviceOption(MobileDevice):
                     for f in files:
                         if f.startswith("ttyUSB"):
                             ports.append(f)
+        
+        if len(ports) == 0 :
+            device_udi = self.dev_props["info.udi"]
+            for device in devices :
+                device_dbus_obj = self.dbus.get_object("org.freedesktop.Hal", device)
+                try:
+                    props = device_dbus_obj.GetAllProperties(dbus_interface="org.freedesktop.Hal.Device")
+                except:
+                    return False
+    
+                device_tmp = props["info.udi"]
+                
+                if device_tmp.startswith(device_udi):
+                    if props.has_key("serial.device") :
+                        ports.append(os.path.basename(props["serial.device"]))
+
+            ports = dict(map(lambda i: (i,1),ports)).keys()
+        
         ports.sort()
-        print ports
+        print "-------------> %s" % ports
+        dev = (self.dev_props["usb_device.product_id"],
+               self.dev_props["usb_device.vendor_id"])
         
         if len(ports) >= 3 :
-            self.set_property("data-device", "/dev/%s" % ports[0])
-            self.set_property("conf-device", "/dev/%s" % ports[2])
+            if dev == (0x7501, 0xaf0) :
+                self.set_property("data-device", "/dev/%s" % ports[3])
+                self.set_property("conf-device", "/dev/%s" % ports[2])
+            else:
+                self.set_property("data-device", "/dev/%s" % ports[0])
+                self.set_property("conf-device", "/dev/%s" % ports[2])
+                
             self.set_property("device-icon", "network-wireless")
             self.pretty_name = "Option"
             self.set_property("devices-autoconf", True)
