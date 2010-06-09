@@ -265,6 +265,7 @@ class MobileDeviceNovatel(MobileDevice):
 
         res = self.send_at_command("AT$NWRAT=%s,%s" % (rmode, rdomain))
         self.dbg_msg ("SET DOMAIN : %s" % res)
+        MobileDevice.set_mode_domain(self, mode, domain)
         
     def get_carrier_list_from_raw(self, raw):
         print "__get_carrier_list_from_raw in"

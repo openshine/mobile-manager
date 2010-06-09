@@ -175,6 +175,7 @@ class MobileDeviceZTE(MobileDevice):
         
         if res[2] == 'OK' :
             self.dbg_msg ("SET MODE : %s" % res)
+            MobileDevice.set_mode_domain(self, mode, domain)
             return True
         else:
             self.dbg_msg ("SET MODE (CRASH) : %s" % res)

@@ -126,6 +126,7 @@ class MobileDeviceOption(MobileDevice):
         res = self.send_at_command("AT_OPSYS=%s,%s" % (mode,domain))
         if res[2] == 'OK' :
             self.dbg_msg ("SET MODE DOMAIN : %s" % res)
+            MobileDevice.set_mode_domain(self, mode, domain)
             return True
         else:
             self.dbg_msg ("SET MODE DOMAIN (CRASH) : %s" % res)

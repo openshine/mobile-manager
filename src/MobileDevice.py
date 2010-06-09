@@ -1175,8 +1175,25 @@ class MobileDevice(gobject.GObject) :
 
         return card_mode, card_domain
 
-    def set_mode_domain(self, mode, domain):
-        print "set_mode_domain"
+    def set_mode_domain(self, mode, domain):  
+        m = int(mode)
+        d = int(domain)
+        
+        self.dbg_msg ("EMITING SINGNALS MODE-DOMAIN (%s,%s)" % (m, d))
+        self.cached_status_values["domain"] = d
+        if self.__is_active_device():
+            self.mcontroller.emit('active-dev-domain-status-changed', d)
+            self.mcontroller.emit('dev-domain-status-changed', self.dev_props["info.udi"], d)
+        else:
+            self.mcontroller.emit('dev-domain-status-changed', self.dev_props["info.udi"], d)
+                 
+        self.cached_status_values["mode"] = m
+        if self.__is_active_device():
+            self.mcontroller.emit('active-dev-mode-status-changed', m)
+            self.mcontroller.emit('dev-mode-status-changed', self.dev_props["info.udi"], m)
+        else:
+            self.mcontroller.emit('dev-mode-status-changed', self.dev_props["info.udi"], m)
+        
         return True
 
     def get_card_info(self):

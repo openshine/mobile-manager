@@ -244,7 +244,8 @@ class MobileDeviceSierra(MobileDevice):
 
         res = self.send_at_command("AT!SELMODE=%s" % real_domain)
         self.dbg_msg ("SET DOMAIN : %s" % res)
-
+        MobileDevice.set_mode_domain(self, mode, domain)
+        
     def is_on(self):
         if self.card_is_on != None :
             return self.card_is_on
