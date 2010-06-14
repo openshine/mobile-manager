@@ -38,7 +38,7 @@ class MobileDeviceHuawei(MobileDevice):
         self.capabilities = [AT_COMM_CAPABILITY, X_ZONE_CAPABILITY, SMS_CAPABILITY, ADDRESSBOOK_CAPABILITY]
         
         #Device list with tuplas representating the device (product_id, vendor_id)
-        self.device_list = [(0x1004,0x12d1), (0x1003,0x12d1), (0x1406,0x12d1), (0x1417,0x12d1)]
+        self.device_list = [(0x1001,0x12d1),(0x1004,0x12d1), (0x1003,0x12d1), (0x1406,0x12d1), (0x1417,0x12d1)]
         
         MobileDevice.__init__(self, mcontroller, dev_props)
 
@@ -74,7 +74,7 @@ class MobileDeviceHuawei(MobileDevice):
 
         self.set_property("device-icon", "network-wireless")
         
-        if dev == (0x1004,0x12d1) and len(ports) == 4 :
+        if (dev == (0x1004,0x12d1) and len(ports) == 4) or (dev == (0x1001,0x12d1) and len(ports) >= 3):
             self.set_property("data-device", "/dev/%s" % ports[0])
             self.set_property("conf-device", "/dev/%s" % ports[2])
             self.pretty_name = "Huawei"
