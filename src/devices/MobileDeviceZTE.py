@@ -250,11 +250,13 @@ class MobileDeviceZTE(MobileDevice):
         
         res = self.serial.readline()
         while attempts != 0 :
-            if cimi == None and res != None and len(res)>0 :
-                cimi = res
-            
             if res == "OK" :
                 break
+            elif "CIMI" in res:
+                res = self.serial.readline()
+                continue
+            elif cimi == None and res != None and len(res)>0:
+                cimi = res
             elif res == None :
                 attempts = attempts - 1
             
@@ -272,6 +274,46 @@ class MobileDeviceZTE(MobileDevice):
     def send_at_pdu_command_to_device(self, sms):
         self.serial.flush()
         self.serial.write("AT+CMGS=" + str(sms[0]) + "\r")
+        
+    def get_unread_smss(self):
+        self.dbg_msg("* GET UNREAD SMS INIT (ZTE style) ....")
+        ret_value = ["AT+CMGL=0", [], "OK"]
+        
+        self.serial.write("AT+CMGL=0\r")
+        self.dbg_msg ("Send (ZTE style) : AT+CMGL=0")
+        
+        attempts = 5
+        res = self.serial.readline()
+        while attempts != 0 :
+            self.dbg_msg ("Recv (ZTE style) : %s" % res)
+            
+            if len(res) > 0 :
+                break
+            elif res == None :
+                attempts = attempts - 1
+                
+            res = self.serial.readline()
+        
+        attempts = 5
+        res = self.serial.readline()
+        while attempts != 0 :
+            self.dbg_msg ("Recv (ZTE style) : %s" % res)
+            
+            if res == "OK" :
+                break
+            elif "ERROR" in res :
+                ret_value[2]="ERROR"
+                break
+            elif len(res):
+                ret_value[1].append(res)
+            elif res == None :
+                attempts = attempts - 1
+
+            res = self.serial.readline()
+        
+        self.dbg_msg("* GET UNREAD SMS END (ZTE style) : %s " % ret_value)
+        return ret_value
+
 
     def actions_on_open_port(self):
         ret = MobileDevice.actions_on_open_port(self)
