@@ -1788,6 +1788,12 @@ class MobileDevice(gobject.GObject) :
 
         self.dbg_msg("VERIFING CONCAT SPOOL END")
 
+
+    def get_unread_smss(self):
+        res = self.send_at_command('AT+CMGL=0')
+        self.dbg_msg("* GET UNREAD SMS : %s" % res)
+        return res
+
     def sms_poll(self):
         self.dbg_msg("SMS POOL")
         
@@ -1835,8 +1841,7 @@ class MobileDevice(gobject.GObject) :
             self.dbg_msg ("* SMS PDU MODE (except): %s" % res)
             return
 
-        res = self.send_at_command('AT+CMGL=0')
-        self.dbg_msg ("* GET UNREAD SMS : %s" % res)
+        res = self.get_unread_smss()
         try:
             if res[2] != 'OK':
                 return
