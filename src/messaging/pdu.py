@@ -174,7 +174,7 @@ class PDU(object):
             testheader = True
         else:
             testheader = False
-
+        
         ptr += 2
         if sms_type == SMS_SUBMIT:
             # skip the message reference
@@ -186,15 +186,20 @@ class PDU(object):
         sndtype = pdu[ptr+2:ptr+4]
 
         # Extract Phone number of sender
-        sender = pdu[ptr+4:ptr+4+sndlen]
-        sender = sender.replace('F', '')
-        sender = list(sender)
-        for n in range(1, len(sender), 2):
-            sender[n-1], sender[n] = sender[n], sender[n-1]
-        sender = ''.join(sender)
-        sender = sender.strip()
-        if sndtype == '91':
-            sender = '+' + sender
+        if sndtype != 'D0' :
+            sender = pdu[ptr+4:ptr+4+sndlen]
+            sender = sender.replace('F', '')
+            sender = list(sender)
+            for n in range(1, len(sender), 2):
+                sender[n-1], sender[n] = sender[n], sender[n-1]
+            sender = ''.join(sender)
+            sender = sender.strip()
+            if sndtype == '91':
+                sender = '+' + sender
+        else:
+            sender = pdu[ptr+4:ptr+4+sndlen]
+            msg = self._unpack_msg(sender)
+            sender = msg.decode("gsm0338")
 
         ptr += 4 + sndlen
         # 1byte (octet) = 2 char
