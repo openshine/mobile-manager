@@ -365,10 +365,10 @@ class MobileDialWvdial(MobileDial):
 
     def __set_dns_info(self):
         print "-----> __set_dns_info (%s)" % self.dns_data
-        os.system("cp /etc/resolv.conf /etc/resolv.conf.mm")
-        
         if self.dns_data == None :
             return
+        
+        os.system("cp /etc/resolv.conf /etc/resolv.conf.mm")
         
         os.system("echo ';Mobile manager dns data' > /etc/resolv.conf")
         if self.dns_data[2] != "" :
