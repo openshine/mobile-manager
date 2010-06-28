@@ -237,6 +237,9 @@ class MobileDialWvdial(MobileDial):
         if os.path.exists("/etc/fedora-release") :
             try:
                 os.system("/etc/init.d/NetworkManager stop")
+                if self.dns_data == None:
+                    os.system("echo 'PEERDNS=yes' > /etc/sysconfig/network-scripts/ifcfg- ")
+                    os.system("echo 'DEFROUTE=yes' >> /etc/sysconfig/network-scripts/ifcfg- ")
             except:
                 print "No network manager to stop"
 
@@ -362,12 +365,10 @@ class MobileDialWvdial(MobileDial):
 
     def __set_dns_info(self):
         print "-----> __set_dns_info (%s)" % self.dns_data
-        if self.dns_data == None :
-            if os.path.exists("/etc/fedora-release") :
-                os.system("echo 'PEERDNS=yes' > /etc/sysconfig/network-scripts/ifcfg- ")
-                os.system("echo 'DEFROUTE=yes' >> /etc/sysconfig/network-scripts/ifcfg- ")
-            return
         os.system("cp /etc/resolv.conf /etc/resolv.conf.mm")
+        
+        if self.dns_data == None :
+            return
         
         os.system("echo ';Mobile manager dns data' > /etc/resolv.conf")
         if self.dns_data[2] != "" :
