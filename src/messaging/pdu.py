@@ -256,8 +256,12 @@ class PDU(object):
             msg = unicode(msg[headlen:], 'latin-1')
 
         elif fmt == UNICODE_FORMAT:
-            msg = u''.join([unichr(int(msg[x:x+4], 16))
+            if cnt == 0 :
+                msg = u''.join([unichr(int(msg[x:x+4], 16))
                             for x in range(0, len(msg), 4)])
+            else:
+                msg = u''.join([unichr(int(msg[x:x+4], 16))
+                            for x in range(12, len(msg), 4)])
 
         return sender, datestr, msg.strip(), csca, ref, cnt, seq, fmt
 
