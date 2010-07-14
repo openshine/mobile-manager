@@ -2347,8 +2347,11 @@ class MobileDevice(gobject.GObject) :
 
     @pin_status_required (PIN_STATUS_READY, ret_value_on_error=0)
     def sms_ab_get_size(self):
-        if self.cached_status_values["ab_size"] != None :
-            return self.cached_status_values["ab_size"]
+        try:
+            if self.cached_status_values["ab_size"] != None :
+                return self.cached_status_values["ab_size"]
+        except:
+            pass
         
         res = self.send_at_command('AT+CPBR=?'
                                    , accept_null_response=False)
