@@ -174,6 +174,9 @@ class MobileDialWvdial(MobileDial):
         if os.system ("test -f /etc/SuSE-release && test 1 == $(/usr/bin/lsb_release -r | grep 11.2 | wc -l)") == 0 :
             print >>out,"plugin passwordfd.so"
 
+        if os.system ("test -f /etc/SuSE-release && test 1 == $(/usr/bin/lsb_release -r | grep 11.3 | wc -l)") == 0 :
+            print >>out,"plugin passwordfd.so"
+
         print >>out,"debug"
         print >>out,"noauth"
         print >>out,"name wvdial"
