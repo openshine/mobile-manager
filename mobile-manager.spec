@@ -16,6 +16,7 @@ Requires: gtk2 >= 2.4.0
 Requires: python
 Requires: libusb
 Requires: usb_modeswitch 
+Requires: wvdial
 
 %if %is_suse
 Requires: python-gtk
