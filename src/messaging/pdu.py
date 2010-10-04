@@ -208,6 +208,10 @@ class PDU(object):
         ptr += 2
         # 1 byte TP-DCS (Data Coding Scheme)
         DCS = int(pdu[ptr:ptr+2], 16)
+        flash_sms = False
+        if (DCS & 0xFF) == 0xF0:
+            flash_sms = True
+
         fmt = SEVENBIT_FORMAT
         if DCS & (EIGHTBIT_FORMAT | UNICODE_FORMAT) == 0:
             fmt = SEVENBIT_FORMAT
@@ -263,7 +267,10 @@ class PDU(object):
                 msg = u''.join([unichr(int(msg[x:x+4], 16))
                             for x in range(12, len(msg), 4)])
 
-        return sender, datestr, msg.strip(), csca, ref, cnt, seq, fmt
+        if flash_sms == False :
+            return sender, datestr, msg.strip(), csca, ref, cnt, seq, fmt
+        else:
+            return "FLASH:" + sender, datestr, msg.strip(), csca, ref, cnt, seq, fmt
 
     #Private methods
     def _decode_status_report_pdu(self, pdu, ptr_st, csca):
